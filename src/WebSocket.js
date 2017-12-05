@@ -1,4 +1,3 @@
-const ws = require('ws')
 const io = require('socket.io')
 const moment = require('moment')
 const User = require('./User')
@@ -19,14 +18,14 @@ function gameLoop() {
 
     setImmediate(gameLoop)
 }
-gameLoop()
-
-setInterval(() => {
-    socketIo.emit('sync', { players: users.map(x => x.info()) })
-}, 100)
 
 const connect = function(server) {
     socketIo = io.listen(server)
+
+    setInterval(() => {
+        if(socketIo) socketIo.emit('sync', { players: users.map(x => x.info()) })
+    }, 100)
+    gameLoop()
 
     socketIo.on('connection', function(socket){
         console.log('a user connected')

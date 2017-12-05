@@ -6,7 +6,7 @@ const WebSocket = require('./src/WebSocket')
 
 const packageJson = require('./package.json')
 
-let server = restify.createServer()
+const server = restify.createServer()
 
 restify.CORS.ALLOW_HEADERS.push('Accept-Encoding')
 restify.CORS.ALLOW_HEADERS.push('Accept-Language')
@@ -19,7 +19,7 @@ server.use(restify.queryParser())
 server.use(restify.jsonBodyParser())
 
 server.get('/', function(req, res, next) {
-    let now = moment()
+    const now = moment()
     res.json(200, {
         name: 'Gameserver',
         version: packageJson.version,
@@ -40,7 +40,7 @@ server.get('/site', function(req, res, next) {
     })
 })
 server.get('/static/:filetype/:filename', function(req, res, next) {
-    let filename = `${__dirname}/../site/build/static/${req.params.filetype}/${req.params.filename}`
+    const filename = `${__dirname}/../site/build/static/${req.params.filetype}/${req.params.filename}`
     fs.readFile(filename, 'UTF-8', (err, data) => {
         if(err) return res.json(500)
 
@@ -50,7 +50,7 @@ server.get('/static/:filetype/:filename', function(req, res, next) {
     })
 })
 
-let port = process.env.PORT || 5002
+const port = process.env.PORT || 5002
 server.listen(port, function() {
     console.log('Gameserver API running! Port: ' + port)
 })

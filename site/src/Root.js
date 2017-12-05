@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import logo from './logo.svg'
 import Player from './Player'
+// import io from 'socket.io-client'
 
 import './Root.css'
 
@@ -15,32 +16,21 @@ class Root extends Component {
 
         this.mousePosition = {}
 
-        window.socket.onopen = (ws) => {
-            console.log('WEB-SOCKET :: Type: open')
-            window.socket.send(JSON.stringify({type: 'ready'}))
-        }
+        window.socketio.on('connect', (socket) => {
+            console.log('SocketIO :: Connected')
 
-        window.socket.onmessage = (message) => {
-            var body = JSON.parse(message.data)
+            window.socketio.on('sync', (body) => {
+                body.players.map(player => {
+                    if(this.playerOne && player.id === '1') this.playerOne.setPosition(player.position)
+                    if(this.playerTwo && player.id === '2') this.playerTwo.setPosition(player.position)
+                    if(this.playerThree && player.id === '3') this.playerThree.setPosition(player.position)
+                })
+            })
 
-            switch(body.type) {
-                case 'ready':
-                    console.log('WEB-SOCKET :: Type: ready')
-                case 'sync':
-                    body.players.map(player => {
-                        if(player.id == '1') this.playerOne.setPosition(player.position)
-                        if(player.id == '2') this.playerTwo.setPosition(player.position)
-                        if(player.id == '3') this.playerThree.setPosition(player.position)
-                    })
-                    break
-                default:
-                    console.log('WEB-SOCKET :: Type: ?? => Body: ', body)
-            }
-        }
-
-        window.socket.onclose = function() {
-            console.log('WEB-SOCKET => Type: close')
-        }
+            window.socketio.on('disconnect', () => {
+                console.log('SocketIO :: Disconnected')
+            })
+        })
 
     }
 
@@ -54,11 +44,10 @@ class Root extends Component {
                 <div className='game-container' tabIndex='1'
                     onMouseMove={e => this.mousePosition = { x: e.pageX, y: e.pageY - 190 } }
                     onMouseDown={() => {
-                        window.socket.send(JSON.stringify({
-                           type: 'move',
+                        window.socketio.emit('move', {
                            id: this.playerOne.id,
                            position: this.mousePosition
-                       }))
+                       })
                     }}>
                     <Player id='1' ref={r => this.playerOne = r}/>
                     <Player id='2' ref={r => this.playerTwo = r}/>

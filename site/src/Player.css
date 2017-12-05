@@ -1,0 +1,7 @@
+.game-player {
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    position: relative;
+    left: 40px;
+}

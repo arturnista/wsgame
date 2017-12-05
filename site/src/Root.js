@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import logo from './logo.svg'
 import Player from './Player'
-// import io from 'socket.io-client'
 
 import './Root.css'
 
@@ -10,28 +9,60 @@ class Root extends Component {
     constructor(props) {
         super(props)
 
-        this.playerOne = null
-        this.playerTwo = null
-        this.playerThree = null
-
         this.mousePosition = {}
+        this.currentPlayer = ''
 
+        this.state = {
+            players: [],
+            status: 'move'
+        }
+
+    }
+
+    componentDidMount() {
         window.socketio.on('connect', (socket) => {
             console.log('SocketIO :: Connected')
 
             window.socketio.on('sync', (body) => {
-                body.players.map(player => {
-                    if(this.playerOne && player.id === '1') this.playerOne.setPosition(player.position)
-                    if(this.playerTwo && player.id === '2') this.playerTwo.setPosition(player.position)
-                    if(this.playerThree && player.id === '3') this.playerThree.setPosition(player.position)
-                })
+                this.setState({ players: body.players })
+            })
+
+            window.socketio.on('created', (body) => {
+                this.currentPlayer = body.id
             })
 
             window.socketio.on('disconnect', () => {
                 console.log('SocketIO :: Disconnected')
             })
         })
+    }
 
+    _handleMouseDown(e) {
+        e.preventDefault()
+        const { status } = this.state
+        if(e.button === 2) {
+            if(status !== 'move') {
+                this.setState({ status: 'move' })
+            } else {
+                window.socketio.emit(status, {
+                    id: this.currentPlayer,
+                    position: this.mousePosition
+                })
+            }
+        } else {
+            window.socketio.emit(status, {
+                id: this.currentPlayer,
+                position: this.mousePosition
+            })
+        }
+    }
+
+    _handleKeyDown(e) {
+        const keyPressed = e.key.toLowerCase()
+        switch (keyPressed) {
+            case '1':
+                return this.setState({ status: 'fireball' })
+        }
     }
 
     render() {
@@ -43,15 +74,11 @@ class Root extends Component {
                 </header>
                 <div className='game-container' tabIndex='1'
                     onMouseMove={e => this.mousePosition = { x: e.pageX, y: e.pageY - 190 } }
-                    onMouseDown={() => {
-                        window.socketio.emit('move', {
-                           id: this.playerOne.id,
-                           position: this.mousePosition
-                       })
-                    }}>
-                    <Player id='1' ref={r => this.playerOne = r}/>
-                    <Player id='2' ref={r => this.playerTwo = r}/>
-                    <Player id='3' ref={r => this.playerThree = r}/>
+                    onMouseDown={this._handleMouseDown.bind(this)}
+                    onKeyDown={this._handleKeyDown.bind(this)}>
+                    {
+                        this.state.players.map(pl => <Player key={pl.id} id={pl.id} position={pl.position} />)
+                    }
                 </div>
             </div>
         )

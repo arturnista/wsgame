@@ -8,39 +8,17 @@ class Player extends Component {
         super(props)
 
         this.id = props.id
-
-        this.state = {
-            x: 10,
-            y: 20
-        }
     }
 
     setPosition({x, y}) {
         this.setState({x, y})
     }
 
-    _handleKeyDown(e) {
-        const keyPressed = e.key.toLowerCase()
-        switch (keyPressed) {
-            case 'a':
-                return this.setState({ x: this.state.x - 5 })
-            case 'd':
-                return this.setState({ x: this.state.x + 5 })
-            case 'w':
-                return this.setState({ y: this.state.y - 5 })
-            case 's':
-                return this.setState({ y: this.state.y + 5 })
-
-        }
-    }
-
     render() {
 
         return (
             <div className='game-player'
-                style={{ left: this.state.x - 5, top: this.state.y - 5 }}
-                tabIndex='0' onKeyDown={this._handleKeyDown.bind(this)}
-            />
+                style={{ left: this.props.position.x - 5, top: this.props.position.y - 5 }} />
         )
     }
 }

@@ -1,12 +1,10 @@
 const io = require('socket.io')
 const moment = require('moment')
+const uuid = require('uuid')
 const User = require('./User')
 let socketIo = null
 
 let users = []
-users.push( new User('1') )
-users.push( new User('2') )
-users.push( new User('3') )
 
 let now = moment()
 function gameLoop() {
@@ -24,15 +22,25 @@ const connect = function(server) {
 
     setInterval(() => {
         if(socketIo) socketIo.emit('sync', { players: users.map(x => x.info()) })
-    }, 100)
+    }, 10)
     gameLoop()
 
     socketIo.on('connection', function(socket){
-        console.log('a user connected')
+        const id = uuid.v4()
+        users.push( new User(id) )
+        console.log(`SocketIO :: New user created :: ${id}`)
+
+        socket.emit('created', { id })
 
         socket.on('move', function (message) {
+            console.log(`SocketIO :: User move :: ${message.id}`)
             const user = users.find(x => x.id === message.id)
             user.setPositionToGo(message.position)
+        })
+
+        socket.on('disconnect', function () {
+            console.log(`SocketIO :: User disconnect :: ${id}`)
+            users = users.filter(x => x.id !== id)
         })
 
     })

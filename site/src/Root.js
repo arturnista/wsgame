@@ -32,6 +32,7 @@ class Root extends Component {
                         if(player.id == '2') this.playerTwo.setPosition(player.position)
                         if(player.id == '3') this.playerThree.setPosition(player.position)
                     })
+                    break
                 default:
                     console.log('WEB-SOCKET :: Type: ?? => Body: ', body)
             }

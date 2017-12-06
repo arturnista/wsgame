@@ -1,15 +1,15 @@
 const _ = require('lodash')
 const goTypes = require('./gameObjectTypes')
+const vector = require('./utils/vector')
 
-function Player(id) {
+function Player(id, goController) {
     this.id = id
     this.type = goTypes.PLAYER
-    this.position = {
-        x: 0.0,
-        y: 0.0
-    }
+    this.position = { x: 0, y: 0 }
+    this.velocity = { x: 0, y: 0 }
 
     this.life = 100
+    this.goController = goController
 
     this.moveSpeed = 100
     this.positionToGo = null
@@ -24,61 +24,43 @@ Player.prototype.info = function () {
 
 Player.prototype.setPositionToGo = function (position) {
     this.positionToGo = position
+
+    let deltaX = Math.abs(this.positionToGo.x - this.position.x) / Math.abs(this.positionToGo.y - this.position.y)
+    let deltaY = 1 / deltaX
+    let deltaSum = deltaX + deltaY
+    console.log(deltaX, deltaY)
+
+    deltaX = deltaX / deltaSum
+    deltaY = deltaY / deltaSum
+
+    if(this.positionToGo.x < this.position.x) deltaX *= -1
+    if(this.positionToGo.y < this.position.y) deltaY *= -1
+
+    console.log(deltaX, deltaY)
+
+    this.velocity = {
+        x: this.moveSpeed * deltaX,
+        y: this.moveSpeed * deltaY,
+    }
+
 }
 
 Player.prototype.dealDamage = function (damage) {
     this.life -= damage
     if(this.life <= 0) {
-        console.log(`${this.id} IS DED`)
+        this.goController.destroy(this.id)
     }
 }
 
 Player.prototype.update = function (deltatime) {
     if(this.positionToGo == null) return
 
-    let deltaX = Math.abs(this.position.x - this.positionToGo.x) / Math.abs(this.position.y - this.positionToGo.y)
-    let deltaY = 1 / deltaX
-    let deltaSum = deltaX + deltaY
-
-    deltaX = deltaX / deltaSum
-    deltaY = deltaY / deltaSum
-
-    const currentMoveSpeedX = this.moveSpeed * deltatime * deltaX
-    const currentMoveSpeedY = this.moveSpeed * deltatime * deltaY
-
-    if(this.positionToGo.x > this.position.x) {
-
-        this.position.x += currentMoveSpeedX
-        if(this.position.x > this.positionToGo.x) {
-            this.position.x = this.positionToGo.x
-        }
-
-    } else if(this.positionToGo.x < this.position.x) {
-
-        this.position.x -= currentMoveSpeedX
-        if(this.position.x < this.positionToGo.x) {
-            this.position.x = this.positionToGo.x
-        }
-
+    const distance = vector.distance(this.position, this.positionToGo)
+    // console.log(distance)
+    if(distance < 3) {
+        this.velocity = { x: 0, y: 0 }
+        this.positionToGo = null
     }
-
-    if(this.positionToGo.y > this.position.y) {
-
-        this.position.y += currentMoveSpeedY
-        if(this.position.y > this.positionToGo.y) {
-            this.position.y = this.positionToGo.y
-        }
-
-    } else if(this.positionToGo.y < this.position.y) {
-
-        this.position.y -= currentMoveSpeedY
-        if(this.position.y < this.positionToGo.y) {
-            this.position.y = this.positionToGo.y
-        }
-
-    }
-
-    if(_.isEqual(this.position, this.positionToGo)) this.positionToGo = null
 }
 
 module.exports = Player

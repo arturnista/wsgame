@@ -16,6 +16,7 @@ class Root extends Component {
         this.currentPlayer = {}
 
         this.state = {
+            positionToGo: {},
             players: [],
             spells: [],
             status: 'move'
@@ -50,7 +51,7 @@ class Root extends Component {
             position: this.mousePosition,
             direction: vector.direction(this.currentPlayer.position, this.mousePosition),
         })
-        this.setState({ status: 'move' })
+        this.setState({ status: 'move', positionToGo: this.mousePosition })
     }
 
     _handleKeyDown(e) {
@@ -72,6 +73,8 @@ class Root extends Component {
                     onMouseMove={e => this.mousePosition = { x: e.pageX, y: e.pageY - 190 } }
                     onMouseDown={this._handleMouseDown.bind(this)}
                     onKeyDown={this._handleKeyDown.bind(this)}>
+                    <div className='game-player click-pos'
+                        style={{ left: this.state.positionToGo.x - 5, top: this.state.positionToGo.y - 5 }} />
                     {
                         this.state.players.map(player => <Player key={player.id} {...player} />)
                     }

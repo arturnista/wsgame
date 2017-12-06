@@ -30,7 +30,7 @@ server.get('/', function(req, res, next) {
 })
 
 server.get('/site', function(req, res, next) {
-    fs.readFile(__dirname + '/../site/build/index.html', 'UTF-8', (err, data) => {
+    fs.readFile(__dirname + '/site/build/index.html', 'UTF-8', (err, data) => {
         res.writeHead(200, {
             'Content-Length': Buffer.byteLength(data),
             'Content-Type': 'text/html'
@@ -40,7 +40,7 @@ server.get('/site', function(req, res, next) {
     })
 })
 server.get('/static/:filetype/:filename', function(req, res, next) {
-    const filename = `${__dirname}/../site/build/static/${req.params.filetype}/${req.params.filename}`
+    const filename = `${__dirname}/site/build/static/${req.params.filetype}/${req.params.filename}`
     fs.readFile(filename, 'UTF-8', (err, data) => {
         if(err) return res.json(500)
 

@@ -1,27 +1,39 @@
 const _ = require('lodash')
+const goTypes = require('./gameObjectTypes')
 
-function User(id) {
+function Player(id) {
     this.id = id
+    this.type = goTypes.PLAYER
     this.position = {
         x: 0.0,
         y: 0.0
     }
-    this.moveSpeed = 20
+
+    this.life = 100
+
+    this.moveSpeed = 100
     this.positionToGo = null
 }
 
-User.prototype.info = function () {
+Player.prototype.info = function () {
     return {
         id: this.id,
         position: this.position
     }
 }
 
-User.prototype.setPositionToGo = function (position) {
+Player.prototype.setPositionToGo = function (position) {
     this.positionToGo = position
 }
 
-User.prototype.move = function (deltatime) {
+Player.prototype.dealDamage = function (damage) {
+    this.life -= damage
+    if(this.life <= 0) {
+        console.log(`${this.id} IS DED`)
+    }
+}
+
+Player.prototype.update = function (deltatime) {
     if(this.positionToGo == null) return
 
     let deltaX = Math.abs(this.position.x - this.positionToGo.x) / Math.abs(this.position.y - this.positionToGo.y)
@@ -69,4 +81,4 @@ User.prototype.move = function (deltatime) {
     if(_.isEqual(this.position, this.positionToGo)) this.positionToGo = null
 }
 
-module.exports = User
+module.exports = Player

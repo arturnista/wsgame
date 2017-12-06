@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import logo from './logo.svg'
 import Player from './Player'
+import Spell from './Spell'
+import vector from './utils/vector'
 
 import './Root.css'
 
@@ -10,10 +12,12 @@ class Root extends Component {
         super(props)
 
         this.mousePosition = {}
-        this.currentPlayer = ''
+        this.currentPlayerId = ''
+        this.currentPlayer = {}
 
         this.state = {
             players: [],
+            spells: [],
             status: 'move'
         }
 
@@ -24,11 +28,12 @@ class Root extends Component {
             console.log('SocketIO :: Connected')
 
             window.socketio.on('sync', (body) => {
-                this.setState({ players: body.players })
+                this.setState({ players: body.players, spells: body.spells })
+                this.currentPlayer = body.players.find(x => x.id === this.currentPlayerId)
             })
 
             window.socketio.on('created', (body) => {
-                this.currentPlayer = body.id
+                this.currentPlayerId = body.id
             })
 
             window.socketio.on('disconnect', () => {
@@ -40,21 +45,12 @@ class Root extends Component {
     _handleMouseDown(e) {
         e.preventDefault()
         const { status } = this.state
-        if(e.button === 2) {
-            if(status !== 'move') {
-                this.setState({ status: 'move' })
-            } else {
-                window.socketio.emit(status, {
-                    id: this.currentPlayer,
-                    position: this.mousePosition
-                })
-            }
-        } else {
-            window.socketio.emit(status, {
-                id: this.currentPlayer,
-                position: this.mousePosition
-            })
-        }
+        window.socketio.emit(status, {
+            id: this.currentPlayerId,
+            position: this.mousePosition,
+            direction: vector.direction(this.currentPlayer.position, this.mousePosition),
+        })
+        this.setState({ status: 'move' })
     }
 
     _handleKeyDown(e) {
@@ -70,14 +66,17 @@ class Root extends Component {
             <div className='root'>
                 <header className='root-header'>
                     <img src={logo} className='root-logo' alt='logo' />
-                    <h1 className='root-title'>Welcome to React</h1>
+                    <h1 className='root-title'>Welcome to tutu game fuck u</h1>
                 </header>
-                <div className='game-container' tabIndex='1'
+                <div className='game-container' tabIndex='0' autoFocus
                     onMouseMove={e => this.mousePosition = { x: e.pageX, y: e.pageY - 190 } }
                     onMouseDown={this._handleMouseDown.bind(this)}
                     onKeyDown={this._handleKeyDown.bind(this)}>
                     {
-                        this.state.players.map(pl => <Player key={pl.id} id={pl.id} position={pl.position} />)
+                        this.state.players.map(player => <Player key={player.id} {...player} />)
+                    }
+                    {
+                        this.state.spells.map(spell => <Spell key={spell.id} {...spell} />)
                     }
                 </div>
             </div>

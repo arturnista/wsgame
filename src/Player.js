@@ -9,7 +9,7 @@ function Player(id, goController) {
     this.position = { x: 0, y: 0 }
     this.velocity = { x: 0, y: 0 }
 
-    this.collider = colliders.createBox(10)
+    this.collider = colliders.createBox(30)
 
     this.life = 100
     this.goController = goController
@@ -21,7 +21,8 @@ function Player(id, goController) {
 Player.prototype.info = function () {
     return {
         id: this.id,
-        position: this.position
+        position: this.position,
+        collider: this.collider
     }
 }
 

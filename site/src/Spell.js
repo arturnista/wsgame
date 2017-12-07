@@ -16,10 +16,12 @@ class Spell extends Component {
 
     render() {
         let className = 'game-spell ' + this.props.type
+        const size = this.props.collider.size
+        const halfSize = this.props.collider.size / 2
 
         return (
             <div className={className}
-                style={{ left: this.props.position.x - 5, top: this.props.position.y - 5 }} />
+                style={{ left: this.props.position.x - halfSize, top: this.props.position.y - halfSize, height: size, width: size, borderRadius: halfSize }} />
         )
     }
 }

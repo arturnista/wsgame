@@ -2,7 +2,19 @@ function createBox(size) {
     return {
         type: 'box',
         size: size,
-        halfSize: size / 2
+        halfSize: size / 2,
+        edges: function(position) {
+            return {
+                min: {
+                    x: position.x - this.halfSize,
+                    y: position.y - this.halfSize
+                },
+                max: {
+                    x: position.x + this.halfSize,
+                    y: position.y + this.halfSize
+                }
+            }
+        }
     }
 }
 

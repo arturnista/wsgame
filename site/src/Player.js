@@ -15,10 +15,12 @@ class Player extends Component {
     }
 
     render() {
+        const size = this.props.collider.size
+        const halfSize = this.props.collider.size / 2
 
         return (
             <div className='game-player'
-                style={{ left: this.props.position.x - 5, top: this.props.position.y - 5 }} />
+                style={{ left: this.props.position.x - halfSize, top: this.props.position.y - halfSize, height: size, width: size }} />
         )
     }
 }

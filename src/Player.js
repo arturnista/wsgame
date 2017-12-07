@@ -1,12 +1,15 @@
 const _ = require('lodash')
 const goTypes = require('./gameObjectTypes')
 const vector = require('./utils/vector')
+const colliders = require('./Physics/colliders')
 
 function Player(id, goController) {
     this.id = id
     this.type = goTypes.PLAYER
     this.position = { x: 0, y: 0 }
     this.velocity = { x: 0, y: 0 }
+
+    this.collider = colliders.createBox(10)
 
     this.life = 100
     this.goController = goController
@@ -26,17 +29,14 @@ Player.prototype.setPositionToGo = function (position) {
     this.positionToGo = position
 
     let deltaX = Math.abs(this.positionToGo.x - this.position.x) / Math.abs(this.positionToGo.y - this.position.y)
-    let deltaY = 1 / deltaX
+    let deltaY = 1
     let deltaSum = deltaX + deltaY
-    console.log(deltaX, deltaY)
 
     deltaX = deltaX / deltaSum
     deltaY = deltaY / deltaSum
 
     if(this.positionToGo.x < this.position.x) deltaX *= -1
     if(this.positionToGo.y < this.position.y) deltaY *= -1
-
-    console.log(deltaX, deltaY)
 
     this.velocity = {
         x: this.moveSpeed * deltaX,
@@ -56,8 +56,7 @@ Player.prototype.update = function (deltatime) {
     if(this.positionToGo == null) return
 
     const distance = vector.distance(this.position, this.positionToGo)
-    // console.log(distance)
-    if(distance < 3) {
+    if(distance <= 2) {
         this.velocity = { x: 0, y: 0 }
         this.positionToGo = null
     }

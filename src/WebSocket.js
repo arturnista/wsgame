@@ -41,13 +41,13 @@ const connect = function(server) {
         socket.emit('created', { id })
 
         socket.on('move', function (message) {
-            console.log(`SocketIO :: Player move :: ${message}`)
+            console.log(`SocketIO :: Player move :: ${JSON.stringify(message)}`)
             const user = gameObjectController.gameObjects.find(x => x.id === message.id)
             if(user) user.setPositionToGo(message.position)
         })
 
         socket.on('fireball', function (message) {
-            console.log(`SocketIO :: Player used fireball :: ${message}`)
+            console.log(`SocketIO :: Player used fireball :: ${JSON.stringify(message)}`)
             gameObjectController.createFireball(message)
         })
 

@@ -5,11 +5,11 @@ const GameObjectController = require('./GameObjectController')
 const Physics = require('./Physics')
 const MapController = require('./MapController')
 
-gameObjectController = new GameObjectController()
+let socketIo = null
+
+gameObjectController = new GameObjectController(socketIo)
 mapController = new MapController(gameObjectController)
 physics = new Physics(gameObjectController)
-
-let socketIo = null
 
 let now = moment()
 function gameLoop() {
@@ -19,6 +19,7 @@ function gameLoop() {
 
     physics.update(deltatime)
     gameObjectController.update(deltatime)
+    mapController.update(deltatime)
 
     now = moment()
 
@@ -26,6 +27,7 @@ function gameLoop() {
 
 const connect = function(server) {
     socketIo = io.listen(server)
+    gameObjectController.socketIo = socketIo
 
     let iteractions = 0
     setInterval(() => {

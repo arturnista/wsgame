@@ -53,7 +53,7 @@ Fireball.prototype.update = function (deltatime) {
     }
 }
 
-Fireball.prototype.onCollide = function (object) {
+Fireball.prototype.onCollide = function (object, direction, directionInv) {
     const { gameObjects } = this.goController
 
     if(object.id === this.id) return
@@ -61,6 +61,7 @@ Fireball.prototype.onCollide = function (object) {
 
     if(object.type === goTypes.PLAYER) {
         object.dealDamage(10)
+        object.velocity = vector.multiply(directionInv, 100)
     }
 
     this.goController.destroy(this.id)

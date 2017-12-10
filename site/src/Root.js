@@ -19,6 +19,7 @@ class Root extends Component {
             positionToGo: {},
             players: [],
             spells: [],
+            map: {},
             status: 'move'
         }
 
@@ -35,6 +36,10 @@ class Root extends Component {
 
             window.socketio.on('created', (body) => {
                 this.currentPlayerId = body.id
+            })
+
+            window.socketio.on('map', (body) => {
+                this.setState({ map: body })
             })
 
             window.socketio.on('disconnect', () => {
@@ -77,6 +82,16 @@ class Root extends Component {
                         style={{ left: this.state.positionToGo.x - 5, top: this.state.positionToGo.y - 5 }} />
                     {
                         this.state.players.map(player => <Player key={player.id} {...player} />)
+                    }
+                    {
+                        this.state.map.obstacles &&
+                        this.state.map.obstacles.map(obs => {
+                            const halfSize = obs.collider.size / 2
+                            return (
+                                <div key={obs.id} className='game-player'
+                                    style={{ left: obs.position.x - halfSize, top: obs.position.y - halfSize, width: obs.collider.size, height: obs.collider.size, backgroundColor: 'green', borderRadius: halfSize }}/>
+                            )
+                        })
                     }
                     {
                         this.state.spells.map(spell => <Spell key={spell.id} {...spell} />)

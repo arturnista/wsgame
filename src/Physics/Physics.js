@@ -8,38 +8,46 @@ function Physics(goController) {
 }
 
 Physics.prototype.update = function (deltatime) {
-
-    for (var i = 0; i < this.goController.gameObjects.length; i++) {
-        const object = this.goController.gameObjects[i]
-
-        if (object.velocity && vector.length(object.velocity) > 0) {
-            object.position.x += object.velocity.x * deltatime
-            object.position.y += object.velocity.y * deltatime
-        }
-    }
     for (var i = 0; i < this.goController.gameObjects.length; i++) {
         const object = this.goController.gameObjects[i]
         if (!object.collider) continue
+        let directionToMove = object.velocity
 
         for (var n = 0; n < this.goController.gameObjects.length; n++) {
             if(i === n) continue
-            
+
             const objectCmp = this.goController.gameObjects[n]
             if (!objectCmp.collider) continue
+            if (!directionToMove || vector.length(directionToMove) === 0) continue
+
             let collided = false
-            collided = this.circleCollision(object, objectCmp)
+            let nextPosition = {
+                x: object.position.x + directionToMove.x * deltatime,
+                y: object.position.y + directionToMove.y * deltatime,
+            }
+
+            collided = this.circleCollision(
+                Object.assign({}, object, { position: nextPosition }),
+                objectCmp
+            )
 
             if (collided) {
-                if (object.onCollide) setImmediate(object.onCollide.bind(object), objectCmp)
+                const dirCollision = vector.direction(objectCmp.position, object.position)
+                const dirCollisionInv = vector.direction(object.position, objectCmp.position)
+                if (object.onCollide) setImmediate(object.onCollide.bind(object), objectCmp, dirCollision, dirCollisionInv)
+                const dirCollisionReserved = vector.reverse(dirCollision)
 
                 if (objectCmp.type === goTypes.OBSTACLE) {
-                    object.position.x -= object.velocity.x * deltatime
-                    object.position.y -= object.velocity.y * deltatime
+                    directionToMove = vector.multiply(dirCollisionReserved, directionToMove)
                 } else if (object.type === goTypes.OBSTACLE) {
-                    objectCmp.position.x -= objectCmp.velocity.x * deltatime
-                    objectCmp.position.y -= objectCmp.velocity.y * deltatime
+                    directionToMove = vector.multiply(dirCollisionReserved, directionToMove)
                 }
             }
+        }
+
+        if (directionToMove && vector.length(directionToMove) > 0) {
+            object.position.x += directionToMove.x * deltatime
+            object.position.y += directionToMove.y * deltatime
         }
     }
 

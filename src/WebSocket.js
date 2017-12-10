@@ -1,11 +1,12 @@
 const io = require('socket.io')
 const moment = require('moment')
 const uuid = require('uuid')
-
 const GameObjectController = require('./GameObjectController')
-gameObjectController = new GameObjectController()
-
 const Physics = require('./Physics')
+const MapController = require('./MapController')
+
+gameObjectController = new GameObjectController()
+mapController = new MapController(gameObjectController)
 physics = new Physics(gameObjectController)
 
 let socketIo = null
@@ -39,7 +40,7 @@ const connect = function(server) {
         console.log(`SocketIO :: New user created :: ${id}`)
 
         socket.emit('created', { id })
-        socket.emit('map', { size: 300, obstacles: [{x: 100, y: 100}, {x: 200, y: 100}, {x: 100, y: 200}, {x: 200, y: 200}] })
+        socket.emit('map', mapController.info())
 
         socket.on('move', function (message) {
             console.log(`SocketIO :: Player move :: ${JSON.stringify(message)}`)

@@ -1,4 +1,5 @@
 function createBox(size) {
+    throw new Error('Do not use the BOX Collider for now!')
     return {
         type: 'box',
         size: size,

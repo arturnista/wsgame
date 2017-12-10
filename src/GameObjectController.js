@@ -4,6 +4,7 @@ const goTypes = require('./gameObjectTypes')
 
 const Fireball = require('./Fireball')
 const Player = require('./Player')
+const Obstacle = require('./Obstacle')
 
 function GameObjectController() {
     this.gameObjects = []
@@ -36,6 +37,14 @@ GameObjectController.prototype.createFireball = function (data) {
     this.gameObjects.push( new Fireball(id, data, this) )
 
     return id
+}
+
+GameObjectController.prototype.createObstacle = function (position) {
+    const id = uuid.v4()
+    const obs = new Obstacle(id, position, this)
+    this.gameObjects.push(obs)
+
+    return obs
 }
 
 GameObjectController.prototype.destroy = function (gameObject) {

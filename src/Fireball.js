@@ -19,7 +19,7 @@ function Fireball(id, data, goController) {
         y: this.owner.position.y,
     }
 
-    this.moveSpeed = 200
+    this.moveSpeed = 100
     this.velocity = {
         x: this.direction.x * this.moveSpeed,
         y: this.direction.y * this.moveSpeed,

@@ -21,8 +21,10 @@ function Player(id, goController) {
 Player.prototype.info = function () {
     return {
         id: this.id,
+        life: this.life,
         position: this.position,
-        collider: this.collider
+        collider: this.collider,
+        velocity: this.velocity
     }
 }
 

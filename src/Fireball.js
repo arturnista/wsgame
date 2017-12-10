@@ -19,7 +19,10 @@ function Fireball(id, data, goController) {
         y: this.owner.position.y,
     }
 
+    this.multiplier = 1
+    this.percentageAdder = .2
     this.moveSpeed = 100
+
     this.velocity = {
         x: this.direction.x * this.moveSpeed,
         y: this.direction.y * this.moveSpeed,
@@ -61,7 +64,7 @@ Fireball.prototype.onCollide = function (object, direction, directionInv) {
 
     if(object.type === goTypes.PLAYER) {
         object.dealDamage(10)
-        object.velocity = vector.multiply(directionInv, 100)
+        object.knockback(directionInv, this.multiplier, this.percentageAdder)
     }
 
     this.goController.destroy(this.id)

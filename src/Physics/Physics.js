@@ -11,25 +11,26 @@ Physics.prototype.update = function (deltatime) {
     for (var i = 0; i < this.goController.gameObjects.length; i++) {
         const object = this.goController.gameObjects[i]
         if (!object.collider) continue
+
         let directionToMove = object.velocity
+        if (!directionToMove || vector.length(directionToMove) === 0) continue
+
+        let nextPosition = {
+            x: object.position.x + directionToMove.x * deltatime,
+            y: object.position.y + directionToMove.y * deltatime,
+        }
+        let nextObj = Object.assign({}, object, { position: nextPosition })
 
         for (var n = 0; n < this.goController.gameObjects.length; n++) {
-            if(i === n) continue
+            if (!directionToMove || vector.length(directionToMove) === 0) break
+            if (i === n) continue
 
             const objectCmp = this.goController.gameObjects[n]
             if (!objectCmp.collider) continue
-            if (!directionToMove || vector.length(directionToMove) === 0) continue
 
             let collided = false
-            let nextPosition = {
-                x: object.position.x + directionToMove.x * deltatime,
-                y: object.position.y + directionToMove.y * deltatime,
-            }
 
-            collided = this.circleCollision(
-                Object.assign({}, object, { position: nextPosition }),
-                objectCmp
-            )
+            collided = this.circleCollision( nextObj, objectCmp )
 
             if (collided) {
                 const dirCollision = vector.direction(objectCmp.position, object.position)

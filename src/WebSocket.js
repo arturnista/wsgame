@@ -35,7 +35,7 @@ const connect = function(server) {
         if(++iteractions % 4) {
             socketIo.emit('sync', gameObjectController.allInfos())
         }
-    }, 30)
+    }, 20)
 
     socketIo.on('connection', function(socket){
         const id = gameObjectController.createPlayer()

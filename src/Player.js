@@ -6,7 +6,7 @@ const colliders = require('./Physics/colliders')
 function Player(id, goController) {
     this.id = id
     this.type = goTypes.PLAYER
-    this.position = { x: 150, y: 150 }
+    this.position = { x: 100, y: 100 }
     this.velocity = { x: 0, y: 0 }
     this.desiredVelocity = { x: 0, y: 0 }
 
@@ -16,8 +16,8 @@ function Player(id, goController) {
     this.knockbackValue = 100
     this.goController = goController
 
-    this.moveSpeed = 100
-    this.acceleration = 50
+    this.moveSpeed = 200
+    this.acceleration = 100
     this.positionToGo = null
 }
 

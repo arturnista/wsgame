@@ -6,7 +6,7 @@ const vector = require('./utils/vector')
 function MapController(goController) {
     this.goController = goController
 
-    this.size = 300
+    this.size = 500
     this.halfSize = this.size / 2
     this.damagePerSecond = 10
     this.position = {
@@ -14,10 +14,10 @@ function MapController(goController) {
         y: this.halfSize,
     }
     this.obstacles = []
-    this.obstacles.push( goController.createObstacle({ position: { x: 100, y: 100 }, size: 25 }) )
-    this.obstacles.push( goController.createObstacle({ position: { x: 200, y: 100 }, size: 25 }) )
-    this.obstacles.push( goController.createObstacle({ position: { x: 100, y: 200 }, size: 25 }) )
-    this.obstacles.push( goController.createObstacle({ position: { x: 200, y: 200 }, size: 25 }) )
+    this.obstacles.push( goController.createObstacle({ position: { x: 150, y: 150 }, size: 50 }) )
+    this.obstacles.push( goController.createObstacle({ position: { x: 350, y: 150 }, size: 20 }) )
+    this.obstacles.push( goController.createObstacle({ position: { x: 150, y: 350 }, size: 20 }) )
+    this.obstacles.push( goController.createObstacle({ position: { x: 350, y: 350 }, size: 50 }) )
 }
 
 MapController.prototype.info = function() {

@@ -54,7 +54,7 @@ class Root extends Component {
     _handleMouseDown(e) {
         e.preventDefault()
         const { status } = this.state
-        
+
         if(this.currentPlayer == null) return
 
         window.socketio.emit(status, {
@@ -68,7 +68,7 @@ class Root extends Component {
     _handleKeyDown(e) {
         const keyPressed = e.key.toLowerCase()
         switch (keyPressed) {
-            case '1':
+            case 'q':
                 return this.setState({ status: 'fireball' })
         }
     }

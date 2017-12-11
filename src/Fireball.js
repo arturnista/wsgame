@@ -12,7 +12,7 @@ function Fireball(id, data, goController) {
     this.goController = goController
     this.owner = this.goController.gameObjects.find(x => x.id === data.id)
 
-    this.collider = colliders.createCircle(10)
+    this.collider = colliders.createCircle(20)
 
     this.position = {
         x: this.owner.position.x,
@@ -21,7 +21,7 @@ function Fireball(id, data, goController) {
 
     this.multiplier = 1
     this.percentageAdder = 1.2
-    this.moveSpeed = 100
+    this.moveSpeed = 200
 
     this.lifeTime = 10
     this._timePassed = 0

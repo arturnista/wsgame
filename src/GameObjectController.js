@@ -52,10 +52,13 @@ GameObjectController.prototype.destroy = function (gameObject) {
     if(typeof gameObject === 'string') {
         gameObject = { id: gameObject }
     }
-    const goDeleted = this.gameObjects.find(x => x.id === gameObject.id)
-    this.gameObjects = this.gameObjects.filter(x => x.id !== gameObject.id)
+    let goDeleted = null
+    this.gameObjects = this.gameObjects.filter(x => {
+        if(x.id === gameObject.id) goDeleted = x
+        return x.id !== gameObject.id
+    })
 
-    this.socketIo.emit('object_deleted', goDeleted.info())
+    if(goDeleted) this.socketIo.emit('object_deleted', goDeleted.info())
 }
 
 GameObjectController.prototype.destroyPlayer = function (id) {

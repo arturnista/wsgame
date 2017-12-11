@@ -3,12 +3,22 @@ const uuid = require('uuid')
 const goTypes = require('./gameObjectTypes')
 const vector = require('./utils/vector')
 
-const DECREASE_INCREMENT = 5
+const DECREASE_INCREMENT = 3
 
 function MapController(goController, socketIo) {
     this.goController = goController
     this.socketIo = socketIo
 
+    this.restart()
+
+    this.obstacles = []
+    this.obstacles.push( goController.createObstacle({ position: { x: 150, y: 150 }, size: 50 }) )
+    this.obstacles.push( goController.createObstacle({ position: { x: 350, y: 150 }, size: 20 }) )
+    this.obstacles.push( goController.createObstacle({ position: { x: 150, y: 350 }, size: 20 }) )
+    this.obstacles.push( goController.createObstacle({ position: { x: 350, y: 350 }, size: 50 }) )
+}
+
+MapController.prototype.restart = function() {
     this.damagePerSecond = 5
     this.size = 500
     this.halfSize = this.size / 2
@@ -20,12 +30,6 @@ function MapController(goController, socketIo) {
     this.decreasePerSecond = 0
     this.timeToUpdate = 60
     this._timePassed = 0
-
-    this.obstacles = []
-    this.obstacles.push( goController.createObstacle({ position: { x: 150, y: 150 }, size: 50 }) )
-    this.obstacles.push( goController.createObstacle({ position: { x: 350, y: 150 }, size: 20 }) )
-    this.obstacles.push( goController.createObstacle({ position: { x: 150, y: 350 }, size: 20 }) )
-    this.obstacles.push( goController.createObstacle({ position: { x: 350, y: 350 }, size: 50 }) )
 }
 
 MapController.prototype.info = function() {

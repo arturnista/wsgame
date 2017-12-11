@@ -6,15 +6,18 @@ const colliders = require('./Physics/colliders')
 function Player(id, goController) {
     this.id = id
     this.type = goTypes.PLAYER
+
+    this.collider = colliders.createCircle(10)
+    this.goController = goController
+    this.restart()
+}
+
+Player.prototype.restart = function () {
     this.position = { x: 100, y: 100 }
     this.velocity = { x: 0, y: 0 }
     this.desiredVelocity = { x: 0, y: 0 }
-
-    this.collider = colliders.createCircle(10)
-
     this.life = 100
     this.knockbackValue = 100
-    this.goController = goController
 
     this.moveSpeed = 200
     this.acceleration = 100

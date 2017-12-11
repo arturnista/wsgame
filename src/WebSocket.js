@@ -49,11 +49,19 @@ const connect = function(server) {
 
     socketIo.on('connection', function(socket){
         const id = gameObjectController.createPlayer()
+
+        socket.on('game_restart', function (message) {
+            console.log(`SocketIO :: Game restarted :: ${JSON.stringify(message)}`)
+            gameObjectController.restart()
+            mapController.restart()
+            socketIo.emit('map_update', mapController.info())
+        })
+
         console.log(`SocketIO :: New user created :: ${id}`)
 
-        socket.emit('player_create', { id })
         socket.emit('map_create', mapController.info())
-
+        
+        socket.emit('player_create', { id })
         socket.on('player_move', function (message) {
             console.log(`SocketIO :: Player move :: ${JSON.stringify(message)}`)
             const user = gameObjectController.gameObjects.find(x => x.id === message.id)

@@ -11,6 +11,13 @@ function GameObjectController(socketIo) {
     this.gameObjects = []
 }
 
+GameObjectController.prototype.restart = function () {
+
+    this.gameObjects = this.gameObjects.filter(x => x.type === goTypes.PLAYER)
+    this.gameObjects.forEach( u => u.restart() )
+
+}
+
 GameObjectController.prototype.allInfos = function () {
 
     return {

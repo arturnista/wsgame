@@ -5,10 +5,26 @@ const GameObjectController = require('./GameObjectController')
 const Physics = require('./Physics')
 const MapController = require('./MapController')
 
+let ITERATIONS = 4
+
+for (var i = 0; i < process.argv.length; i++) {
+    const param = process.argv[i].split('=')
+    const [ key, value ] = param
+    const valueInt = parseInt(value)
+
+    if(isNaN(valueInt)) continue
+
+    switch (key) {
+        case '-i':
+            ITERATIONS = valueInt + 1
+            break
+    }
+}
+
 let socketIo = null
 
 gameObjectController = new GameObjectController(socketIo)
-mapController = new MapController(gameObjectController)
+mapController = new MapController(gameObjectController, socketIo)
 physics = new Physics(gameObjectController)
 
 let now = moment()
@@ -22,20 +38,14 @@ function gameLoop() {
     mapController.update(deltatime)
 
     now = moment()
-
+    setTimeout(gameLoop, 10)
+    socketIo.emit('sync', gameObjectController.allInfos())
 }
 
 const connect = function(server) {
     socketIo = io.listen(server)
     gameObjectController.socketIo = socketIo
-
-    let iteractions = 0
-    setInterval(() => {
-        gameLoop()
-        if(++iteractions % 4) {
-            socketIo.emit('sync', gameObjectController.allInfos())
-        }
-    }, 20)
+    mapController.socketIo = socketIo
 
     socketIo.on('connection', function(socket){
         const id = gameObjectController.createPlayer()
@@ -61,6 +71,8 @@ const connect = function(server) {
         })
 
     })
+
+    setImmediate(gameLoop)
 }
 
 module.exports = {

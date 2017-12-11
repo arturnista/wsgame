@@ -39,9 +39,8 @@ class Root extends Component {
                 this.currentPlayerId = body.id
             })
 
-            window.socketio.on('map', (body) => {
-                this.setState({ map: body })
-            })
+            window.socketio.on('map', (body) => this.setState({ map: body }))
+            window.socketio.on('map_update', (body) => this.setState({ map: body }))
 
             window.socketio.on('disconnect', () => {
                 console.log('SocketIO :: Disconnected')
@@ -90,7 +89,7 @@ class Root extends Component {
                     }
                 </header>
                 <div className='game-container'
-                    onMouseMove={e => this.mousePosition = { x: e.pageX, y: e.pageY - 190 } }
+                    onMouseMove={e => this.mousePosition = { x: e.pageX - (window.innerWidth * .3) , y: e.pageY - 190 } }
                     onMouseDown={this._handleMouseDown.bind(this)}
                     onKeyDown={this._handleKeyDown.bind(this)}>
                     {

@@ -23,6 +23,9 @@ function Fireball(id, data, goController) {
     this.percentageAdder = .2
     this.moveSpeed = 100
 
+    this.lifeTime = 10
+    this._timePassed = 0
+
     this.velocity = {
         x: this.direction.x * this.moveSpeed,
         y: this.direction.y * this.moveSpeed,
@@ -41,18 +44,9 @@ Fireball.prototype.info = function () {
 Fireball.prototype.update = function (deltatime) {
     const { gameObjects } = this.goController
 
-    for (var i = 0; i < gameObjects.length; i++) {
-        if(gameObjects[i].id === this.id) continue
-        if(gameObjects[i].id === this.owner.id) continue
-
-        const distance = vector.distance(gameObjects[i].position, this.position)
-        if(distance < 1) {
-            if(gameObjects[i].type === goTypes.PLAYER) {
-                gameObjects[i].dealDamage(10)
-            }
-
-            this.goController.destroy(this.id)
-        }
+    this._timePassed += deltatime
+    if(this._timePassed >= this.lifeTime) {
+        this.goController.destroy(this.id)
     }
 }
 
@@ -63,7 +57,6 @@ Fireball.prototype.onCollide = function (object, direction, directionInv) {
     if(object.id === this.owner.id) return
 
     if(object.type === goTypes.PLAYER) {
-        object.dealDamage(10)
         object.knockback(directionInv, this.multiplier, this.percentageAdder)
     }
 

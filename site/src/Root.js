@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import _ from 'lodash'
 import logo from './logo.svg'
 import Player from './Player'
 import Spell from './Spell'
@@ -13,7 +14,7 @@ class Root extends Component {
 
         this.mousePosition = {}
         this.currentPlayerId = ''
-        this.currentPlayer = {}
+        this.currentPlayer = null
 
         this.state = {
             positionToGo: {},
@@ -46,11 +47,16 @@ class Root extends Component {
                 console.log('SocketIO :: Disconnected')
             })
         })
+
+        window.addEventListener('keydown', this._handleKeyDown.bind(this), true)
     }
 
     _handleMouseDown(e) {
         e.preventDefault()
         const { status } = this.state
+        
+        if(this.currentPlayer == null) return
+
         window.socketio.emit(status, {
             id: this.currentPlayerId,
             position: this.mousePosition,
@@ -68,16 +74,30 @@ class Root extends Component {
     }
 
     render() {
+        const { map } = this.state
+        const halfMapSize = map.size / 2
+
         return (
             <div className='root'>
                 <header className='root-header'>
                     <img src={logo} className='root-logo' alt='logo' />
                     <h1 className='root-title'>Welcome to tutu game fuck u</h1>
+                    {
+                        this.currentPlayer ?
+                        <p>Life: {this.currentPlayer.life.toFixed(2)} ({this.currentPlayer.knockbackValue})</p>
+                        :
+                        <p>DEAD</p>
+                    }
                 </header>
-                <div className='game-container' tabIndex='0' autoFocus
+                <div className='game-container'
                     onMouseMove={e => this.mousePosition = { x: e.pageX, y: e.pageY - 190 } }
                     onMouseDown={this._handleMouseDown.bind(this)}
                     onKeyDown={this._handleKeyDown.bind(this)}>
+                    {
+                        !_.isEmpty(this.state.map) &&
+                        <div className='game-player'
+                            style={{ left: map.position.x - halfMapSize, top: map.position.y - halfMapSize, width: map.size, height: map.size, backgroundColor: 'gray', borderRadius: halfMapSize }}/>
+                    }
                     <div className='game-player click-pos'
                         style={{ left: this.state.positionToGo.x - 5, top: this.state.positionToGo.y - 5 }} />
                     {
@@ -89,7 +109,7 @@ class Root extends Component {
                             const halfSize = obs.collider.size / 2
                             return (
                                 <div key={obs.id} className='game-player'
-                                    style={{ left: obs.position.x - halfSize, top: obs.position.y - halfSize, width: obs.collider.size, height: obs.collider.size, backgroundColor: 'green', borderRadius: halfSize }}/>
+                                    style={{ left: obs.position.x - halfSize, top: obs.position.y - halfSize, width: obs.collider.size, height: obs.collider.size, backgroundColor: 'blue', borderRadius: halfSize }}/>
                             )
                         })
                     }

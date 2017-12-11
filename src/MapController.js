@@ -23,7 +23,8 @@ function MapController(goController) {
 MapController.prototype.info = function() {
     return {
         size: this.size,
-        obstacles: this.obstacles.map(x => x.info())
+        obstacles: this.obstacles.map(x => x.info()),
+        position: this.position
     }
 }
 

@@ -13,7 +13,7 @@ function Player(id, goController) {
     this.collider = colliders.createCircle(10)
 
     this.life = 100
-    this.knockbackPercentage = .5
+    this.knockbackValue = 50
     this.goController = goController
 
     this.moveSpeed = 100
@@ -28,7 +28,7 @@ Player.prototype.info = function () {
         position: this.position,
         collider: this.collider,
         velocity: this.velocity,
-        percentage: this.knockbackPercentage
+        knockbackValue: this.knockbackValue
     }
 }
 
@@ -44,11 +44,11 @@ Player.prototype.dealDamage = function (damage) {
 }
 
 Player.prototype.knockback = function (direction, multiplier, adder) {
-    const knockbackValue = this.knockbackPercentage * multiplier * 10
+    const knockbackValue = this.knockbackValue * multiplier
 
     this.velocity = vector.multiply(direction, knockbackValue)
 
-    this.knockbackPercentage *= 1 + adder
+    this.knockbackValue *= 1 + adder
 }
 
 Player.prototype.update = function (deltatime) {

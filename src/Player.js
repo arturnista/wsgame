@@ -13,7 +13,7 @@ function Player(id, goController) {
     this.collider = colliders.createCircle(10)
 
     this.life = 100
-    this.knockbackValue = 50
+    this.knockbackValue = 100
     this.goController = goController
 
     this.moveSpeed = 100
@@ -48,7 +48,7 @@ Player.prototype.knockback = function (direction, multiplier, adder) {
 
     this.velocity = vector.multiply(direction, knockbackValue)
 
-    this.knockbackValue *= 1 + adder
+    this.knockbackValue *= adder
 }
 
 Player.prototype.update = function (deltatime) {

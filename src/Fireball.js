@@ -20,7 +20,7 @@ function Fireball(id, data, goController) {
     }
 
     this.multiplier = 1
-    this.percentageAdder = .2
+    this.percentageAdder = 1.2
     this.moveSpeed = 100
 
     this.lifeTime = 10

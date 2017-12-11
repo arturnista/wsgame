@@ -35,11 +35,11 @@ class Root extends Component {
                 this.currentPlayer = body.players.find(x => x.id === this.currentPlayerId)
             })
 
-            window.socketio.on('created', (body) => {
+            window.socketio.on('player_create', (body) => {
                 this.currentPlayerId = body.id
             })
 
-            window.socketio.on('map', (body) => this.setState({ map: body }))
+            window.socketio.on('map_create', (body) => this.setState({ map: body }))
             window.socketio.on('map_update', (body) => this.setState({ map: body }))
 
             window.socketio.on('disconnect', () => {
@@ -56,7 +56,7 @@ class Root extends Component {
 
         if(this.currentPlayer == null) return
 
-        window.socketio.emit(status, {
+        window.socketio.emit(`player_${status}`, {
             id: this.currentPlayerId,
             position: this.mousePosition,
             direction: vector.direction(this.currentPlayer.position, this.mousePosition),
@@ -68,7 +68,7 @@ class Root extends Component {
         const keyPressed = e.key.toLowerCase()
         switch (keyPressed) {
             case 'q':
-                return this.setState({ status: 'fireball' })
+                return this.setState({ status: 'spell_fireball' })
         }
     }
 

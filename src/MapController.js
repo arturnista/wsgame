@@ -9,9 +9,9 @@ function MapController(goController, socketIo) {
     this.goController = goController
     this.socketIo = socketIo
 
+    this.damagePerSecond = 5
     this.size = 500
     this.halfSize = this.size / 2
-    this.damagePerSecond = 10
     this.position = {
         x: this.halfSize,
         y: this.halfSize,

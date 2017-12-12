@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const goTypes = require('./gameObjectTypes')
-const vector = require('./utils/vector')
+const vector = require('../utils/vector')
 const colliders = require('./Physics/colliders')
 
 function Player(id, goController) {

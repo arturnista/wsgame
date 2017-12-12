@@ -1,9 +1,7 @@
 const io = require('socket.io')
 const moment = require('moment')
 const uuid = require('uuid')
-const GameObjectController = require('./GameObjectController')
-const Physics = require('./Physics')
-const MapController = require('./MapController')
+const Room = require('./Room/Room')
 
 let ITERATIONS = 4
 
@@ -22,80 +20,17 @@ for (var i = 0; i < process.argv.length; i++) {
 }
 
 let socketIo = null
-let gameIsRunning = false
-
-gameObjectController = new GameObjectController(socketIo)
-mapController = new MapController(gameObjectController, socketIo)
-physics = new Physics(gameObjectController)
-
-let now = moment()
-function gameLoop() {
-    if(!gameIsRunning) return
-
-    let deltatime = now.diff() / 1000 * -1
-    if(deltatime === 0) deltatime = .0001
-
-    physics.update(deltatime)
-    gameObjectController.update(deltatime)
-    mapController.update(deltatime)
-
-    now = moment()
-    setTimeout(gameLoop, 10)
-    socketIo.emit('sync', gameObjectController.allInfos())
-}
 
 const connect = function(server) {
     socketIo = io.listen(server)
-    gameObjectController.socketIo = socketIo
-    mapController.socketIo = socketIo
 
-    socketIo.on('connection', function(socket){
-        const id = gameObjectController.createPlayer()
-
-        socket.emit('map_create', mapController.info())
-
-        socket.on('game_start', function (message) {
-            console.log(`SocketIO :: Game start :: ${JSON.stringify(message)}`)
-            const everybodyReady = gameObjectController.gameObjects.every(x => x.type === goTypes.PLAYER && x.status === 'ready')
-            if(everybodyReady) {
-                gameObjectController.start()
-                mapController.start()
-
-                gameIsRunning = true
-                setImmediate(gameLoop)
-
-                socketIo.emit('map_update', mapController.info())
-            }
-        })
-        socket.on('game_restart', function (message) {
-            console.log(`SocketIO :: Game restarted :: ${JSON.stringify(message)}`)
-            gameObjectController.restart()
-            mapController.restart()
-            socketIo.emit('map_update', mapController.info())
-        })
-
-        console.log(`SocketIO :: New user created :: ${id}`)
-
-        socket.emit('player_create', { id })
-        socket.on('player_move', function (message) {
-            console.log(`SocketIO :: Player move :: ${JSON.stringify(message)}`)
-            const player = gameObjectController.gameObjects.find(x => x.id === message.id)
-            if(player) player.setPositionToGo(message.position)
-        })
-        socket.on('player_ready', function (message) {
-            console.log(`SocketIO :: Player ready :: ${JSON.stringify(message)}`)
-            const player = gameObjectController.gameObjects.find(x => x.id === message.id)
-            if(player) player.status = 'ready'
-        })
-
-        socket.on('player_spell_fireball', function (message) {
-            console.log(`SocketIO :: Player used fireball :: ${JSON.stringify(message)}`)
-            gameObjectController.createFireball(message)
-        })
+    socketIo.on('connection', function(socket) {
+        let room = new Room(socketIo)
+        room.userConnect(socket)
 
         socket.on('disconnect', function () {
             console.log(`SocketIO :: Player disconnect :: ${id}`)
-            gameObjectController.destroyPlayer(id)
+            room.userDisconnect()
         })
 
     })

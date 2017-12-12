@@ -9,10 +9,12 @@ function Player(id, goController) {
 
     this.collider = colliders.createCircle(10)
     this.goController = goController
-    this.restart()
+
+    this.status = 'waiting'
+    this.start()
 }
 
-Player.prototype.restart = function () {
+Player.prototype.start = function () {
     this.position = { x: 100, y: 100 }
     this.velocity = { x: 0, y: 0 }
     this.desiredVelocity = { x: 0, y: 0 }
@@ -22,6 +24,12 @@ Player.prototype.restart = function () {
     this.moveSpeed = 200
     this.acceleration = 100
     this.positionToGo = null
+}
+
+Player.prototype.restart = function () {
+    this.start()
+
+    this.status = 'waiting'
 }
 
 Player.prototype.info = function () {

@@ -22,6 +22,7 @@ for (var i = 0; i < process.argv.length; i++) {
 }
 
 let socketIo = null
+let gameIsRunning = false
 
 gameObjectController = new GameObjectController(socketIo)
 mapController = new MapController(gameObjectController, socketIo)
@@ -29,6 +30,7 @@ physics = new Physics(gameObjectController)
 
 let now = moment()
 function gameLoop() {
+    if(!gameIsRunning) return
 
     let deltatime = now.diff() / 1000 * -1
     if(deltatime === 0) deltatime = .0001
@@ -50,6 +52,21 @@ const connect = function(server) {
     socketIo.on('connection', function(socket){
         const id = gameObjectController.createPlayer()
 
+        socket.emit('map_create', mapController.info())
+
+        socket.on('game_start', function (message) {
+            console.log(`SocketIO :: Game start :: ${JSON.stringify(message)}`)
+            const everybodyReady = gameObjectController.gameObjects.every(x => x.type === goTypes.PLAYER && x.status === 'ready')
+            if(everybodyReady) {
+                gameObjectController.start()
+                mapController.start()
+
+                gameIsRunning = true
+                setImmediate(gameLoop)
+
+                socketIo.emit('map_update', mapController.info())
+            }
+        })
         socket.on('game_restart', function (message) {
             console.log(`SocketIO :: Game restarted :: ${JSON.stringify(message)}`)
             gameObjectController.restart()
@@ -59,13 +76,16 @@ const connect = function(server) {
 
         console.log(`SocketIO :: New user created :: ${id}`)
 
-        socket.emit('map_create', mapController.info())
-        
         socket.emit('player_create', { id })
         socket.on('player_move', function (message) {
             console.log(`SocketIO :: Player move :: ${JSON.stringify(message)}`)
-            const user = gameObjectController.gameObjects.find(x => x.id === message.id)
-            if(user) user.setPositionToGo(message.position)
+            const player = gameObjectController.gameObjects.find(x => x.id === message.id)
+            if(player) player.setPositionToGo(message.position)
+        })
+        socket.on('player_ready', function (message) {
+            console.log(`SocketIO :: Player ready :: ${JSON.stringify(message)}`)
+            const player = gameObjectController.gameObjects.find(x => x.id === message.id)
+            if(player) player.status = 'ready'
         })
 
         socket.on('player_spell_fireball', function (message) {
@@ -80,7 +100,6 @@ const connect = function(server) {
 
     })
 
-    setImmediate(gameLoop)
 }
 
 module.exports = {

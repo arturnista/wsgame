@@ -36,7 +36,7 @@ MapController.prototype.prepare = function() {
     }
 
     this.decreasePerSecond = 0
-    this.timeToUpdate = 60
+    this.timeToUpdate = 10
     this._timePassed = 0
 }
 
@@ -91,6 +91,7 @@ MapController.prototype.update = function(deltatime) {
 
     if(this.decreasePerSecond > 0) {
         this.size -= this.decreasePerSecond * deltatime
+        if(this.size < 0) this.size = 0
         this.halfSize = this.size / 2
     }
 }

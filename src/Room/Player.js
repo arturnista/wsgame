@@ -7,7 +7,7 @@ function Player(id, goController) {
     this.id = id
     this.type = goTypes.PLAYER
 
-    this.collider = colliders.createCircle(10)
+    this.collider = colliders.createCircle(25)
     this.goController = goController
 
     this.status = 'alive'
@@ -39,6 +39,7 @@ Player.prototype.info = function () {
         position: this.position,
         collider: this.collider,
         velocity: this.velocity,
+        status: this.status,
         knockbackValue: this.knockbackValue
     }
 }

@@ -4,6 +4,8 @@ const GameObjectController = require('./GameObjectController')
 const Physics = require('./Physics')
 const MapController = require('./MapController')
 
+const DELAY_TO_START = 3000
+
 function Room(socketIo, data) {
     this.now = moment()
     this.name = data.name
@@ -61,15 +63,21 @@ Room.prototype.userJoin = function(user) {
 
         const usersReady = this.users.every(x => x.status === 'ready')
         if(usersReady) {
-            gameObjectController.start(this.users)
-            mapController.start()
+            this.socketIo.emit('game_will_start', { time: DELAY_TO_START })
 
-            this.users.forEach(u => u.socket.emit('player_create', u.player.info()))
-            this.socketIo.emit('map_create', mapController.info())
+            setTimeout(() => {
+                gameObjectController.start(this.users)
+                mapController.start()
+    
+                this.users.forEach(u => u.socket.emit('player_create', u.player.info()))
+                this.socketIo.emit('map_create', mapController.info())
+    
+                this.gameIsRunning = true
+                this.now = moment()
+                this.gameLoop()
 
-            this.gameIsRunning = true
-            this.now = moment()
-            this.gameLoop()
+                this.socketIo.emit('game_start')
+            }, DELAY_TO_START)
         }
     })
 
@@ -110,7 +118,6 @@ Room.prototype.gameLoop = function () {
     this.now = moment()
     setTimeout(this.gameLoop.bind(this), 10)
     const infos = gameObjectController.allInfos()
-    infos.players = infos.players.filter(x => x.status === 'alive')
     this.socketIo.emit('sync', infos)
 }
 

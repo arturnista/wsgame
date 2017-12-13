@@ -29,6 +29,7 @@ MapController.prototype.prepare = function() {
     this.damagePerSecond = 5
     this.size = 500
     this.halfSize = this.size / 2
+
     this.position = {
         x: this.halfSize,
         y: this.halfSize,
@@ -48,7 +49,7 @@ MapController.prototype.start = function() {
 
         player.position = this.spawnPoints[i]
     }
-    
+
     this.status = 'ready'
 }
 

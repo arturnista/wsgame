@@ -11,18 +11,17 @@ function GameObjectController(socketIo) {
     this.gameObjects = []
 }
 
-GameObjectController.prototype.start = function () {
+GameObjectController.prototype.start = function (users) {
 
-    this.gameObjects = this.gameObjects.filter(x => x.type === goTypes.PLAYER)
-    this.gameObjects.forEach( u => u.start() )
+    this.gameObjects = []
+    for (var i = 0; i < users.length; i++) {
+        users[i].player = this.createPlayer()
+    }
 
 }
 
 GameObjectController.prototype.restart = function () {
-
-    this.gameObjects = this.gameObjects.filter(x => x.type === goTypes.PLAYER)
-    this.gameObjects.forEach( u => u.restart() )
-
+    this.start()
 }
 
 GameObjectController.prototype.allInfos = function () {
@@ -42,16 +41,18 @@ GameObjectController.prototype.update = function (deltatime) {
 
 GameObjectController.prototype.createPlayer = function () {
     const id = uuid.v4()
-    this.gameObjects.push( new Player(id, this) )
+    const player = new Player(id, this)
+    this.gameObjects.push( player )
 
-    return id
+    return player
 }
 
 GameObjectController.prototype.createFireball = function (data) {
     const id = uuid.v4()
-    this.gameObjects.push( new Fireball(id, data, this) )
+    const fireball = new Fireball(id, data, this)
+    this.gameObjects.push( fireball )
 
-    return id
+    return fireball
 }
 
 GameObjectController.prototype.createObstacle = function (position) {

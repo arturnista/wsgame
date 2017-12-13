@@ -10,7 +10,7 @@ function Player(id, goController) {
     this.collider = colliders.createCircle(10)
     this.goController = goController
 
-    this.status = 'waiting'
+    this.status = 'alive'
     this.start()
 }
 
@@ -29,7 +29,7 @@ Player.prototype.start = function () {
 Player.prototype.restart = function () {
     this.start()
 
-    this.status = 'waiting'
+    this.status = 'alive'
 }
 
 Player.prototype.info = function () {
@@ -50,7 +50,7 @@ Player.prototype.setPositionToGo = function (position) {
 Player.prototype.dealDamage = function (damage) {
     this.life -= damage
     if(this.life <= 0) {
-        this.goController.destroy(this.id)
+        this.status = 'dead'
     }
 }
 
@@ -63,14 +63,19 @@ Player.prototype.knockback = function (direction, multiplier, adder) {
 }
 
 Player.prototype.update = function (deltatime) {
+    if(this.status === 'dead') return
+
     if(this.positionToGo == null) return
 
     const distance = vector.distance(this.position, this.positionToGo)
     if(distance <= 2) {
+
         this.desiredVelocity = { x: 0, y: 0 }
         this.velocity = { x: 0, y: 0 }
         this.positionToGo = null
+
     } else {
+
         let deltaX = Math.abs(this.positionToGo.x - this.position.x) / Math.abs(this.positionToGo.y - this.position.y)
         let deltaY = 1
         let deltaSum = deltaX + deltaY
@@ -90,6 +95,7 @@ Player.prototype.update = function (deltatime) {
         else if(this.desiredVelocity.x < this.velocity.x) this.velocity.x -= this.acceleration * deltatime
         if(this.desiredVelocity.y > this.velocity.y) this.velocity.y += this.acceleration * deltatime
         else if(this.desiredVelocity.y < this.velocity.y) this.velocity.y -= this.acceleration * deltatime
+
     }
 }
 

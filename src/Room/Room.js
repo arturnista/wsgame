@@ -4,68 +4,80 @@ const GameObjectController = require('./GameObjectController')
 const Physics = require('./Physics')
 const MapController = require('./MapController')
 
-function Room(socketIo) {
+function Room(socketIo, data) {
     this.now = moment()
+    this.name = data.name
 
     this.gameObjectController = new GameObjectController(socketIo)
     this.mapController = new MapController(this.gameObjectController, socketIo)
     this.physics = new Physics(this.gameObjectController)
 
     this.gameIsRunning = false
+    this.users = []
+    this.owner = null
 }
 
-Room.prototype.userConnect = function(socket) {
+Room.prototype.userJoin = function(user) {
     const {
         gameObjectController,
         mapController,
         physics
     } = this
-    const id = gameObjectController.createPlayer()
+    this.users.push( user )
 
-    socket.emit('map_create', mapController.info())
+    console.log(`SocketIO :: ${this.name} :: User joined :: ${user.id}`)
 
-    socket.on('game_start', function (message) {
-        console.log(`SocketIO :: Game start :: ${JSON.stringify(message)}`)
-        const everybodyReady = gameObjectController.gameObjects.every(x => x.type === goTypes.PLAYER && x.status === 'ready')
-        if(everybodyReady) {
+    // User events
+    user.socket.emit('user_info', user.info())
+    user.socket.on('user_ready', function (message) {
+        console.log(`SocketIO :: ${this.name} :: Player ready :: ${JSON.stringify(message)}`)
+        user.status = 'ready'
+    })
+
+    // Player events
+    user.socket.on('player_move', function (message) {
+        console.log(`SocketIO :: ${this.name} :: Player move :: ${JSON.stringify(message)}`)
+        if(user.player && user.player.status === 'alive') user.player.setPositionToGo(message.position)
+    })
+
+    user.socket.on('player_spell_fireball', function (message) {
+        console.log(`SocketIO :: ${this.name} :: Player used fireball :: ${JSON.stringify(message)}`)
+        if(user.player && user.player.status === 'alive') gameObjectController.createFireball(message)
+    })
+
+    // Game events
+    user.socket.on('game_start', function (message) {
+        console.log(`SocketIO :: ${this.name} :: Game start :: ${JSON.stringify(message)}`)
+        if(this.owner.id !== message.id) return
+
+        const usersReady = this.users.every(x => x.id === 'ready')
+        if(usersReady) {
             gameObjectController.start()
             mapController.start()
 
-            this.gameIsRunning = true
-            setImmediate(this.gameLoop.bind(this))
+            this.users.forEach(u => u.socket.emit('player_create', u.player.info()))
+            user.socket.emit('map_create', mapController.info())
 
-            socketIo.emit('map_update', mapController.info())
+            this.gameIsRunning = true
+            this.now = moment()
+            this.gameLoop()
         }
     })
-    socket.on('game_restart', function (message) {
-        console.log(`SocketIO :: Game restarted :: ${JSON.stringify(message)}`)
-        gameObjectController.restart()
-        mapController.restart()
-        socketIo.emit('map_update', mapController.info())
-    })
+    user.socket.on('game_restart', function (message) {
+        console.log(`SocketIO :: ${this.name} :: Game restarted :: ${JSON.stringify(message)}`)
+        if(this.owner.id !== message.id) return
 
-    console.log(`SocketIO :: New user created :: ${id}`)
 
-    socket.emit('player_create', { id })
-    socket.on('player_move', function (message) {
-        console.log(`SocketIO :: Player move :: ${JSON.stringify(message)}`)
-        const player = gameObjectController.gameObjects.find(x => x.id === message.id)
-        if(player) player.setPositionToGo(message.position)
-    })
-    socket.on('player_ready', function (message) {
-        console.log(`SocketIO :: Player ready :: ${JSON.stringify(message)}`)
-        const player = gameObjectController.gameObjects.find(x => x.id === message.id)
-        if(player) player.status = 'ready'
-    })
-
-    socket.on('player_spell_fireball', function (message) {
-        console.log(`SocketIO :: Player used fireball :: ${JSON.stringify(message)}`)
-        gameObjectController.createFireball(message)
     })
 }
 
-Room.prototype.userDisconnect = function () {
-    this.gameObjectController.destroyPlayer(id)
+Room.prototype.userDisconnect = function (user) {
+    this.gameObjectController.destroyPlayer(user.id)
+    this.users = this.users.filter(x => x.id !== user.id)
+}
+
+Room.prototype.userOwner = function (user) {
+    this.owner = user
 }
 
 Room.prototype.gameLoop = function () {

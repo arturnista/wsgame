@@ -21,7 +21,9 @@ class Root extends Component {
             players: [],
             spells: [],
             map: {},
-            status: 'move'
+            status: 'move',
+            roomName: '',
+            roomJoined: ''
         }
 
     }
@@ -36,11 +38,20 @@ class Root extends Component {
             })
 
             window.socketio.on('player_create', (body) => {
+                console.log('chamo n?')
                 this.currentPlayerId = body.id
             })
 
             window.socketio.on('map_create', (body) => this.setState({ map: body }))
             window.socketio.on('map_update', (body) => this.setState({ map: body }))
+
+            window.socketio.on('user_info', (body) => {
+                console.log(body)
+            })
+
+            window.socketio.on('user_joined_room', (body) => {
+                this.setState({ roomJoined: body.name })
+            })
 
             window.socketio.on('disconnect', () => {
                 console.log('SocketIO :: Disconnected')
@@ -48,6 +59,22 @@ class Root extends Component {
         })
 
         window.addEventListener('keydown', this._handleKeyDown.bind(this), true)
+    }
+
+    _handleJoinRoom() {
+        window.socketio.emit('room_join', { name: this.state.roomName })
+    }
+
+    _handleCreateRoom() {
+        window.socketio.emit('room_create', { name: this.state.roomName })
+    }
+
+    _handleReady() {
+        window.socketio.emit('user_ready', {})
+    }
+
+    _handleStart() {
+        window.socketio.emit('game_start', {})
     }
 
     _handleMouseDown(e) {
@@ -79,8 +106,21 @@ class Root extends Component {
         return (
             <div className='root'>
                 <header className='root-header'>
-                    <img src={logo} className='root-logo' alt='logo' />
+                    {/* <img src={logo} className='root-logo' alt='logo' /> */}
                     <h1 className='root-title'>Welcome to tutu game fuck u</h1>
+                    { this.state.roomJoined === '' ?
+                        <div>
+                            <input placeholder='Room name' onChange={e => this.setState({ roomName: e.target.value })} value={this.state.roomName}/>
+                            <button onClick={this._handleJoinRoom.bind(this)}>Enter room</button>
+                            <button onClick={this._handleCreateRoom.bind(this)}>Create room</button>
+                        </div>
+                        :
+                        <div>
+                            <p>{this.state.roomJoined}</p>
+                            <button onClick={this._handleReady.bind(this)}>READY</button>
+                            <button onClick={this._handleStart.bind(this)}>START GAME</button>
+                        </div>
+                    }
                     {
                         this.currentPlayer ?
                         <p>Life: {this.currentPlayer.life.toFixed(2)} ({this.currentPlayer.knockbackValue})</p>

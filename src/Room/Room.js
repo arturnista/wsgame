@@ -8,6 +8,8 @@ function Room(socketIo, data) {
     this.now = moment()
     this.name = data.name
 
+    this.socketIo = socketIo
+
     this.gameObjectController = new GameObjectController(socketIo)
     this.mapController = new MapController(this.gameObjectController, socketIo)
     this.physics = new Physics(this.gameObjectController)
@@ -15,6 +17,12 @@ function Room(socketIo, data) {
     this.gameIsRunning = false
     this.users = []
     this.owner = null
+}
+
+Room.prototype.info = function () {
+    return {
+        name: this.name
+    }
 }
 
 Room.prototype.userJoin = function(user) {
@@ -26,49 +34,52 @@ Room.prototype.userJoin = function(user) {
     this.users.push( user )
 
     console.log(`SocketIO :: ${this.name} :: User joined :: ${user.id}`)
+    user.socket.emit('user_joined_room', this.info())
 
     // User events
-    user.socket.emit('user_info', user.info())
-    user.socket.on('user_ready', function (message) {
+    user.socket.on('user_ready', (message) => {
         console.log(`SocketIO :: ${this.name} :: Player ready :: ${JSON.stringify(message)}`)
         user.status = 'ready'
     })
 
     // Player events
-    user.socket.on('player_move', function (message) {
+    user.socket.on('player_move', (message) => {
         console.log(`SocketIO :: ${this.name} :: Player move :: ${JSON.stringify(message)}`)
         if(user.player && user.player.status === 'alive') user.player.setPositionToGo(message.position)
     })
 
-    user.socket.on('player_spell_fireball', function (message) {
+    user.socket.on('player_spell_fireball', (message) => {
         console.log(`SocketIO :: ${this.name} :: Player used fireball :: ${JSON.stringify(message)}`)
         if(user.player && user.player.status === 'alive') gameObjectController.createFireball(message)
     })
 
     // Game events
-    user.socket.on('game_start', function (message) {
+    user.socket.on('game_start', (message) => {
         console.log(`SocketIO :: ${this.name} :: Game start :: ${JSON.stringify(message)}`)
-        if(this.owner.id !== message.id) return
+        console.log(this.users)
+        if(this.owner.id !== user.id) return
 
-        const usersReady = this.users.every(x => x.id === 'ready')
+        const usersReady = this.users.every(x => x.status === 'ready')
         if(usersReady) {
-            gameObjectController.start()
+            gameObjectController.start(this.users)
             mapController.start()
 
             this.users.forEach(u => u.socket.emit('player_create', u.player.info()))
-            user.socket.emit('map_create', mapController.info())
+            this.socketIo.emit('map_create', mapController.info())
 
             this.gameIsRunning = true
             this.now = moment()
             this.gameLoop()
         }
     })
-    user.socket.on('game_restart', function (message) {
+
+    user.socket.on('game_restart', (message) => {
         console.log(`SocketIO :: ${this.name} :: Game restarted :: ${JSON.stringify(message)}`)
         if(this.owner.id !== message.id) return
 
 
     })
+
 }
 
 Room.prototype.userDisconnect = function (user) {
@@ -98,7 +109,9 @@ Room.prototype.gameLoop = function () {
 
     this.now = moment()
     setTimeout(this.gameLoop.bind(this), 10)
-    socketIo.emit('sync', gameObjectController.allInfos())
+    const infos = gameObjectController.allInfos()
+    infos.players = infos.players.filter(x => x.status === 'alive')
+    this.socketIo.emit('sync', infos)
 }
 
 module.exports = Room

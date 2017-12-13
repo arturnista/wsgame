@@ -65,38 +65,40 @@ Player.prototype.knockback = function (direction, multiplier, adder) {
 Player.prototype.update = function (deltatime) {
     if(this.status === 'dead') return
 
-    if(this.positionToGo == null) return
+    if(this.desiredVelocity.x > this.velocity.x) this.velocity.x += this.acceleration * deltatime
+    else if(this.desiredVelocity.x < this.velocity.x) this.velocity.x -= this.acceleration * deltatime
+    if(this.desiredVelocity.y > this.velocity.y) this.velocity.y += this.acceleration * deltatime
+    else if(this.desiredVelocity.y < this.velocity.y) this.velocity.y -= this.acceleration * deltatime
 
-    const distance = vector.distance(this.position, this.positionToGo)
-    if(distance <= 2) {
+    if(this.positionToGo != null) {
 
-        this.desiredVelocity = { x: 0, y: 0 }
-        this.velocity = { x: 0, y: 0 }
-        this.positionToGo = null
+        const distance = vector.distance(this.position, this.positionToGo)
+        if(distance <= 2) {
 
-    } else {
+            this.desiredVelocity = { x: 0, y: 0 }
+            this.positionToGo = null
 
-        let deltaX = Math.abs(this.positionToGo.x - this.position.x) / Math.abs(this.positionToGo.y - this.position.y)
-        let deltaY = 1
-        let deltaSum = deltaX + deltaY
+        } else {
 
-        deltaX = deltaX / deltaSum
-        deltaY = deltaY / deltaSum
+            let deltaX = Math.abs(this.positionToGo.x - this.position.x) / Math.abs(this.positionToGo.y - this.position.y)
+            let deltaY = 1
+            let deltaSum = deltaX + deltaY
 
-        if(this.positionToGo.x < this.position.x) deltaX *= -1
-        if(this.positionToGo.y < this.position.y) deltaY *= -1
+            deltaX = deltaX / deltaSum
+            deltaY = deltaY / deltaSum
 
-        this.desiredVelocity = {
-            x: this.moveSpeed * deltaX,
-            y: this.moveSpeed * deltaY,
+            if(this.positionToGo.x < this.position.x) deltaX *= -1
+            if(this.positionToGo.y < this.position.y) deltaY *= -1
+
+            this.desiredVelocity = {
+                x: this.moveSpeed * deltaX,
+                y: this.moveSpeed * deltaY,
+            }
+
         }
-
-        if(this.desiredVelocity.x > this.velocity.x) this.velocity.x += this.acceleration * deltatime
-        else if(this.desiredVelocity.x < this.velocity.x) this.velocity.x -= this.acceleration * deltatime
-        if(this.desiredVelocity.y > this.velocity.y) this.velocity.y += this.acceleration * deltatime
-        else if(this.desiredVelocity.y < this.velocity.y) this.velocity.y -= this.acceleration * deltatime
-
+        
     }
+
 }
 
 module.exports = Player

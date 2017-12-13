@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const uuid = require('uuid')
 const goTypes = require('../gameObjectTypes')
-const vector = require('.../utils/vector')
+const vector = require('../../utils/vector')
 
 function Physics(goController) {
     this.goController = goController

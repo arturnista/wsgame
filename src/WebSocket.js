@@ -16,22 +16,34 @@ const connect = function(server) {
         let user = new User(socket)
         users.push( user )
 
+        console.log(`SocketIO :: User connected :: ${user.id}`)
+
+        user.socket.emit('user_info', user.info())
+
         socket.on('room_create', function (data) {
-            console.log(`SocketIO :: User created ${data.name} :: ${id}`)
-            room = new Room(socketIo, data)
+            const checkRoom = rooms.find(x => x.name === data.name)
+            if(checkRoom) return
+
+            console.log(`SocketIO :: User created ${data.name} :: ${user.id}`)
+            room = new Room(socketIo.to(data.name), data)
+            rooms.push(room)
+
             room.userJoin(user)
             room.userOwner(user)
-            rooms.push(room)
+            user.socket.join(room.name)
         })
 
         socket.on('room_join', function (data) {
-            console.log(`SocketIO :: User joined ${data.name} :: ${id}`)
             room = rooms.find(x => x.name === data.name)
+            if(!room) return
+
+            console.log(`SocketIO :: User joined ${data.name} :: ${user.id}`)
             room.userJoin(user)
+            user.socket.join(room.name)
         })
 
         socket.on('disconnect', function () {
-            console.log(`SocketIO :: User disconnect :: ${id}`)
+            console.log(`SocketIO :: User disconnect :: ${user.id}`)
             if(room) room.userDisconnect(user)
             users = users.filter(x => x.id !== user.id)
         })

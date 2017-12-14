@@ -39,9 +39,11 @@ Physics.prototype.update = function (deltatime) {
                 const dirCollisionReserved = vector.reverse(dirCollision)
 
                 if (objectCmp.type === goTypes.OBSTACLE) {
-                    directionToMove = vector.multiply(dirCollisionReserved, directionToMove)
+                    directionToMove = null
+                    // directionToMove = vector.multiply(dirCollisionReserved, directionToMove)
                 } else if (object.type === goTypes.OBSTACLE) {
-                    directionToMove = vector.multiply(dirCollisionReserved, directionToMove)
+                    directionToMove = null
+                    // directionToMove = vector.multiply(dirCollisionReserved, directionToMove)
                 }
             }
         }

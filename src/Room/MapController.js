@@ -9,18 +9,6 @@ function MapController(goController, socketIo) {
     this.goController = goController
     this.socketIo = socketIo
 
-    this.obstacles = []
-    this.obstacles.push( goController.createObstacle({ position: { x: 150, y: 150 }, size: 50 }) )
-    this.obstacles.push( goController.createObstacle({ position: { x: 350, y: 150 }, size: 20 }) )
-    this.obstacles.push( goController.createObstacle({ position: { x: 150, y: 350 }, size: 20 }) )
-    this.obstacles.push( goController.createObstacle({ position: { x: 350, y: 350 }, size: 50 }) )
-
-    this.spawnPoints = []
-    this.spawnPoints.push( { x: 100, y: 100 } )
-    this.spawnPoints.push( { x: 400, y: 100 } )
-    this.spawnPoints.push( { x: 100, y: 400 } )
-    this.spawnPoints.push( { x: 400, y: 400 } )
-
     this.prepare()
     this.status = 'waiting'
 }
@@ -34,6 +22,18 @@ MapController.prototype.prepare = function() {
         x: this.halfSize,
         y: this.halfSize,
     }
+
+    this.obstacles = []
+    this.obstacles.push( this.goController.createObstacle({ position: { x: 150, y: 150 }, size: 50 }) )
+    this.obstacles.push( this.goController.createObstacle({ position: { x: 350, y: 150 }, size: 20 }) )
+    this.obstacles.push( this.goController.createObstacle({ position: { x: 150, y: 350 }, size: 20 }) )
+    this.obstacles.push( this.goController.createObstacle({ position: { x: 350, y: 350 }, size: 50 }) )
+
+    this.spawnPoints = []
+    this.spawnPoints.push( { x: 100, y: 100 } )
+    this.spawnPoints.push( { x: 400, y: 100 } )
+    this.spawnPoints.push( { x: 100, y: 400 } )
+    this.spawnPoints.push( { x: 400, y: 400 } )
 
     this.decreasePerSecond = 0
     this.timeToUpdate = 10
@@ -73,6 +73,8 @@ MapController.prototype.update = function(deltatime) {
 
     const players = this.goController.gameObjects.filter(x => x.type === goTypes.PLAYER)
     for (var i = 0; i < players.length; i++) {
+        if(players[i].status !== 'alive') continue
+
         const plDistance = vector.distance(players[i].position, this.position)
         if(plDistance > this.halfSize) {
             players[i].dealDamage(this.damagePerSecond * deltatime)

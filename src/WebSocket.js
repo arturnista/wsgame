@@ -45,7 +45,9 @@ const connect = function(server) {
         socket.on('disconnect', function () {
             console.log(`SocketIO :: User disconnect :: ${user.id}`)
             if(room) room.userDisconnect(user)
+
             users = users.filter(x => x.id !== user.id)
+            rooms = rooms.filter(x => x.users.length > 0)
         })
 
     })

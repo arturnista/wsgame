@@ -20,8 +20,8 @@ GameObjectController.prototype.start = function (users) {
 
 }
 
-GameObjectController.prototype.restart = function () {
-    this.start()
+GameObjectController.prototype.end = function () {
+    this.gameObjects = []    
 }
 
 GameObjectController.prototype.allInfos = function () {

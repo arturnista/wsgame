@@ -5,6 +5,7 @@ const Physics = require('./Physics')
 const MapController = require('./MapController')
 
 const DELAY_TO_START = 3000
+const DELAY_TO_END = 5000
 
 function Room(socketIo, data) {
     this.now = moment()
@@ -17,6 +18,7 @@ function Room(socketIo, data) {
     this.physics = new Physics(this.gameObjectController)
 
     this.gameIsRunning = false
+    this._gameEnded = false
     this.users = []
     this.owner = null
 }
@@ -61,24 +63,7 @@ Room.prototype.userJoin = function(user) {
         console.log(this.users)
         if(this.owner.id !== user.id) return
 
-        const usersReady = this.users.every(x => x.status === 'ready')
-        if(usersReady) {
-            this.socketIo.emit('game_will_start', { time: DELAY_TO_START })
-
-            setTimeout(() => {
-                gameObjectController.start(this.users)
-                mapController.start()
-    
-                this.users.forEach(u => u.socket.emit('player_create', u.player.info()))
-                this.socketIo.emit('map_create', mapController.info())
-    
-                this.gameIsRunning = true
-                this.now = moment()
-                this.gameLoop()
-
-                this.socketIo.emit('game_start')
-            }, DELAY_TO_START)
-        }
+        this.startGame()
     })
 
     user.socket.on('game_restart', (message) => {
@@ -97,6 +82,39 @@ Room.prototype.userDisconnect = function (user) {
 
 Room.prototype.userOwner = function (user) {
     this.owner = user
+}
+
+Room.prototype.startGame = function () {
+    const usersReady = this.users.every(x => x.status === 'ready')
+    if(usersReady) {
+        this.socketIo.emit('game_will_start', { time: DELAY_TO_START })
+
+        setTimeout(() => {
+            this.gameObjectController.start(this.users)
+            this.mapController.start()
+
+            this.users.forEach(u => u.socket.emit('player_create', u.player.info()))
+            this.socketIo.emit('map_create', this.mapController.info())
+
+            this.gameIsRunning = true
+            this.now = moment()
+            this.gameLoop()
+
+            this.socketIo.emit('game_start')
+        }, DELAY_TO_START)
+    }
+}
+
+Room.prototype.endGame = function () {
+    this.gameObjectController.end()
+    this.mapController.end()
+
+    this.users.forEach(u => u.status === 'waiting')
+
+    this.socketIo.emit('game_end')    
+
+    this.gameIsRunning = false
+    this._gameEnded = false
 }
 
 Room.prototype.gameLoop = function () {
@@ -119,6 +137,15 @@ Room.prototype.gameLoop = function () {
     setTimeout(this.gameLoop.bind(this), 10)
     const infos = gameObjectController.allInfos()
     this.socketIo.emit('sync', infos)
+
+    if(this._gameEnded) return
+    
+    const alivePlayers = infos.players.filter(x => x.status === 'alive')
+    if(alivePlayers.length === 1) {
+        this._gameEnded = true
+        this.socketIo.emit('game_will_end', { time: DELAY_TO_END, winner: alivePlayers[0] })
+        setTimeout(this.endGame.bind(this), DELAY_TO_END)
+    }
 }
 
 module.exports = Room

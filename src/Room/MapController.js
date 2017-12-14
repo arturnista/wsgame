@@ -53,8 +53,7 @@ MapController.prototype.start = function() {
     this.status = 'ready'
 }
 
-MapController.prototype.restart = function() {
-    this.prepare()
+MapController.prototype.end = function() {
     this.status = 'waiting'
 }
 

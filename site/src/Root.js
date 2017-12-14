@@ -23,7 +23,8 @@ class Root extends Component {
             map: {},
             status: 'move',
             roomName: '',
-            roomJoined: ''
+            roomJoined: '',
+            isWinner: false
         }
 
     }
@@ -41,6 +42,9 @@ class Root extends Component {
                 console.log('chamo n?')
                 this.currentPlayerId = body.id
             })
+
+            window.socketio.on('game_will_end', (body) => this.setState({ isWinner: body.winner.id === this.currentPlayerId }))
+            window.socketio.on('game_end', (body) => this.setState({ map: {}, players: [], spells: [] }))
 
             window.socketio.on('map_create', (body) => this.setState({ map: body }))
             window.socketio.on('map_update', (body) => this.setState({ map: body }))
@@ -126,6 +130,9 @@ class Root extends Component {
                         <p>Life: {this.currentPlayer.life.toFixed(2)} ({this.currentPlayer.knockbackValue})</p>
                         :
                         <p>DEAD</p>
+                    }
+                    {
+                        this.state.isWinner && <p>GANHO CARALHO</p>
                     }
                 </header>
                 <div className='game-container'

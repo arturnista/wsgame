@@ -15,8 +15,8 @@ function Fireball(id, data, goController) {
     this.collider = colliders.createCircle(20)
 
     this.position = {
-        x: this.owner.position.x,
-        y: this.owner.position.y,
+        x: this.owner ? this.owner.position.x : 0,
+        y: this.owner ? this.owner.position.y : 0,
     }
 
     this.multiplier = 1

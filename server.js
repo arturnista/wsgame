@@ -30,7 +30,6 @@ server.get('/', function(req, res, next) {
 })
 
 server.get('/site', function(req, res, next) {
-    console.log('entrou aqui??')
     fs.readFile(__dirname + '/site/build/index.html', 'UTF-8', (err, data) => {
         res.writeHead(200, {
             'Content-Length': Buffer.byteLength(data),
@@ -52,7 +51,6 @@ server.get('/static/:filetype/:filename', function(req, res, next) {
 })
 
 server.get('/game', function (req, res) {
-    console.log('Chamo o game')
     const filename = `${__dirname}/game/index.html`
     fs.readFile(filename, 'UTF-8', (err, data) => {
         res.writeHead(200, {
@@ -64,19 +62,8 @@ server.get('/game', function (req, res) {
     })
 })
 
-server.get('/TemplateData/:arq', function (req, res) {
-    const filename = `${__dirname}/game/TemplateData/${req.params.arq}`
-    fs.readFile(filename, 'UTF-8', (err, data) => {
-        if(err) return res.json(500)
-
-        res.writeHead(200, { 'Content-Length': Buffer.byteLength(data) })
-        res.write(data)
-        res.end()
-    })
-})
-
-server.get('/Build/:arq', function (req, res) {
-    const filename = `${__dirname}/game/Build/${req.params.arq}`
+server.get('/game/:filetype/:filename', function(req, res, next) {
+    const filename = `${__dirname}/game/${req.params.filetype}/${req.params.filename}`
     fs.readFile(filename, 'UTF-8', (err, data) => {
         if(err) return res.json(500)
 

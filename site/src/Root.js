@@ -39,7 +39,6 @@ class Root extends Component {
             })
 
             window.socketio.on('player_create', (body) => {
-                console.log('chamo n?')
                 this.currentPlayerId = body.id
             })
 
@@ -49,11 +48,11 @@ class Root extends Component {
             window.socketio.on('map_create', (body) => this.setState({ map: body }))
             window.socketio.on('map_update', (body) => this.setState({ map: body }))
 
-            window.socketio.on('user_info', (body) => {
+            window.socketio.on('myuser_info', (body) => {
                 console.log(body)
             })
 
-            window.socketio.on('user_joined_room', (body) => {
+            window.socketio.on('myuser_joined_room', (body) => {
                 this.setState({ roomJoined: body.name })
             })
 

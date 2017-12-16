@@ -38,29 +38,40 @@ Room.prototype.userJoin = function(user) {
     this.users.push( user )
 
     console.log(`SocketIO :: ${this.name} :: User joined :: ${user.id}`)
-    user.socket.emit('user_joined_room', this.info())
-
+    user.socket.emit('myuser_joined_room', this.info())
+    this.emit('user_joined_room', this.info())
+    
     // User events
     user.socket.on('user_ready', (message) => {
+        if(this.gameIsRunning) return
         console.log(`SocketIO :: ${this.name} :: Player ready :: ${JSON.stringify(message)}`)
         user.status = 'ready'
+        this.emit('user_ready', { user: user.id })
+    })
+    user.socket.on('user_waiting', (message) => {
+        if(this.gameIsRunning) return
+        console.log(`SocketIO :: ${this.name} :: Player waiting :: ${JSON.stringify(message)}`)
+        user.status = 'waiting'
+        this.emit('user_waiting', { user: user.id })
     })
 
     // Player events
     user.socket.on('player_move', (message) => {
+        if(!this.gameIsRunning) return
         console.log(`SocketIO :: ${this.name} :: Player move :: ${JSON.stringify(message)}`)
         if(user.player && user.player.status === 'alive') user.player.setPositionToGo(message.position)
     })
 
     user.socket.on('player_spell_fireball', (message) => {
+        if(!this.gameIsRunning) return
         console.log(`SocketIO :: ${this.name} :: Player used fireball :: ${JSON.stringify(message)}`)
         if(user.player && user.player.status === 'alive') gameObjectController.createFireball(message)
     })
 
     // Game events
     user.socket.on('game_start', (message) => {
+        if(this.gameIsRunning) return
         console.log(`SocketIO :: ${this.name} :: Game start :: ${JSON.stringify(message)}`)
-        console.log(this.users)
         if(this.owner.id !== user.id) return
 
         this.startGame()
@@ -87,31 +98,31 @@ Room.prototype.userOwner = function (user) {
 Room.prototype.startGame = function () {
     const usersReady = this.users.every(x => x.status === 'ready')
     if(usersReady) {
-        this.socketIo.emit('game_will_start', { time: DELAY_TO_START })
+        this.emit('game_will_start', { time: DELAY_TO_START })
 
         setTimeout(() => {
             this.gameObjectController.start(this.users)
             this.mapController.start()
 
             this.users.forEach(u => u.socket.emit('player_create', u.player.info()))
-            this.socketIo.emit('map_create', this.mapController.info())
+            this.emit('map_create', this.mapController.info())
 
             this.gameIsRunning = true
             this.now = moment()
             this.gameLoop()
 
-            this.socketIo.emit('game_start')
+            this.emit('game_start')
         }, DELAY_TO_START)
     }
 }
 
 Room.prototype.endGame = function () {
-    this.gameObjectController.end()
+    this.gameObjectController.end(this.users)
     this.mapController.end()
 
     this.users.forEach(u => u.status === 'waiting')
 
-    this.socketIo.emit('game_end')    
+    this.emit('game_end')    
 
     this.gameIsRunning = false
     this._gameEnded = false
@@ -136,16 +147,21 @@ Room.prototype.gameLoop = function () {
     this.now = moment()
     setTimeout(this.gameLoop.bind(this), 10)
     const infos = gameObjectController.allInfos()
-    this.socketIo.emit('sync', infos)
+    this.emit('sync', infos)
 
     if(this._gameEnded) return
     
     const alivePlayers = infos.players.filter(x => x.status === 'alive')
-    // if(alivePlayers.length === 1) {
-    //     this._gameEnded = true
-    //     this.socketIo.emit('game_will_end', { time: DELAY_TO_END, winner: alivePlayers[0] })
-    //     setTimeout(this.endGame.bind(this), DELAY_TO_END)
-    // }
+    if(alivePlayers.length === 1) {
+        this._gameEnded = true
+        this.emit('game_will_end', { time: DELAY_TO_END, winner: alivePlayers[0] })
+        setTimeout(this.endGame.bind(this), DELAY_TO_END)
+    }
+}
+
+Room.prototype.emit = function(name, data) {
+    // this.socketIo.emit(name, data)
+    this.users.forEach(u => u.socket.emit(name, data))
 }
 
 module.exports = Room

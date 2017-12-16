@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const moment = require('moment')
 const uuid = require('uuid')
 
@@ -12,7 +13,7 @@ function User(socket) {
 User.prototype.info = function () {
     return {
         id: this.id,
-        player: this.player,
+        player: _.isEmpty(this.player) ? this.player : this.player.info(),
         status: this.status
     }
 }

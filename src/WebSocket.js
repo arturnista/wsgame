@@ -18,7 +18,7 @@ const connect = function(server) {
 
         console.log(`SocketIO :: User connected :: ${user.id}`)
 
-        user.socket.emit('user_info', user.info())
+        user.socket.emit('myuser_info', user.info())
 
         socket.on('room_create', function (data) {
             const checkRoom = rooms.find(x => x.name === data.name)

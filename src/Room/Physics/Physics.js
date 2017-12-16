@@ -36,14 +36,11 @@ Physics.prototype.update = function (deltatime) {
                 const dirCollision = vector.direction(objectCmp.position, object.position)
                 const dirCollisionInv = vector.direction(object.position, objectCmp.position)
                 if (object.onCollide) setImmediate(object.onCollide.bind(object), objectCmp, dirCollision, dirCollisionInv)
-                const dirCollisionReserved = vector.reverse(dirCollision)
 
                 if (objectCmp.type === goTypes.OBSTACLE) {
-                    directionToMove = null
-                    // directionToMove = vector.multiply(dirCollisionReserved, directionToMove)
+                    directionToMove = vector.multiply(dirCollision, vector.length(directionToMove))
                 } else if (object.type === goTypes.OBSTACLE) {
-                    directionToMove = null
-                    // directionToMove = vector.multiply(dirCollisionReserved, directionToMove)
+                    directionToMove = vector.multiply(dirCollision, vector.length(directionToMove))
                 }
             }
         }

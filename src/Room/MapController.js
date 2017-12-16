@@ -36,7 +36,7 @@ MapController.prototype.prepare = function() {
     this.spawnPoints.push( { x: 400, y: 400 } )
 
     this.decreasePerSecond = 0
-    this.timeToUpdate = 10
+    this.timeToUpdate = 1000
     this._timePassed = 0
 }
 

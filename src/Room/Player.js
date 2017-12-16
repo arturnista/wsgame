@@ -22,7 +22,7 @@ Player.prototype.start = function () {
     this.knockbackValue = 100
 
     this.moveSpeed = 200
-    this.acceleration = 100
+    this.acceleration = 200
     this.positionToGo = null
 }
 
@@ -77,6 +77,7 @@ Player.prototype.update = function (deltatime) {
         if(distance <= 2) {
 
             this.desiredVelocity = { x: 0, y: 0 }
+            this.velocity = { x: 0, y: 0 }
             this.positionToGo = null
 
         } else {

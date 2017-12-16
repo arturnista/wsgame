@@ -1,26 +1,17 @@
-const restify = require('restify')
 const moment = require('moment')
-const fs = require('fs')
+const express = require('express')
+const server = express()
+const http = require('http').Server(server)
+
+server.set('views', __dirname + '')
+server.engine('html', require('ejs').renderFile)
 
 const WebSocket = require('./src/WebSocket')
-
 const packageJson = require('./package.json')
-
-const server = restify.createServer()
-
-restify.CORS.ALLOW_HEADERS.push('Accept-Encoding')
-restify.CORS.ALLOW_HEADERS.push('Accept-Language')
-restify.CORS.ALLOW_HEADERS.push('Access-Control-Allow-Origin')
-restify.CORS.ALLOW_HEADERS.push('origin')
-restify.CORS.ALLOW_HEADERS.push('authorization')
-
-server.pre(restify.CORS({ credentials: true }))
-server.use(restify.queryParser())
-server.use(restify.jsonBodyParser())
 
 server.get('/', function(req, res, next) {
     const now = moment()
-    res.json(200, {
+    res.status(200).json({
         name: 'Gameserver',
         version: packageJson.version,
         status: 200,
@@ -30,51 +21,25 @@ server.get('/', function(req, res, next) {
 })
 
 server.get('/site', function(req, res, next) {
-    fs.readFile(__dirname + '/site/build/index.html', 'UTF-8', (err, data) => {
-        res.writeHead(200, {
-            'Content-Length': Buffer.byteLength(data),
-            'Content-Type': 'text/html'
-        })
-        res.write(data)
-        res.end()
-    })
+    res.render('site/build/index.html')
 })
+
 server.get('/static/:filetype/:filename', function(req, res, next) {
     const filename = `${__dirname}/site/build/static/${req.params.filetype}/${req.params.filename}`
-    fs.readFile(filename, 'UTF-8', (err, data) => {
-        if(err) return res.json(500)
-
-        res.writeHead(200, { 'Content-Length': Buffer.byteLength(data) })
-        res.write(data)
-        res.end()
-    })
+    res.sendFile(filename)
 })
 
 server.get('/game', function (req, res) {
-    const filename = `${__dirname}/game/index.html`
-    fs.readFile(filename, 'UTF-8', (err, data) => {
-        res.writeHead(200, {
-            'Content-Length': Buffer.byteLength(data),
-            'Content-Type': 'text/html'
-        })
-        res.write(data)
-        res.end()
-    })
+    res.render('game/index.html')
 })
 
-server.get('/game/:filetype/:filename', function(req, res, next) {
-    const filename = `${__dirname}/game/${req.params.filetype}/${req.params.filename}`
-    fs.readFile(filename, 'UTF-8', (err, data) => {
-        if(err) return res.json(500)
-
-        res.writeHead(200, { 'Content-Length': Buffer.byteLength(data) })
-        res.write(data)
-        res.end()
-    })
+server.get('/Build/:arq', function (req, res) {
+    const arq = req.params.arq
+    res.sendFile(__dirname + "/game/Build/" + arq)
 })
 
 const port = process.env.PORT || 5002
-server.listen(port, function() {
+http.listen(port, function() {
     console.log('Gameserver API running! Port: ' + port)
 })
-WebSocket.connect(server.server)
+WebSocket.connect(http)

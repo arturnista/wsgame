@@ -24,6 +24,9 @@ class Root extends Component {
             status: 'move',
             roomName: '',
             roomJoined: '',
+            gameIsRunning: false,
+            roomJoinedIsOwner: false,
+            isReady: false,
             isWinner: false
         }
 
@@ -42,8 +45,19 @@ class Root extends Component {
                 this.currentPlayerId = body.id
             })
 
-            window.socketio.on('game_will_end', (body) => this.setState({ isWinner: body.winner.id === this.currentPlayerId }))
-            window.socketio.on('game_end', (body) => this.setState({ map: {}, players: [], spells: [] }))
+            window.socketio.on('game_will_start', () => this.setState({ gameIsRunning: true }))
+            window.socketio.on('game_start', () => {} )
+
+            window.socketio.on('game_will_end', (body) => {
+                const isWinner = body.winner.id === this.currentPlayerId
+                this.setState({ isWinner, isReady: false })
+                if(isWinner) {
+                    alert('GANHO BOA PORRA')
+                } else {
+                    alert('SE FUDEU EM')
+                }
+            })
+            window.socketio.on('game_end', (body) => this.setState({ map: {}, players: [], spells: [], gameIsRunning: false, isReady: false }))
 
             window.socketio.on('map_create', (body) => this.setState({ map: body }))
             window.socketio.on('map_update', (body) => this.setState({ map: body }))
@@ -65,15 +79,23 @@ class Root extends Component {
     }
 
     _handleJoinRoom() {
+        this.setState({ roomJoinedIsOwner: false })
         window.socketio.emit('room_join', { name: this.state.roomName })
     }
 
     _handleCreateRoom() {
+        this.setState({ roomJoinedIsOwner: true })
         window.socketio.emit('room_create', { name: this.state.roomName })
     }
 
-    _handleReady() {
-        window.socketio.emit('user_ready', {})
+    _toggleReady() {
+        const { isReady } = this.state
+        this.setState({ isReady: !isReady })
+        if(isReady) {
+            window.socketio.emit('user_waiting', {})
+        } else {
+            window.socketio.emit('user_ready', {})
+        }
     }
 
     _handleStart() {
@@ -111,17 +133,29 @@ class Root extends Component {
                 <header className='root-header'>
                     {/* <img src={logo} className='root-logo' alt='logo' /> */}
                     <h1 className='root-title'>Welcome to tutu game fuck u</h1>
-                    { this.state.roomJoined === '' ?
+                    {
+                        !this.state.gameIsRunning &&
                         <div>
-                            <input placeholder='Room name' onChange={e => this.setState({ roomName: e.target.value })} value={this.state.roomName}/>
-                            <button onClick={this._handleJoinRoom.bind(this)}>Enter room</button>
-                            <button onClick={this._handleCreateRoom.bind(this)}>Create room</button>
-                        </div>
-                        :
-                        <div>
-                            <p>{this.state.roomJoined}</p>
-                            <button onClick={this._handleReady.bind(this)}>READY</button>
-                            <button onClick={this._handleStart.bind(this)}>START GAME</button>
+                            { this.state.roomJoined === '' ?
+                                <div>
+                                    <input placeholder='Room name' onChange={e => this.setState({ roomName: e.target.value })} value={this.state.roomName}/>
+                                    <button onClick={this._handleJoinRoom.bind(this)}>Enter room</button>
+                                    <button onClick={this._handleCreateRoom.bind(this)}>Create room</button>
+                                </div>
+                                :
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                                    <p>{this.state.roomJoined}</p>
+                                    {
+                                        this.state.isReady ?
+                                        <button style={{ width: 100 }} onClick={this._toggleReady.bind(this)}>WAITING</button>
+                                        :
+                                        <button style={{ width: 100 }} onClick={this._toggleReady.bind(this)}>READY</button>
+                                    }
+                                    {
+                                        this.state.roomJoinedIsOwner && <button style={{ width: 100 }} onClick={this._handleStart.bind(this)}>START GAME</button>
+                                    }
+                                </div>
+                            }
                         </div>
                     }
                     {
@@ -135,7 +169,7 @@ class Root extends Component {
                     }
                 </header>
                 <div className='game-container'
-                    onMouseMove={e => this.mousePosition = { x: e.pageX - (window.innerWidth * .3) , y: e.pageY - 190 } }
+                    onMouseMove={e => this.mousePosition = { x: e.pageX , y: e.pageY - 190 } }
                     onMouseDown={this._handleMouseDown.bind(this)}
                     onKeyDown={this._handleKeyDown.bind(this)}>
                     {

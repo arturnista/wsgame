@@ -26,7 +26,6 @@
     position: relative;
     display: flex;
     flex: 1;
-    left: 30%;
 }
 
 @keyframes root-logo-spin {

@@ -40,19 +40,25 @@ Room.prototype.userJoin = function(user) {
     console.log(`SocketIO :: ${this.name} :: User joined :: ${user.id}`)
     user.socket.emit('myuser_joined_room', this.info())
     this.emit('user_joined_room', this.info())
-    
+
     // User events
     user.socket.on('user_ready', (message) => {
         if(this.gameIsRunning) return
-        console.log(`SocketIO :: ${this.name} :: Player ready :: ${JSON.stringify(message)}`)
-        user.status = 'ready'
-        this.emit('user_ready', { user: user.id })
+
+        if(user.status !== 'ready') {
+            console.log(`SocketIO :: ${this.name} :: Player ready :: ${JSON.stringify(message)}`)
+            user.status = 'ready'
+            this.emit('user_ready', { user: user.id })
+        }
     })
     user.socket.on('user_waiting', (message) => {
         if(this.gameIsRunning) return
-        console.log(`SocketIO :: ${this.name} :: Player waiting :: ${JSON.stringify(message)}`)
-        user.status = 'waiting'
-        this.emit('user_waiting', { user: user.id })
+
+        if(user.status !== 'waiting') {
+            console.log(`SocketIO :: ${this.name} :: Player waiting :: ${JSON.stringify(message)}`)
+            user.status = 'waiting'
+            this.emit('user_waiting', { user: user.id })
+        }
     })
 
     // Player events
@@ -122,7 +128,7 @@ Room.prototype.endGame = function () {
 
     this.users.forEach(u => u.status === 'waiting')
 
-    this.emit('game_end')    
+    this.emit('game_end')
 
     this.gameIsRunning = false
     this._gameEnded = false
@@ -150,7 +156,7 @@ Room.prototype.gameLoop = function () {
     this.emit('sync', infos)
 
     if(this._gameEnded) return
-    
+
     const alivePlayers = infos.players.filter(x => x.status === 'alive')
     if(alivePlayers.length === 1) {
         this._gameEnded = true

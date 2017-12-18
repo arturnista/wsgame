@@ -31,9 +31,9 @@ MapController.prototype.prepare = function() {
 
     this.spawnPoints = []
     this.spawnPoints.push( { x: 100, y: 100 } )
-    this.spawnPoints.push( { x: 400, y: 100 } )
-    this.spawnPoints.push( { x: 100, y: 400 } )
     this.spawnPoints.push( { x: 400, y: 400 } )
+    this.spawnPoints.push( { x: 100, y: 400 } )
+    this.spawnPoints.push( { x: 400, y: 100 } )
 
     this.decreasePerSecond = 0
     this.timeToUpdate = 60
@@ -86,7 +86,6 @@ MapController.prototype.update = function(deltatime) {
 
         this.damagePerSecond *= 2
         this.decreasePerSecond += DECREASE_INCREMENT
-
         this.socketIo.emit('map_update', this.info())
     }
 

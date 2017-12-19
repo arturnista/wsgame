@@ -13,8 +13,8 @@ function Room(socketIo, data) {
 
     this.socketIo = socketIo
 
-    this.gameObjectController = new GameObjectController(socketIo)
-    this.mapController = new MapController(this.gameObjectController, socketIo)
+    this.gameObjectController = new GameObjectController(this.emit.bind(this))
+    this.mapController = new MapController(this.gameObjectController, this.emit.bind(this))
     this.physics = new Physics(this.gameObjectController)
 
     this.gameIsRunning = false

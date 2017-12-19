@@ -5,9 +5,9 @@ const vector = require('../utils/vector')
 
 const DECREASE_INCREMENT = 3
 
-function MapController(goController, socketIo) {
+function MapController(goController, emit) {
     this.goController = goController
-    this.socketIo = socketIo
+    this.emit = emit
 
     this.prepare()
     this.status = 'waiting'
@@ -86,7 +86,7 @@ MapController.prototype.update = function(deltatime) {
 
         this.damagePerSecond *= 2
         this.decreasePerSecond += DECREASE_INCREMENT
-        this.socketIo.emit('map_update', this.info())
+        this.emit('map_update', this.info())
     }
 
     if(this.decreasePerSecond > 0) {

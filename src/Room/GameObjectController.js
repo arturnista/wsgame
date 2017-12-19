@@ -6,8 +6,8 @@ const Fireball = require('./Fireball')
 const Player = require('./Player')
 const Obstacle = require('./Obstacle')
 
-function GameObjectController(socketIo) {
-    this.socketIo = socketIo
+function GameObjectController(emit) {
+    this.emit = emit
     this.gameObjects = []
 }
 
@@ -21,7 +21,7 @@ GameObjectController.prototype.start = function (users) {
 }
 
 GameObjectController.prototype.end = function (users) {
-    this.gameObjects = []    
+    this.gameObjects = []
     for (var i = 0; i < users.length; i++) {
         users[i].player = {}
     }
@@ -76,7 +76,7 @@ GameObjectController.prototype.destroy = function (gameObject) {
         return x.id !== gameObject.id
     })
 
-    if(goDeleted) this.socketIo.emit('gameobject_delete', goDeleted.info())
+    if(goDeleted) this.emit('gameobject_delete', goDeleted.info())
 }
 
 GameObjectController.prototype.destroyPlayer = function (id) {

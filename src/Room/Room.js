@@ -2,7 +2,7 @@ const moment = require('moment')
 const uuid = require('uuid')
 const GameObjectController = require('./GameObjects/GameObjectController')
 const Physics = require('./Physics')
-const MapController = require('./MapController')
+const MapController = require('./Map/MapController')
 
 const DELAY_TO_START = 3000
 const DELAY_TO_END = 5000
@@ -104,12 +104,12 @@ Room.prototype.userOwner = function (user) {
 Room.prototype.startGame = function () {
     const usersReady = this.users.every(x => x.status === 'ready')
     if(usersReady) {
-        this.emit('game_will_start', { time: DELAY_TO_START })
+        this.gameObjectController.start(this.users)
+        this.mapController.start()
+
+        this.emit('game_will_start', { time: DELAY_TO_START, map: this.mapController.info() })
 
         setTimeout(() => {
-            this.gameObjectController.start(this.users)
-            this.mapController.start()
-
             this.users.forEach(u => u.socket.emit('player_create', u.player.info()))
             this.emit('map_create', this.mapController.info())
 

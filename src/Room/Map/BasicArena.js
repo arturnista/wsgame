@@ -1,19 +1,14 @@
-const _ = require('lodash')
-const uuid = require('uuid')
-const goTypes = require('./GameObjects/gameObjectTypes')
-const vector = require('../utils/vector')
+const goTypes = require('../GameObjects/gameObjectTypes')
+const vector = require('../../utils/vector')
 
 const DECREASE_INCREMENT = 3
 
-function MapController(goController, emit) {
+function BasicArena(goController) {
     this.goController = goController
-    this.emit = emit
-
-    this.prepare()
-    this.status = 'waiting'
+    this.name = 'Basic Arena'
 }
 
-MapController.prototype.prepare = function() {
+BasicArena.prototype.prepare = function() {
     this.damagePerSecond = 5
     this.size = 500
     this.halfSize = this.size / 2
@@ -40,7 +35,7 @@ MapController.prototype.prepare = function() {
     this._timePassed = 0
 }
 
-MapController.prototype.start = function() {
+BasicArena.prototype.start = function() {
     this.prepare()
 
     for (var i = 0; i < this.goController.gameObjects.length; i++) {
@@ -49,16 +44,11 @@ MapController.prototype.start = function() {
 
         player.position = this.spawnPoints[i]
     }
-
-    this.status = 'ready'
 }
 
-MapController.prototype.end = function() {
-    this.status = 'waiting'
-}
-
-MapController.prototype.info = function() {
+BasicArena.prototype.info = function() {
     return {
+        name: this.name,
         size: this.size,
         obstacles: this.obstacles.map(x => x.info()),
         position: this.position,
@@ -67,9 +57,8 @@ MapController.prototype.info = function() {
     }
 }
 
-MapController.prototype.update = function(deltatime) {
-    if(this.status === 'waiting') return
-
+BasicArena.prototype.update = function(deltatime) {
+    let shouldUpdate = false
     const players = this.goController.gameObjects.filter(x => x.type === goTypes.PLAYER)
     for (var i = 0; i < players.length; i++) {
         if(players[i].status !== 'alive') continue
@@ -86,7 +75,7 @@ MapController.prototype.update = function(deltatime) {
 
         this.damagePerSecond *= 2
         this.decreasePerSecond += DECREASE_INCREMENT
-        this.emit('map_update', this.info())
+        shouldUpdate = true
     }
 
     if(this.decreasePerSecond > 0) {
@@ -94,6 +83,9 @@ MapController.prototype.update = function(deltatime) {
         if(this.size < 0) this.size = 0
         this.halfSize = this.size / 2
     }
+
+    return shouldUpdate
 }
 
-module.exports = MapController
+
+module.exports = BasicArena

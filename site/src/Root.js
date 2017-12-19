@@ -21,6 +21,7 @@ class Root extends Component {
             players: [],
             spells: [],
             map: {},
+            mapName: '',
             status: 'move',
             roomName: '',
             roomJoined: '',
@@ -45,7 +46,7 @@ class Root extends Component {
                 this.currentPlayerId = body.id
             })
 
-            window.socketio.on('game_will_start', () => this.setState({ gameIsRunning: true }))
+            window.socketio.on('game_will_start', ({map}) => this.setState({ mapName: map.name, gameIsRunning: true }))
             window.socketio.on('game_start', () => {} )
 
             window.socketio.on('game_will_end', (body) => {
@@ -134,7 +135,7 @@ class Root extends Component {
                     {/* <img src={logo} className='root-logo' alt='logo' /> */}
                     <h1 className='root-title'>Welcome to tutu game fuck u</h1>
                     {
-                        !this.state.gameIsRunning &&
+                        !this.state.gameIsRunning ?
                         <div>
                             { this.state.roomJoined === '' ?
                                 <div>
@@ -156,6 +157,10 @@ class Root extends Component {
                                     }
                                 </div>
                             }
+                        </div>
+                        :
+                        <div>
+                            <p className='root-map-name'>{this.state.mapName}</p>
                         </div>
                     }
                     {

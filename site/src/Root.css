@@ -22,6 +22,11 @@
     font-size: 1.5em;
 }
 
+.root-map-name {
+    font-size: 1.3em;
+    color: #FFCC00;
+}
+
 .game-container {
     position: relative;
     display: flex;

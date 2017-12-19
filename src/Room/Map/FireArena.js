@@ -19,14 +19,14 @@ FireArena.prototype.prepare = function() {
     }
 
     this.obstacles = []
-    this.obstacles.push( this.goController.createObstacle({ position: { x: 150, y: 150 }, size: 20 }) )
-    this.obstacles.push( this.goController.createObstacle({ position: { x: 250, y: 150 }, size: 20 }) )
-    this.obstacles.push( this.goController.createObstacle({ position: { x: 350, y: 150 }, size: 20 }) )
-    this.obstacles.push( this.goController.createObstacle({ position: { x: 350, y: 250 }, size: 20 }) )
-    this.obstacles.push( this.goController.createObstacle({ position: { x: 350, y: 350 }, size: 20 }) )
-    this.obstacles.push( this.goController.createObstacle({ position: { x: 250, y: 350 }, size: 20 }) )
-    this.obstacles.push( this.goController.createObstacle({ position: { x: 150, y: 350 }, size: 20 }) )
-    this.obstacles.push( this.goController.createObstacle({ position: { x: 150, y: 250 }, size: 20 }) )
+    this.obstacles.push( this.goController.createObstacle({ position: { x: 130, y: 130 }, size: 10 }) )
+    this.obstacles.push( this.goController.createObstacle({ position: { x: 250, y:  50 }, size: 10 }) )
+    this.obstacles.push( this.goController.createObstacle({ position: { x: 380, y: 130 }, size: 10 }) )
+    this.obstacles.push( this.goController.createObstacle({ position: { x: 450, y: 250 }, size: 10 }) )
+    this.obstacles.push( this.goController.createObstacle({ position: { x: 380, y: 380 }, size: 10 }) )
+    this.obstacles.push( this.goController.createObstacle({ position: { x: 250, y: 450 }, size: 10 }) )
+    this.obstacles.push( this.goController.createObstacle({ position: { x: 130, y: 380 }, size: 10 }) )
+    this.obstacles.push( this.goController.createObstacle({ position: { x:  50, y: 250 }, size: 10 }) )
 
     this.spawnPoints = []
     this.spawnPoints.push( { x: 100, y: 100 } )

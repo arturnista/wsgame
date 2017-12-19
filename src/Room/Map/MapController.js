@@ -1,5 +1,11 @@
+const _ = require('lodash')
 const BasicArena = require('./BasicArena')
 const FireArena = require('./FireArena')
+
+const MAPS = [
+    BasicArena,
+    FireArena
+]
 
 function MapController(goController, emit) {
     this.emit = emit
@@ -7,7 +13,8 @@ function MapController(goController, emit) {
 }
 
 MapController.prototype.selectCurrentMap = function() {
-    this.currentMap = new BasicArena(this.goController)
+    const RandomMap = MAPS[ _.random(0, MAPS.length - 1) ]
+    this.currentMap = new RandomMap(this.goController)
 }
 
 MapController.prototype.start = function() {

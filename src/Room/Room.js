@@ -1,6 +1,6 @@
 const moment = require('moment')
 const uuid = require('uuid')
-const GameObjectController = require('./GameObjectController')
+const GameObjectController = require('./GameObjects/GameObjectController')
 const Physics = require('./Physics')
 const MapController = require('./MapController')
 

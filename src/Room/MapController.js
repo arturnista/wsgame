@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const uuid = require('uuid')
-const goTypes = require('./gameObjectTypes')
+const goTypes = require('./GameObjects/gameObjectTypes')
 const vector = require('../utils/vector')
 
 const DECREASE_INCREMENT = 3

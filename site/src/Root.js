@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
+import moment from 'moment'
 import logo from './logo.svg'
 import Player from './Player'
 import Spell from './Spell'
@@ -22,6 +23,7 @@ class Root extends Component {
             spells: [],
             map: {},
             mapName: '',
+            ping: 0,
             status: 'move',
             roomName: '',
             roomJoined: '',
@@ -38,7 +40,8 @@ class Root extends Component {
             console.log('SocketIO :: Connected')
 
             window.socketio.on('sync', (body) => {
-                this.setState({ players: body.players, spells: body.spells })
+                const ping = moment().diff(body.sendTime)
+                this.setState({ players: body.players, spells: body.spells, ping })
                 this.currentPlayer = body.players.find(x => x.id === this.currentPlayerId)
             })
 
@@ -133,7 +136,7 @@ class Root extends Component {
             <div className='root'>
                 <header className='root-header'>
                     {/* <img src={logo} className='root-logo' alt='logo' /> */}
-                    <h1 className='root-title'>Welcome to tutu game fuck u</h1>
+                    <h1 className='root-title'>Welcome to tutu game fuck u ({this.state.ping}ms)</h1>
                     {
                         !this.state.gameIsRunning ?
                         <div>

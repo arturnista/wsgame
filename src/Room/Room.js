@@ -166,8 +166,11 @@ Room.prototype.gameLoop = function () {
 }
 
 Room.prototype.emit = function(name, data) {
-    // this.socketIo.emit(name, data)
-    this.users.forEach(u => u.socket.emit(name, data || {}))
+    const emitData = data || {}
+    emitData.sendTime = moment().toISOString()
+
+    // this.socketIo.emit(name, emitData)
+    this.users.forEach(u => u.socket.emit(name, emitData))
 }
 
 module.exports = Room

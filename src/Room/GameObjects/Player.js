@@ -64,7 +64,10 @@ Player.prototype.knockback = function (direction, multiplier, adder) {
 }
 
 Player.prototype.update = function (deltatime) {
-    if(this.status === 'dead') return
+    if(this.status === 'dead') {
+        this.velocity = { x: 0, y: 0 }
+        return
+    }
 
     if(this.desiredVelocity.x > this.velocity.x) this.velocity.x += this.acceleration * deltatime
     else if(this.desiredVelocity.x < this.velocity.x) this.velocity.x -= this.acceleration * deltatime

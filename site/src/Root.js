@@ -102,8 +102,8 @@ class Root extends Component {
         }
     }
 
-    _handleStart() {
-        window.socketio.emit('game_start', {})
+    _handleStart(mapName) {
+        window.socketio.emit('game_start', { map: mapName })
     }
 
     _handleMouseDown(e) {
@@ -156,7 +156,12 @@ class Root extends Component {
                                         <button style={{ width: 100 }} onClick={this._toggleReady.bind(this)}>READY</button>
                                     }
                                     {
-                                        this.state.roomJoinedIsOwner && <button style={{ width: 100 }} onClick={this._handleStart.bind(this)}>START GAME</button>
+                                        this.state.roomJoinedIsOwner &&
+                                        <div>
+                                            <button style={{ width: 100 }} onClick={() => this._handleStart('BasicArena')}>START GAME BASIC</button>
+                                            <button style={{ width: 100 }} onClick={() => this._handleStart('FireArena')}>START GAME FIRE</button>
+                                            <button style={{ width: 100 }} onClick={() => this._handleStart()}>START GAME RANDOM</button>
+                                        </div>
                                     }
                                 </div>
                             }

@@ -80,7 +80,7 @@ Room.prototype.userJoin = function(user) {
         console.log(`SocketIO :: ${this.name} :: Game start :: ${JSON.stringify(message)}`)
         if(this.owner.id !== user.id) return
 
-        this.startGame()
+        this.startGame(message)
     })
 
     user.socket.on('game_restart', (message) => {
@@ -101,11 +101,11 @@ Room.prototype.userOwner = function (user) {
     this.owner = user
 }
 
-Room.prototype.startGame = function () {
+Room.prototype.startGame = function (data) {
     const usersReady = this.users.every(x => x.status === 'ready')
     if(usersReady) {
         this.gameObjectController.start(this.users)
-        this.mapController.start()
+        this.mapController.start(data.map)
 
         this.emit('game_will_start', { time: DELAY_TO_START, map: this.mapController.info() })
 

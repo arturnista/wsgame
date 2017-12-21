@@ -8,6 +8,8 @@ const MapController = require('./Map/MapController')
 const DELAY_TO_START = 3000
 const DELAY_TO_END = 5000
 
+const FIREBALL_CD = 1000
+
 let COLORS = [
     '#FFCC00',
     '#FF0000',
@@ -48,6 +50,7 @@ Room.prototype.userJoin = function(user) {
         physics
     } = this
     this.users.push( user )
+    user.lastSpellMoment = null
     user.color = COLORS[ _.random(0, COLORS.length - 1) ]
     COLORS = COLORS.filter(x => x !== user.color)
 
@@ -84,6 +87,10 @@ Room.prototype.userJoin = function(user) {
 
     user.socket.on('player_spell_fireball', (message) => {
         if(!this.gameIsRunning) return
+
+        if(user.lastSpellMoment && moment().diff(user.lastSpellMoment) < FIREBALL_CD) return;
+        user.lastSpellMoment = moment()
+
         console.log(`SocketIO :: ${this.name} :: Player used fireball :: ${JSON.stringify(message)}`)
         if(user.player && user.player.status === 'alive') gameObjectController.createFireball(message)
     })

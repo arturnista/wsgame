@@ -11,6 +11,7 @@ function Player(id, goController) {
     this.goController = goController
 
     this.status = 'alive'
+    this.color = ''
     this.start()
 }
 
@@ -40,7 +41,8 @@ Player.prototype.info = function () {
         collider: this.collider,
         velocity: this.velocity,
         status: this.status,
-        knockbackValue: this.knockbackValue
+        knockbackValue: this.knockbackValue,
+        color: this.color
     }
 }
 

@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const moment = require('moment')
 const uuid = require('uuid')
 const GameObjectController = require('./GameObjects/GameObjectController')
@@ -6,6 +7,17 @@ const MapController = require('./Map/MapController')
 
 const DELAY_TO_START = 3000
 const DELAY_TO_END = 5000
+
+let COLORS = [
+    '#FFCC00',
+    '#FF0000',
+    '#00FF00',
+    '#0000FF',
+    '#FFFF00',
+    '#FF00FF',
+    '#00FFFF',
+    '#FFFFFF',
+]
 
 function Room(socketIo, data) {
     this.now = moment()
@@ -36,9 +48,11 @@ Room.prototype.userJoin = function(user) {
         physics
     } = this
     this.users.push( user )
+    user.color = COLORS[ _.random(0, COLORS.length - 1) ]
+    COLORS = COLORS.filter(x => x !== user.color)
 
     console.log(`SocketIO :: ${this.name} :: User joined :: ${user.id}`)
-    user.socket.emit('myuser_joined_room', this.info())
+    user.socket.emit('myuser_joined_room', { room: this.info(), user: user.info() })
     this.emit('user_joined_room', this.info())
 
     // User events
@@ -93,6 +107,8 @@ Room.prototype.userJoin = function(user) {
 }
 
 Room.prototype.userDisconnect = function (user) {
+    COLORS.push( user.color )
+
     this.gameObjectController.destroyPlayer(user.id)
     this.users = this.users.filter(x => x.id !== user.id)
 }

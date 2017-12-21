@@ -14,7 +14,8 @@ User.prototype.info = function () {
     return {
         id: this.id,
         player: _.isEmpty(this.player) ? this.player : this.player.info(),
-        status: this.status
+        color: this.color,
+        status: this.status,
     }
 }
 

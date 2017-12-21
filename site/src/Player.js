@@ -20,7 +20,7 @@ class Player extends Component {
 
         return (
             <div className='game-player'
-                style={{ left: this.props.position.x - halfSize, top: this.props.position.y - halfSize, height: size, width: size, borderRadius: halfSize }} />
+                style={{ backgroundColor: this.props.color, left: this.props.position.x - halfSize, top: this.props.position.y - halfSize, height: size, width: size, borderRadius: halfSize }} />
         )
     }
 }

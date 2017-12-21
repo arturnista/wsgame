@@ -23,6 +23,7 @@ class Root extends Component {
             spells: [],
             map: {},
             mapName: '',
+            user: {},
             ping: 0,
             status: 'move',
             roomName: '',
@@ -67,11 +68,11 @@ class Root extends Component {
             window.socketio.on('map_update', (body) => this.setState({ map: body }))
 
             window.socketio.on('myuser_info', (body) => {
-                console.log(body)
+                this.setState({ user: body })
             })
 
             window.socketio.on('myuser_joined_room', (body) => {
-                this.setState({ roomJoined: body.name })
+                this.setState({ roomJoined: body.room.name, user: body.user })
             })
 
             window.socketio.on('disconnect', () => {
@@ -147,22 +148,24 @@ class Root extends Component {
                                     <button onClick={this._handleCreateRoom.bind(this)}>Create room</button>
                                 </div>
                                 :
-                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                                    <p>{this.state.roomJoined}</p>
-                                    {
-                                        this.state.isReady ?
-                                        <button style={{ width: 100 }} onClick={this._toggleReady.bind(this)}>WAITING</button>
-                                        :
-                                        <button style={{ width: 100 }} onClick={this._toggleReady.bind(this)}>READY</button>
-                                    }
-                                    {
-                                        this.state.roomJoinedIsOwner &&
-                                        <div>
-                                            <button style={{ width: 100 }} onClick={() => this._handleStart('BasicArena')}>START GAME BASIC</button>
-                                            <button style={{ width: 100 }} onClick={() => this._handleStart('FireArena')}>START GAME FIRE</button>
-                                            <button style={{ width: 100 }} onClick={() => this._handleStart()}>START GAME RANDOM</button>
-                                        </div>
-                                    }
+                                <div style={{ backgroundColor: this.state.user.color, paddingTop: 10 }}>
+                                    <div style={{ backgroundColor: '#222', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                                        <p>{this.state.roomJoined}</p>
+                                        {
+                                            this.state.isReady ?
+                                            <button style={{ width: 100 }} onClick={this._toggleReady.bind(this)}>WAITING</button>
+                                            :
+                                            <button style={{ width: 100 }} onClick={this._toggleReady.bind(this)}>READY</button>
+                                        }
+                                        {
+                                            this.state.roomJoinedIsOwner &&
+                                            <div>
+                                                <button style={{ width: 100 }} onClick={() => this._handleStart('BasicArena')}>START GAME BASIC</button>
+                                                <button style={{ width: 100 }} onClick={() => this._handleStart('FireArena')}>START GAME FIRE</button>
+                                                <button style={{ width: 100 }} onClick={() => this._handleStart()}>START GAME RANDOM</button>
+                                            </div>
+                                        }
+                                    </div>
                                 </div>
                             }
                         </div>
@@ -182,7 +185,7 @@ class Root extends Component {
                     }
                 </header>
                 <div className='game-container'
-                    onMouseMove={e => this.mousePosition = { x: e.pageX , y: e.pageY - 190 } }
+                    onMouseMove={e => this.mousePosition = { x: e.pageX , y: e.pageY - 200 } }
                     onMouseDown={this._handleMouseDown.bind(this)}
                     onKeyDown={this._handleKeyDown.bind(this)}>
                     {

@@ -16,6 +16,7 @@ GameObjectController.prototype.start = function (users) {
     this.gameObjects = []
     for (var i = 0; i < users.length; i++) {
         users[i].player = this.createPlayer()
+        users[i].player.color = users[i].color
     }
 
 }

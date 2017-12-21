@@ -33,9 +33,14 @@ FireArena.prototype.prepare = function() {
     this.spawnPoints.push( { x: 400, y: 400 } )
     this.spawnPoints.push( { x: 100, y: 400 } )
     this.spawnPoints.push( { x: 400, y: 100 } )
-
+    this.spawnPoints.push( { x: 200, y: 200 } )
+    this.spawnPoints.push( { x: 400, y: 200 } )
+    this.spawnPoints.push( { x: 200, y: 400 } )
+    this.spawnPoints.push( { x: 200, y: 100 } )
+    this.spawnPoints.push( { x: 100, y: 200 } )
+    
     this.decreasePerSecond = 0
-    this.timeToUpdate = 60
+    this.timeToUpdate = 30
     this._timePassed = 0
 }
 

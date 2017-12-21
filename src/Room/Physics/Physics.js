@@ -8,6 +8,8 @@ function Physics(goController) {
 }
 
 Physics.prototype.update = function (deltatime) {
+    const onCollideFunctions = []
+
     for (var i = 0; i < this.goController.gameObjects.length; i++) {
         const object = this.goController.gameObjects[i]
         if (!object.collider) continue
@@ -35,7 +37,7 @@ Physics.prototype.update = function (deltatime) {
             if (collided) {
                 const dirCollision = vector.direction(objectCmp.position, object.position)
                 const dirCollisionInv = vector.direction(object.position, objectCmp.position)
-                if (object.onCollide) setImmediate(object.onCollide.bind(object), objectCmp, dirCollision, dirCollisionInv)
+                if (object.onCollide) onCollideFunctions.push(_ => object.onCollide(objectCmp, dirCollision, dirCollisionInv))
 
                 if (objectCmp.type === goTypes.OBSTACLE) {
                     directionToMove = vector.multiply(dirCollision, vector.length(directionToMove))
@@ -49,6 +51,11 @@ Physics.prototype.update = function (deltatime) {
             object.position.x += directionToMove.x * deltatime
             object.position.y += directionToMove.y * deltatime
         }
+    }
+    
+    for (let i = 0; i < onCollideFunctions.length; i++) {
+        const fun = onCollideFunctions[i]
+        fun()
     }
 
 }

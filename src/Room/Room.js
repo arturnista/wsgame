@@ -166,11 +166,12 @@ Room.prototype.gameLoop = function () {
     gameObjectController.update(deltatime)
     mapController.update(deltatime)
 
-    this.now = moment()
-    setTimeout(this.gameLoop.bind(this), 10)
     const infos = gameObjectController.allInfos()
     this.emit('sync', infos)
 
+    this.now = moment()
+    setTimeout(this.gameLoop.bind(this), 10)
+    
     if(this._gameEnded) return
 
     const alivePlayers = infos.players.filter(x => x.status === 'alive')

@@ -28,8 +28,8 @@ const connect = function(server) {
             room = new Room(socketIo.to(data.name), data)
             rooms.push(room)
 
-            room.userJoin(user)
             room.userOwner(user)
+            room.userJoin(user)
             user.socket.join(room.name)
         })
 

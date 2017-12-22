@@ -11,14 +11,15 @@ const DELAY_TO_END = 5000
 const FIREBALL_CD = 1000
 
 let COLORS = [
-    '#FFCC00',
-    '#FF0000',
-    '#00FF00',
-    '#0000FF',
-    '#FFFF00',
-    '#FF00FF',
-    '#00FFFF',
-    '#FFFFFF',
+    '#ff0000',
+    '#0000ff',
+    '#00ffff',
+    '#ff00ff',
+    '#ffff00',
+    '#ff8000',
+    '#00ff00',
+    '#ffaaaa',
+    '#aaaaaa',
 ]
 
 function Room(socketIo, data) {
@@ -39,7 +40,11 @@ function Room(socketIo, data) {
 
 Room.prototype.info = function () {
     return {
-        name: this.name
+        name: this.name,
+        owner: this.owner.info(),
+        usersNumber: this.users.length,
+        usersReady: this.users.filter(x => x.status === 'ready').length,
+        usersWaiting: this.users.filter(x => x.status === 'waiting').length,
     }
 }
 
@@ -88,7 +93,7 @@ Room.prototype.userJoin = function(user) {
     user.socket.on('player_spell_fireball', (message) => {
         if(!this.gameIsRunning) return
 
-        if(user.lastSpellMoment && moment().diff(user.lastSpellMoment) < FIREBALL_CD) return;
+        if(user.lastSpellMoment && moment().diff(user.lastSpellMoment) < FIREBALL_CD) return
         user.lastSpellMoment = moment()
 
         console.log(`SocketIO :: ${this.name} :: Player used fireball :: ${JSON.stringify(message)}`)
@@ -149,7 +154,7 @@ Room.prototype.endGame = function () {
     this.gameObjectController.end(this.users)
     this.mapController.end()
 
-    this.users.forEach(u => u.status === 'waiting')
+    this.users.forEach(u => u.status = 'waiting')
 
     this.emit('game_end')
 

@@ -6,7 +6,7 @@
 }
 
 .reflect_shield {
-    border: 1px solid #FFCC00;
+    box-shadow: inset 0 0 15px #00CCFF;
 }
 
 .click-pos {

@@ -54,10 +54,16 @@ Fireball.prototype.onCollide = function (object, direction, directionInv) {
     const { gameObjects } = this.goController
 
     if(object.id === this.id) return
-    if(object.id === this.owner.id) return
+    if(this.owner && object.id === this.owner.id) return
 
     if(object.type === goTypes.PLAYER) {
         object.knockback(directionInv, this.multiplier, this.percentageAdder)
+        const shouldReflect = object.modifiers.find(x => x.name === 'reflect_shield') != null
+        if(shouldReflect) {
+            this.velocity = vector.multiply(direction, this.moveSpeed)
+            this.owner = null
+            return
+        }
     }
 
     this.goController.destroy(this.id)

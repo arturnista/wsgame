@@ -8,8 +8,6 @@ const MapController = require('./Map/MapController')
 const DELAY_TO_START = 3000
 const DELAY_TO_END = 5000
 
-const FIREBALL_CD = 1000
-
 let COLORS = [
     '#ff0000',
     '#0000ff',
@@ -55,9 +53,10 @@ Room.prototype.userJoin = function(user) {
         physics
     } = this
     this.users.push( user )
-    user.lastSpellMoment = null
+
     user.color = COLORS[ _.random(0, COLORS.length - 1) ]
     COLORS = COLORS.filter(x => x !== user.color)
+    user.gameObjectController = this.gameObjectController
 
     console.log(`SocketIO :: ${this.name} :: User joined :: ${user.id}`)
     user.socket.emit('myuser_joined_room', { room: this.info(), user: user.info() })
@@ -93,11 +92,15 @@ Room.prototype.userJoin = function(user) {
     user.socket.on('player_spell_fireball', (message) => {
         if(!this.gameIsRunning) return
 
-        if(user.lastSpellMoment && moment().diff(user.lastSpellMoment) < FIREBALL_CD) return
-        user.lastSpellMoment = moment()
-
         console.log(`SocketIO :: ${this.name} :: Player used fireball :: ${JSON.stringify(message)}`)
-        if(user.player && user.player.status === 'alive') gameObjectController.createFireball(message)
+        if(user.player) user.player.useSpell('fireball', message)
+    })
+
+    user.socket.on('player_spell_reflect_shield', (message) => {
+        if(!this.gameIsRunning) return
+
+        console.log(`SocketIO :: ${this.name} :: Player used reflect_shield :: ${JSON.stringify(message)}`)
+        if(user.player) user.player.useSpell('reflect_shield', message)
     })
 
     // Game events
@@ -130,7 +133,8 @@ Room.prototype.userOwner = function (user) {
 }
 
 Room.prototype.startGame = function (data) {
-    const usersReady = this.users.every(x => x.status === 'ready')
+    // const usersReady = this.users.every(x => x.status === 'ready')
+    const usersReady = true
     if(usersReady) {
         this.gameObjectController.start(this.users)
         this.mapController.start(data && data.map)
@@ -183,15 +187,15 @@ Room.prototype.gameLoop = function () {
 
     this.now = moment()
     setTimeout(this.gameLoop.bind(this), 10)
-    
+
     if(this._gameEnded) return
 
-    const alivePlayers = infos.players.filter(x => x.status === 'alive')
-    if(alivePlayers.length === 1) {
-        this._gameEnded = true
-        this.emit('game_will_end', { time: DELAY_TO_END, winner: alivePlayers[0] })
-        setTimeout(this.endGame.bind(this), DELAY_TO_END)
-    }
+    // const alivePlayers = infos.players.filter(x => x.status === 'alive')
+    // if(alivePlayers.length === 1) {
+    //     this._gameEnded = true
+    //     this.emit('game_will_end', { time: DELAY_TO_END, winner: alivePlayers[0] })
+    //     setTimeout(this.endGame.bind(this), DELAY_TO_END)
+    // }
 }
 
 Room.prototype.emit = function(name, data) {

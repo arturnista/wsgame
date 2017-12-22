@@ -1,7 +1,9 @@
 const _ = require('lodash')
+const moment = require('moment')
 const goTypes = require('./gameObjectTypes')
 const vector = require('../../utils/vector')
 const colliders = require('../Physics/colliders')
+const spells = require('./spells')
 
 function Player(id, goController) {
     this.id = id
@@ -23,8 +25,11 @@ Player.prototype.start = function () {
     this.knockbackValue = 200
 
     this.moveSpeed = 200
-    this.acceleration = 150
+    this.acceleration = 400
     this.positionToGo = null
+
+    this.spellsUsed = {}
+    this.modifiers = []
 }
 
 Player.prototype.restart = function () {
@@ -42,7 +47,8 @@ Player.prototype.info = function () {
         velocity: this.velocity,
         status: this.status,
         knockbackValue: this.knockbackValue,
-        color: this.color
+        color: this.color,
+        modifiers: this.modifiers.map(x => x.name)
     }
 }
 
@@ -58,11 +64,32 @@ Player.prototype.dealDamage = function (damage) {
 }
 
 Player.prototype.knockback = function (direction, multiplier, adder) {
-    const knockbackValue = this.knockbackValue * multiplier
+    let knockbackValue = this.knockbackValue * multiplier
+    knockbackValue = this.modifiers.reduce((v, m) => _.isNil(m.effects.knockback) ? v : v * m.effects.knockback, knockbackValue)
 
-    this.velocity = vector.multiply(direction, knockbackValue)
+    let knockbackAdder = adder
+    knockbackAdder = this.modifiers.reduce((v, m) => _.isNil(m.effects.knockbackAdder) ? v : v * m.effects.knockbackAdder, knockbackAdder)
 
-    this.knockbackValue *= adder
+    if(knockbackValue) this.velocity = vector.multiply(direction, knockbackValue)
+    if(knockbackAdder) this.knockbackValue *= knockbackAdder
+}
+
+Player.prototype.useSpell = function(spellName, data) {
+    if(this.status !== 'alive') return
+    if(!spells[spellName]) return
+
+    const spellData = spells[spellName]
+    if(this.spellsUsed[spellName] && moment().diff(this.spellsUsed[spellName]) < spellData.cooldown) return
+    this.spellsUsed[spellName] = moment()
+
+    switch (spellName) {
+        case 'fireball':
+            this.goController.createFireball(data)
+            break
+        case 'reflect_shield':
+            this.modifiers.push(Object.assign({ name: spellName, initial: moment() }, spellData))
+            break
+    }
 }
 
 Player.prototype.update = function (deltatime) {
@@ -70,6 +97,8 @@ Player.prototype.update = function (deltatime) {
         this.velocity = { x: 0, y: 0 }
         return
     }
+
+    this.modifiers = this.modifiers.filter(m => moment().diff(m.initial) < m.duration)
 
     if(this.desiredVelocity.x > this.velocity.x) this.velocity.x += this.acceleration * deltatime
     else if(this.desiredVelocity.x < this.velocity.x) this.velocity.x -= this.acceleration * deltatime

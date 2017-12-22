@@ -22,7 +22,7 @@ Player.prototype.start = function () {
     this.velocity = { x: 0, y: 0 }
     this.desiredVelocity = { x: 0, y: 0 }
     this.life = 100
-    this.knockbackValue = 200
+    this.knockbackValue = 600
 
     this.moveSpeed = 200
     this.acceleration = 400

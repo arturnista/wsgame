@@ -17,9 +17,10 @@ class Player extends Component {
     render() {
         const size = this.props.collider.size
         const halfSize = this.props.collider.size / 2
-
+        let classNames = 'game-player '
+        classNames = this.props.modifiers.reduce((v, m) => v + m + ' ', classNames)
         return (
-            <div className='game-player'
+            <div className={classNames}
                 style={{ backgroundColor: this.props.color, left: this.props.position.x - halfSize, top: this.props.position.y - halfSize, height: size, width: size, borderRadius: halfSize }} />
         )
     }

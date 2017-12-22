@@ -113,11 +113,7 @@ class Root extends Component {
 
         if(this.currentPlayer == null) return
 
-        window.socketio.emit(`player_${status}`, {
-            id: this.currentPlayerId,
-            position: this.mousePosition,
-            direction: vector.direction(this.currentPlayer.position, this.mousePosition),
-        })
+        this.emitAction(status)
         this.setState({ status: 'move', positionToGo: this.mousePosition })
     }
 
@@ -126,7 +122,17 @@ class Root extends Component {
         switch (keyPressed) {
             case 'q':
                 return this.setState({ status: 'spell_fireball' })
+            case 'e':
+                return this.emitAction('spell_reflect_shield')
         }
+    }
+
+    emitAction(action) {
+        window.socketio.emit(`player_${action}`, {
+            id: this.currentPlayerId,
+            position: this.mousePosition,
+            direction: vector.direction(this.currentPlayer.position, this.mousePosition),
+        })
     }
 
     render() {

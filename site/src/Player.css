@@ -5,6 +5,10 @@
     position: absolute;
 }
 
+.reflect_shield {
+    border: 1px solid #FFCC00;
+}
+
 .click-pos {
     width: 10px;
     height: 10px;

@@ -18,15 +18,15 @@ function Player(id, goController) {
 }
 
 Player.prototype.start = function () {
+    this.moveSpeed = 200
+    this.acceleration = 400
+    this.positionToGo = null
+
     this.position = { x: 100, y: 100 }
     this.velocity = { x: 0, y: 0 }
     this.desiredVelocity = { x: 0, y: 0 }
     this.life = 100
-    this.knockbackValue = 600
-
-    this.moveSpeed = 200
-    this.acceleration = 400
-    this.positionToGo = null
+    this.knockbackValue = 300
 
     this.spellsUsed = {}
     this.modifiers = []

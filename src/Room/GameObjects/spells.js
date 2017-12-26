@@ -4,7 +4,7 @@ module.exports = {
     },
     reflect_shield: {
         cooldown: 6000,
-        duration: 3000,
+        duration: 1000,
         effects: {
             knockback: 0,
             knockbackAdder: 0

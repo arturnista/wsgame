@@ -126,6 +126,8 @@ Room.prototype.userDisconnect = function (user) {
 
     this.gameObjectController.destroyPlayer(user.id)
     this.users = this.users.filter(x => x.id !== user.id)
+    
+    this.emit('user_left_room', user.info())
 }
 
 Room.prototype.userOwner = function (user) {

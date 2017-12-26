@@ -64,9 +64,11 @@ Fireball.prototype.onCollide = function (object, direction, directionInv) {
             this.owner = null
             return
         }
+        this.goController.destroy(this.id)
+    } else if(object.type === goTypes.OBSTACLE) {
+        this.goController.destroy(this.id)
     }
-
-    this.goController.destroy(this.id)
+    
 }
 
 module.exports = Fireball

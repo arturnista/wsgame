@@ -24,7 +24,8 @@ Player.prototype.start = function () {
 
     this.position = { x: 100, y: 100 }
     this.velocity = { x: 0, y: 0 }
-    this.desiredVelocity = { x: 0, y: 0 }
+    this.knockbackVelocity = { x: 0, y: 0 }
+    this.moveVelocity = { x: 0, y: 0 }
     this.life = 100
     this.knockbackValue = 300
 
@@ -70,7 +71,7 @@ Player.prototype.knockback = function (direction, multiplier, adder) {
     let knockbackAdder = adder
     knockbackAdder = this.modifiers.reduce((v, m) => _.isNil(m.effects.knockbackAdder) ? v : v * m.effects.knockbackAdder, knockbackAdder)
 
-    if(knockbackValue) this.velocity = vector.multiply(direction, knockbackValue)
+    if(knockbackValue) this.knockbackVelocity = vector.add(this.knockbackVelocity, vector.multiply(direction, knockbackValue))
     if(knockbackAdder) this.knockbackValue *= knockbackAdder
 }
 
@@ -100,17 +101,17 @@ Player.prototype.update = function (deltatime) {
 
     this.modifiers = this.modifiers.filter(m => moment().diff(m.initial) < m.duration)
 
-    if(this.desiredVelocity.x > this.velocity.x) this.velocity.x += this.acceleration * deltatime
-    else if(this.desiredVelocity.x < this.velocity.x) this.velocity.x -= this.acceleration * deltatime
-    if(this.desiredVelocity.y > this.velocity.y) this.velocity.y += this.acceleration * deltatime
-    else if(this.desiredVelocity.y < this.velocity.y) this.velocity.y -= this.acceleration * deltatime
+    // if(this.desiredVelocity.x > this.velocity.x) this.velocity.x += this.acceleration * deltatime
+    // else if(this.desiredVelocity.x < this.velocity.x) this.velocity.x -= this.acceleration * deltatime
+    // if(this.desiredVelocity.y > this.velocity.y) this.velocity.y += this.acceleration * deltatime
+    // else if(this.desiredVelocity.y < this.velocity.y) this.velocity.y -= this.acceleration * deltatime
 
     if(this.positionToGo != null) {
 
         const distance = vector.distance(this.position, this.positionToGo)
         if(distance <= 2) {
 
-            this.desiredVelocity = { x: 0, y: 0 }
+            this.moveVelocity = { x: 0, y: 0 }
             this.positionToGo = null
 
         } else {
@@ -125,7 +126,7 @@ Player.prototype.update = function (deltatime) {
             if(this.positionToGo.x < this.position.x) deltaX *= -1
             if(this.positionToGo.y < this.position.y) deltaY *= -1
 
-            this.desiredVelocity = {
+            this.moveVelocity = {
                 x: this.moveSpeed * deltaX,
                 y: this.moveSpeed * deltaY,
             }
@@ -133,6 +134,13 @@ Player.prototype.update = function (deltatime) {
         }
 
     }
+    if(vector.length(this.knockbackVelocity) > 0) {
+        console.log(this.knockbackVelocity, 300 * deltatime)
+        this.knockbackVelocity = vector.reduceToZero(this.knockbackVelocity, 300 * deltatime)
+        console.log(this.knockbackVelocity)
+        console.log('\n')
+    }
+    this.velocity = vector.add(this.moveVelocity, this.knockbackVelocity)
 
 }
 

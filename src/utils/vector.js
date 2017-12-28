@@ -55,6 +55,26 @@ function add(pos1, pos2) {
     }
 }
 
+function reduceToZero(vector, value) {
+    if(value < 0) value *= -1
+
+    const norm = normalize(vector)
+
+    let xToSum = ( norm.x * value )
+    let yToSum = ( norm.y * value )
+
+    let xFinal = vector.x - xToSum
+    let yFinal = vector.y - yToSum
+    if(Math.abs(vector.x) < Math.abs(xToSum)) xFinal = 0
+    if(Math.abs(vector.y) < Math.abs(yToSum)) yFinal = 0
+    console.log('Normal: ', norm, 'Vetor: ', vector, ' Sum: ', ({x:xToSum, y: yToSum}), 'Final: ', ({x:xFinal, y: yFinal}))
+
+    return {
+        x: xFinal,
+        y: yFinal,
+    }
+}
+
 module.exports = {
     direction,
     normalize,
@@ -62,4 +82,5 @@ module.exports = {
     length,
     multiply,
     add,
+    reduceToZero
 }

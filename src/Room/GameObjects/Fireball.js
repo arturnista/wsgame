@@ -14,9 +14,9 @@ function Fireball(id, data, goController) {
 
     this.collider = colliders.createCircle(40)
 
-    this.position = {
-        x: this.owner ? this.owner.position.x : 0,
-        y: this.owner ? this.owner.position.y : 0,
+    this.position = { x: 0, y: 0 }
+    if(this.owner) {
+        this.position = vector.add( this.owner.position, vector.multiply(data.direction, this.owner.collider.size) )
     }
 
     this.multiplier = 1

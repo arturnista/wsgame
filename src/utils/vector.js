@@ -24,15 +24,6 @@ function multiply(vec1, vec2) {
     }
 }
 
-function reverse(vec1) {
-    if(vec1 == null) throw new Error('Vector 1 is undefined')
-
-    return {
-        x: vec1.x > 0 ? 1 - vec1.x : 1 + vec1.x,
-        y: vec1.y > 0 ? 1 - vec1.y : 1 + vec1.y,
-    }
-}
-
 function direction(pos1, pos2) {
     if(pos1 == null) throw new Error('Position 1 is undefined')
     if(pos2 == null) throw new Error('Position 2 is undefined')
@@ -54,11 +45,21 @@ function normalize(vector) {
     }
 }
 
+function add(pos1, pos2) {
+    if(pos1 == null) throw new Error('Position 1 is undefined')
+    if(pos2 == null) throw new Error('Position 2 is undefined')
+
+    return {
+        x: pos2.x + pos1.x,
+        y: pos2.y + pos1.y
+    }
+}
+
 module.exports = {
     direction,
     normalize,
     distance,
     length,
     multiply,
-    reverse
+    add,
 }

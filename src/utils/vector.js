@@ -67,7 +67,6 @@ function reduceToZero(vector, value) {
     let yFinal = vector.y - yToSum
     if(Math.abs(vector.x) < Math.abs(xToSum)) xFinal = 0
     if(Math.abs(vector.y) < Math.abs(yToSum)) yFinal = 0
-    console.log('Normal: ', norm, 'Vetor: ', vector, ' Sum: ', ({x:xToSum, y: yToSum}), 'Final: ', ({x:xFinal, y: yFinal}))
 
     return {
         x: xFinal,

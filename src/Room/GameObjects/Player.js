@@ -19,13 +19,14 @@ function Player(id, goController) {
 
 Player.prototype.start = function () {
     this.moveSpeed = 200
-    this.acceleration = 400
     this.positionToGo = null
 
-    this.position = { x: 100, y: 100 }
+    this.position = { x: 0, y: 0 }
+
     this.velocity = { x: 0, y: 0 }
     this.knockbackVelocity = { x: 0, y: 0 }
     this.moveVelocity = { x: 0, y: 0 }
+
     this.life = 100
     this.knockbackValue = 300
 
@@ -101,11 +102,6 @@ Player.prototype.update = function (deltatime) {
 
     this.modifiers = this.modifiers.filter(m => moment().diff(m.initial) < m.duration)
 
-    // if(this.desiredVelocity.x > this.velocity.x) this.velocity.x += this.acceleration * deltatime
-    // else if(this.desiredVelocity.x < this.velocity.x) this.velocity.x -= this.acceleration * deltatime
-    // if(this.desiredVelocity.y > this.velocity.y) this.velocity.y += this.acceleration * deltatime
-    // else if(this.desiredVelocity.y < this.velocity.y) this.velocity.y -= this.acceleration * deltatime
-
     if(this.positionToGo != null) {
 
         const distance = vector.distance(this.position, this.positionToGo)
@@ -135,13 +131,21 @@ Player.prototype.update = function (deltatime) {
 
     }
     if(vector.length(this.knockbackVelocity) > 0) {
-        console.log(this.knockbackVelocity, 300 * deltatime)
         this.knockbackVelocity = vector.reduceToZero(this.knockbackVelocity, 300 * deltatime)
-        console.log(this.knockbackVelocity)
-        console.log('\n')
     }
     this.velocity = vector.add(this.moveVelocity, this.knockbackVelocity)
 
+}
+
+Player.prototype.onCollide = function (object, direction, directionInv) {
+    const { gameObjects } = this.goController
+
+    if(object.id === this.id) return
+
+    if(object.type === goTypes.OBSTACLE) {
+        this.knockbackVelocity = vector.multiply(direction, vector.length(this.knockbackVelocity))
+    }
+    
 }
 
 module.exports = Player

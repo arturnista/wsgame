@@ -40,6 +40,7 @@ Room.prototype.info = function () {
     return {
         name: this.name,
         owner: this.owner.info(),
+        users: this.users.map(x => x.info()),
         usersNumber: this.users.length,
         usersReady: this.users.filter(x => x.status === 'ready').length,
         usersWaiting: this.users.filter(x => x.status === 'waiting').length,

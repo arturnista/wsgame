@@ -40,10 +40,7 @@ Room.prototype.info = function () {
     return {
         name: this.name,
         owner: this.owner.info(),
-        users: this.users.map(x => x.info()),
-        usersNumber: this.users.length,
-        usersReady: this.users.filter(x => x.status === 'ready').length,
-        usersWaiting: this.users.filter(x => x.status === 'waiting').length,
+        users: this.users.map(x => x.info())
     }
 }
 
@@ -61,7 +58,7 @@ Room.prototype.userJoin = function(user) {
 
     console.log(`SocketIO :: ${this.name} :: User joined :: ${user.id}`)
     user.socket.emit('myuser_joined_room', { room: this.info(), user: user.info() })
-    this.emit('user_joined_room', this.info())
+    this.emit('user_joined_room', { room: this.info(), user: user.info() })
 
     // User events
     user.socket.on('user_ready', (message) => {

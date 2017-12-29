@@ -85,12 +85,12 @@ class Root extends Component {
 
     _handleJoinRoom() {
         this.setState({ roomJoinedIsOwner: false })
-        window.socketio.emit('room_join', { name: this.state.roomName })
+        window.socketio.emit('room_join', { name: this.state.roomName, userName: this.state.userName })
     }
 
     _handleCreateRoom() {
         this.setState({ roomJoinedIsOwner: true })
-        window.socketio.emit('room_create', { name: this.state.roomName })
+        window.socketio.emit('room_create', { name: this.state.roomName, userName: this.state.userName })
     }
 
     _toggleReady() {
@@ -149,6 +149,8 @@ class Root extends Component {
                         <div>
                             { this.state.roomJoined === '' ?
                                 <div>
+                                    <input placeholder='User name' onChange={e => this.setState({ userName: e.target.value })} value={this.state.userName}/>
+                                    <br />
                                     <input placeholder='Room name' onChange={e => this.setState({ roomName: e.target.value })} value={this.state.roomName}/>
                                     <button onClick={this._handleJoinRoom.bind(this)}>Enter room</button>
                                     <button onClick={this._handleCreateRoom.bind(this)}>Create room</button>

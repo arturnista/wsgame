@@ -23,7 +23,8 @@ const connect = function(server) {
         socket.on('room_create', function (data) {
             const checkRoom = rooms.find(x => x.name === data.name)
             if(checkRoom) return
-
+            
+            user.name = data.userName
             console.log(`SocketIO :: User created ${data.name} :: ${user.id}`)
             room = new Room(socketIo.to(data.name), data)
             rooms.push(room)
@@ -36,7 +37,8 @@ const connect = function(server) {
         socket.on('room_join', function (data) {
             room = rooms.find(x => x.name === data.name)
             if(!room) return
-
+            
+            user.name = data.userName
             console.log(`SocketIO :: User joined ${data.name} :: ${user.id}`)
             room.userJoin(user)
             user.socket.join(room.name)

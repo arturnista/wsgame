@@ -8,6 +8,7 @@ function Physics(goController) {
 }
 
 Physics.prototype.update = function (deltatime) {
+    const movementFunctions = []
     const onCollideFunctions = []
 
     for (var i = 0; i < this.goController.gameObjects.length; i++) {
@@ -50,16 +51,15 @@ Physics.prototype.update = function (deltatime) {
         }
 
         if (directionToMove && vector.length(directionToMove) > 0) {
-            object.position.x += directionToMove.x * deltatime
-            object.position.y += directionToMove.y * deltatime
+            movementFunctions.push(_ => {
+                object.position.x += directionToMove.x * deltatime
+                object.position.y += directionToMove.y * deltatime
+            })
         }
     }
 
-    for (let i = 0; i < onCollideFunctions.length; i++) {
-        const fun = onCollideFunctions[i]
-        fun()
-    }
-
+    for (let i = 0; i < movementFunctions.length; i++) movementFunctions[i]()
+    for (let i = 0; i < onCollideFunctions.length; i++) onCollideFunctions[i]()
 }
 
 Physics.prototype.circleCollision = function (obj1, obj2) {

@@ -80,6 +80,18 @@ Room.prototype.userJoin = function(user) {
         }
     })
 
+    user.socket.on('user_select_spell', (message) => {
+        if(this.gameIsRunning) return
+
+        user.spells.push(message.spellName)
+    })
+
+    user.socket.on('user_deselect_spell', (message) => {
+        if(this.gameIsRunning) return
+
+        user.spells = user.spells.filter(x => x !== message.spellName)
+    })
+
     // Player events
     user.socket.on('player_move', (message) => {
         if(!this.gameIsRunning) return

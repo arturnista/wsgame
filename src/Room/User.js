@@ -8,6 +8,7 @@ function User(socket) {
 
     this.socket = socket
     this.status = 'waiting'
+    this.spells = []
 }
 
 User.prototype.info = function () {

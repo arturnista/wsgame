@@ -17,6 +17,7 @@ GameObjectController.prototype.start = function (users) {
     for (var i = 0; i < users.length; i++) {
         users[i].player = this.createPlayer()
         users[i].player.color = users[i].color
+        users[i].player.spells = users[i].spells
     }
 
 }

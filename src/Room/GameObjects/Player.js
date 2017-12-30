@@ -30,6 +30,7 @@ Player.prototype.start = function () {
     this.life = 100
     this.knockbackValue = 300
 
+    this.spells = ['fireball', 'explosion', 'reflect_shield', 'blink']
     this.spellsUsed = {}
     this.modifiers = []
 }
@@ -78,6 +79,7 @@ Player.prototype.knockback = function (direction, multiplier, adder) {
 
 Player.prototype.useSpell = function(spellName, data) {
     if(this.status !== 'alive') return
+    if(this.spells.indexOf(spellName) === -1) return
     if(!spells[spellName]) return
 
     const spellData = spells[spellName]
@@ -86,10 +88,36 @@ Player.prototype.useSpell = function(spellName, data) {
 
     switch (spellName) {
         case 'fireball':
-            this.goController.createFireball(data)
+            this.goController.createFireball(Object.assign(data, spellData))
             break
         case 'reflect_shield':
             this.modifiers.push(Object.assign({ name: spellName, initial: moment() }, spellData))
+            break
+        case 'blink':
+            this.positionToGo = null
+            this.moveVelocity = { x: 0, y: 0 }
+            this.modifiers.push(Object.assign({ name: spellName, initial: moment() }, spellData))
+            if(vector.distance(this.position, data.position) >= spellData.distance) {
+                const dir = vector.direction(this.position, data.position)
+                this.position = vector.add(this.position, vector.multiply(dir, spellData.distance))
+            } else {
+                this.position = data.position
+            }
+            break
+        case 'explosion':
+            const players = this.goController.gameObjects.filter(x => 
+                x.type === goTypes.PLAYER && 
+                x.id !== this.id &&
+                x.status === 'alive' &&
+                vector.distance(x.position, this.position) < spellData.radius
+            )
+            players.forEach(p => {
+                p.knockback(
+                    vector.direction(this.position, p.position),
+                    spellData.multiplier,
+                    spellData.adder
+                )
+            })
             break
     }
 }
@@ -134,7 +162,7 @@ Player.prototype.update = function (deltatime) {
         this.knockbackVelocity = vector.reduceToZero(this.knockbackVelocity, 300 * deltatime)
     }
     this.velocity = vector.add(this.moveVelocity, this.knockbackVelocity)
-
+    this.velocity = this.modifiers.reduce((p, v) => _.isNil(v.effects.velocity) ? p : p * v.effects.velocity, this.velocity)
 }
 
 Player.prototype.onCollide = function (object, direction, directionInv) {

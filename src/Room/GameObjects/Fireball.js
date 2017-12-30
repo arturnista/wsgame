@@ -19,9 +19,9 @@ function Fireball(id, data, goController) {
         this.position = vector.add( this.owner.position, vector.multiply(data.direction, this.owner.collider.size) )
     }
 
-    this.multiplier = 1
-    this.percentageAdder = 1.2
-    this.moveSpeed = 400
+    this.multiplier = data.multiplier
+    this.percentageAdder = data.percentageAdder
+    this.moveSpeed = data.moveSpeed
 
     this.lifeTime = 10
     this._timePassed = 0

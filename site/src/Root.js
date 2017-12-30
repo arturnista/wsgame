@@ -26,7 +26,8 @@ class Root extends Component {
             user: {},
             ping: 0,
             status: 'move',
-            roomName: '',
+            roomName: 'a',
+            userName: 'a',
             roomJoined: '',
             gameIsRunning: false,
             roomJoinedIsOwner: false,
@@ -122,6 +123,10 @@ class Root extends Component {
         switch (keyPressed) {
             case 'q':
                 return this.setState({ status: 'spell_fireball' })
+            case 'w':
+                return this.emitAction('spell_explosion')
+            case 'r':
+                return this.setState({ status: 'spell_blink' })
             case 'e':
                 return this.emitAction('spell_reflect_shield')
         }

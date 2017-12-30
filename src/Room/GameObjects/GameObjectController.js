@@ -54,6 +54,7 @@ GameObjectController.prototype.createPlayer = function () {
 GameObjectController.prototype.createFireball = function (data) {
     const id = uuid.v4()
     const fireball = new Fireball(id, data, this)
+
     this.gameObjects.push( fireball )
 
     return fireball

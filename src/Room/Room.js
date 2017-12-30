@@ -101,6 +101,20 @@ Room.prototype.userJoin = function(user) {
         if(user.player) user.player.useSpell('reflect_shield', message)
     })
 
+    user.socket.on('player_spell_blink', (message) => {
+        if(!this.gameIsRunning) return
+
+        console.log(`SocketIO :: ${this.name} :: Player used blink :: ${JSON.stringify(message)}`)
+        if(user.player) user.player.useSpell('blink', message)
+    })
+
+    user.socket.on('player_spell_explosion', (message) => {
+        if(!this.gameIsRunning) return
+
+        console.log(`SocketIO :: ${this.name} :: Player used explosion :: ${JSON.stringify(message)}`)
+        if(user.player) user.player.useSpell('explosion', message)
+    })
+
     // Game events
     user.socket.on('game_start', (message) => {
         if(this.gameIsRunning) return

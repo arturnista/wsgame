@@ -1,22 +1,26 @@
 module.exports = {
     fireball: {
         cooldown: 1000,
-        multiplier: 1,
-        adder: 1.2,
+        knockbackMultiplier: 1,
+        knockbackIncrement: 1.2,
         moveSpeed: 400
     },
     explosion: {
         cooldown: 3000,
         radius: 100,
-        multiplier: 1,
-        adder: 1.3,
+        knockbackMultiplier: 1,
+        knockbackIncrement: 1.3,
+        duration: 1000,
+        effects: {
+            moveVelocity: 0,
+        }
     },
     reflect_shield: {
         cooldown: 6000,
         duration: 1000,
         effects: {
-            knockback: 0,
-            knockbackAdder: 0
+            knockbackValue: 0,
+            knockbackIncrement: 0
         }
     },
     blink: {
@@ -24,7 +28,7 @@ module.exports = {
         distance: 300,
         duration: 1000,
         effects: {
-            velocity: 0,
+            moveVelocity: 0,
         }
     },
 }

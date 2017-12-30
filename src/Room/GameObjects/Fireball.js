@@ -19,8 +19,8 @@ function Fireball(id, data, goController) {
         this.position = vector.add( this.owner.position, vector.multiply(data.direction, this.owner.collider.size) )
     }
 
-    this.multiplier = data.multiplier
-    this.percentageAdder = data.percentageAdder
+    this.multiplier = data.knockbackMultiplier
+    this.increment = data.knockbackIncrement
     this.moveSpeed = data.moveSpeed
 
     this.lifeTime = 10
@@ -57,7 +57,7 @@ Fireball.prototype.onCollide = function (object, direction, directionInv) {
     if(this.owner && object.id === this.owner.id) return
 
     if(object.type === goTypes.PLAYER) {
-        object.knockback(directionInv, this.multiplier, this.percentageAdder)
+        object.knockback(directionInv, this.multiplier, this.increment)
         const shouldReflect = object.modifiers.find(x => x.name === 'reflect_shield') != null
         if(shouldReflect) {
             this.velocity = vector.multiply(direction, this.moveSpeed)

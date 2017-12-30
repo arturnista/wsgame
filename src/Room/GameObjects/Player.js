@@ -66,15 +66,15 @@ Player.prototype.dealDamage = function (damage) {
     }
 }
 
-Player.prototype.knockback = function (direction, multiplier, adder) {
+Player.prototype.knockback = function (direction, multiplier, increment) {
     let knockbackValue = this.knockbackValue * multiplier
-    knockbackValue = this.modifiers.reduce((v, m) => _.isNil(m.effects.knockback) ? v : v * m.effects.knockback, knockbackValue)
+    knockbackValue = this.modifiers.reduce((v, m) => _.isNil(m.effects.knockbackValue) ? v : v * m.effects.knockbackValue, knockbackValue)
 
-    let knockbackAdder = adder
-    knockbackAdder = this.modifiers.reduce((v, m) => _.isNil(m.effects.knockbackAdder) ? v : v * m.effects.knockbackAdder, knockbackAdder)
+    let knockbackIncrement = increment
+    knockbackIncrement = this.modifiers.reduce((v, m) => _.isNil(m.effects.knockbackIncrement) ? v : v * m.effects.knockbackIncrement, knockbackIncrement)
 
     if(knockbackValue) this.knockbackVelocity = vector.add(this.knockbackVelocity, vector.multiply(direction, knockbackValue))
-    if(knockbackAdder) this.knockbackValue *= knockbackAdder
+    if(knockbackIncrement) this.knockbackValue *= knockbackIncrement
 }
 
 Player.prototype.useSpell = function(spellName, data) {
@@ -85,6 +85,8 @@ Player.prototype.useSpell = function(spellName, data) {
     const spellData = spells[spellName]
     if(this.spellsUsed[spellName] && moment().diff(this.spellsUsed[spellName]) < spellData.cooldown) return
     this.spellsUsed[spellName] = moment()
+
+    this.emit('player_use_spell', Object.assign({ name: spellName, player: this.info() }, spellData, data))
 
     switch (spellName) {
         case 'fireball':
@@ -111,13 +113,16 @@ Player.prototype.useSpell = function(spellName, data) {
                 x.status === 'alive' &&
                 vector.distance(x.position, this.position) < spellData.radius
             )
-            players.forEach(p => {
-                p.knockback(
-                    vector.direction(this.position, p.position),
-                    spellData.multiplier,
-                    spellData.adder
-                )
-            })
+            const afterEffect = () => {
+                players.forEach(p => {
+                    p.knockback(
+                        vector.direction(this.position, p.position),
+                        spellData.knockbackMultiplier,
+                        spellData.knockbackIncrement
+                    )
+                })
+            }
+            this.modifiers.push(Object.assign({ name: spellName, initial: moment(), afterEffect }, spellData))
             break
     }
 }
@@ -128,7 +133,13 @@ Player.prototype.update = function (deltatime) {
         return
     }
 
-    this.modifiers = this.modifiers.filter(m => moment().diff(m.initial) < m.duration)
+    this.modifiers = this.modifiers.filter(m => {
+        if(moment().diff(m.initial) > m.duration) {
+            if(m.afterEffect) m.afterEffect()
+            return false
+        }
+        return true
+    })
 
     if(this.positionToGo != null) {
 
@@ -161,8 +172,11 @@ Player.prototype.update = function (deltatime) {
     if(vector.length(this.knockbackVelocity) > 0) {
         this.knockbackVelocity = vector.reduceToZero(this.knockbackVelocity, 300 * deltatime)
     }
+
+    this.moveVelocity = this.modifiers.reduce((p, v) => _.isNil(v.effects.moveVelocity) ? p : p * v.effects.moveVelocity, this.moveVelocity)
+    this.knockbackVelocity = this.modifiers.reduce((p, v) => _.isNil(v.effects.knockbackVelocity) ? p : p * v.effects.knockbackVelocity, this.knockbackVelocity)
+    
     this.velocity = vector.add(this.moveVelocity, this.knockbackVelocity)
-    this.velocity = this.modifiers.reduce((p, v) => _.isNil(v.effects.velocity) ? p : p * v.effects.velocity, this.velocity)
 }
 
 Player.prototype.onCollide = function (object, direction, directionInv) {

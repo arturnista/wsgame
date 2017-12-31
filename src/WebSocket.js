@@ -64,6 +64,11 @@ const connect = function(server) {
 
 }
 
+function getRooms() {
+    return rooms.map(x => x.info())
+}
+
 module.exports = {
     connect,
+    getRooms
 }

@@ -86,7 +86,7 @@ Player.prototype.useSpell = function(spellName, data) {
     if(this.spellsUsed[spellName] && moment().diff(this.spellsUsed[spellName]) < spellData.cooldown) return
     this.spellsUsed[spellName] = moment()
 
-    this.emit('player_use_spell', Object.assign({ name: spellName, player: this.info() }, spellData, data))
+    // this.emit('player_use_spell', Object.assign({ name: spellName, player: this.info() }, spellData, data))
 
     switch (spellName) {
         case 'fireball':

@@ -83,12 +83,14 @@ Room.prototype.userJoin = function(user) {
     user.socket.on('user_select_spell', (message) => {
         if(this.gameIsRunning) return
 
+        console.log(`SocketIO :: ${this.name} :: Player selected spell :: ${JSON.stringify(message)}`)
         user.spells.push(message.spellName)
     })
 
     user.socket.on('user_deselect_spell', (message) => {
         if(this.gameIsRunning) return
 
+        console.log(`SocketIO :: ${this.name} :: Player deselected spell :: ${JSON.stringify(message)}`)
         user.spells = user.spells.filter(x => x !== message.spellName)
     })
 

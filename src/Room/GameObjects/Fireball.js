@@ -58,7 +58,7 @@ Fireball.prototype.onCollide = function (object, direction, directionInv) {
 
     if(object.type === goTypes.PLAYER) {
         object.knockback(directionInv, this.multiplier, this.increment)
-        const shouldReflect = object.modifiers.find(x => x.name === 'reflect_shield') != null
+        const shouldReflect = object.modifiers.find(x => x.effects.reflectSpells) != null
         if(shouldReflect) {
             this.velocity = vector.multiply(direction, this.moveSpeed)
             this.owner = null

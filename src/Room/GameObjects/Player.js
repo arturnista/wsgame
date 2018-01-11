@@ -30,7 +30,7 @@ Player.prototype.start = function () {
     this.life = 100
     this.knockbackValue = 300
 
-    this.spells = ['fireball', 'explosion', 'reflect_shield', 'blink']
+    this.spells = ['fireball', 'follower', 'explosion', 'reflect_shield', 'blink']
     this.spellsUsed = {}
     this.modifiers = []
 }
@@ -82,6 +82,9 @@ Player.prototype.useSpell = function(spellName, data) {
     if(this.spells.indexOf(spellName) === -1) return
     if(!spells[spellName]) return
 
+    const isSilenced = this.modifiers.find(x => x.effects.silenced)
+    if(isSilenced) return
+
     const spellData = spells[spellName]
     if(this.spellsUsed[spellName] && moment().diff(this.spellsUsed[spellName]) < spellData.cooldown) return
     this.spellsUsed[spellName] = moment()
@@ -91,6 +94,11 @@ Player.prototype.useSpell = function(spellName, data) {
     switch (spellName) {
         case 'fireball':
             this.goController.createFireball(Object.assign(data, spellData))
+            break
+        case 'follower':
+            this.goController.createFollower(Object.assign(data, spellData))
+            setTimeout(_ => this.goController.createFollower(Object.assign(data, spellData)), 300)
+            setTimeout(_ => this.goController.createFollower(Object.assign(data, spellData)), 600)
             break
         case 'reflect_shield':
             this.modifiers.push(Object.assign({ name: spellName, initial: moment() }, spellData))

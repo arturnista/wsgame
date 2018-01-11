@@ -10,6 +10,13 @@ module.exports = {
         knockbackIncrement: 1.2,
         moveSpeed: 400
     },
+    follower: {
+        _type: 'offensive',
+        cooldown: 10000,
+        knockbackMultiplier: 1.3,
+        knockbackIncrement: 1.5,
+        moveSpeed: 500
+    },
     explosion: {
         _type: 'offensive',
         cooldown: 3000,
@@ -19,6 +26,7 @@ module.exports = {
         duration: 1000,
         effects: {
             moveVelocity: 0,
+            silenced: true
         }
     },
     reflect_shield: {
@@ -27,7 +35,8 @@ module.exports = {
         duration: 1000,
         effects: {
             knockbackValue: 0,
-            knockbackIncrement: 0
+            knockbackIncrement: 0,
+            reflectSpells: true
         }
     },
     blink: {
@@ -37,6 +46,7 @@ module.exports = {
         duration: 1000,
         effects: {
             moveVelocity: 0,
+            silenced: true
         }
     },
 }

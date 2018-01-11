@@ -129,6 +129,8 @@ class Root extends Component {
                 return this.setState({ status: 'spell_blink' })
             case 'e':
                 return this.emitAction('spell_reflect_shield')
+            case 't':
+                return this.emitAction('spell_follower')
         }
     }
 

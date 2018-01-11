@@ -110,6 +110,13 @@ Room.prototype.userJoin = function(user) {
         if(user.player) user.player.useSpell('fireball', message)
     })
 
+    user.socket.on('player_spell_follower', (message) => {
+        if(!this.gameIsRunning) return
+
+        console.log(`SocketIO :: ${this.name} :: Player used follower :: ${JSON.stringify(message)}`)
+        if(user.player) user.player.useSpell('follower', message)
+    })
+
     user.socket.on('player_spell_reflect_shield', (message) => {
         if(!this.gameIsRunning) return
 
@@ -163,8 +170,7 @@ Room.prototype.userOwner = function (user) {
 }
 
 Room.prototype.startGame = function (data) {
-    // const usersReady = this.users.every(x => x.status === 'ready')
-    const usersReady = true
+    const usersReady = this.users.every(x => x.status === 'ready')
     if(usersReady) {
         this.gameObjectController.start(this.users)
         this.mapController.start(data && data.map)
@@ -222,9 +228,9 @@ Room.prototype.gameLoop = function () {
 
     const alivePlayers = infos.players.filter(x => x.status === 'alive')
     if(alivePlayers.length === 1) {
-        this._gameEnded = true
-        this.emit('game_will_end', { time: DELAY_TO_END, winner: alivePlayers[0] })
-        setTimeout(this.endGame.bind(this), DELAY_TO_END)
+        // this._gameEnded = true
+        // this.emit('game_will_end', { time: DELAY_TO_END, winner: alivePlayers[0] })
+        // setTimeout(this.endGame.bind(this), DELAY_TO_END)
     }
 }
 

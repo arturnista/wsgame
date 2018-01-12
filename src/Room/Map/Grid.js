@@ -65,7 +65,7 @@ Grid.prototype.info = function() {
 Grid.prototype.nextStep = function() {
     this.blocks = this.blocks.map(block => {
         let status = block.status
-        switch (block) {
+        switch (status) {
             case 'toDestroy':
                 status = 'destroyed'
                 break
@@ -73,14 +73,15 @@ Grid.prototype.nextStep = function() {
                 status = 'normal'
                 break
             case 'normal':
-                const shouldDestroy = Math.random() >= 0.3
+                const shouldDestroy = Math.random() >= 0.8
                 if(shouldDestroy) status = 'toDestroy'
                 break
             case 'destroyed':
-                const shoudRevive = Math.random() >= 0.3
+                const shoudRevive = Math.random() >= 0.8
                 if(shoudRevive) status = 'toRevive'
                 break
         }
+        console.log(status)
         return Object.assign({}, block, {status})
     })
 }

@@ -77,7 +77,7 @@ Player.prototype.knockback = function (direction, multiplier, increment) {
     if(knockbackIncrement) this.knockbackValue *= knockbackIncrement
 }
 
-Player.prototype.useSpell = function(spellName, data) {
+Player.prototype.useSpell = function(spellName, data, emit) {
     if(this.status !== 'alive') return
     if(this.spells.indexOf(spellName) === -1) return
     if(!spells[spellName]) return
@@ -89,7 +89,7 @@ Player.prototype.useSpell = function(spellName, data) {
     if(this.spellsUsed[spellName] && moment().diff(this.spellsUsed[spellName]) < spellData.cooldown) return
     this.spellsUsed[spellName] = moment()
 
-    // this.emit('player_use_spell', Object.assign({ name: spellName, player: this.info() }, spellData, data))
+    emit('player_use_spell', Object.assign({ name: spellName, player: this.info() }, spellData, data))
 
     switch (spellName) {
         case 'fireball':
@@ -97,8 +97,8 @@ Player.prototype.useSpell = function(spellName, data) {
             break
         case 'follower':
             this.goController.createFollower(Object.assign(data, spellData))
-            setTimeout(_ => this.goController.createFollower(Object.assign(data, spellData)), 300)
-            setTimeout(_ => this.goController.createFollower(Object.assign(data, spellData)), 600)
+            setTimeout(_ => this.goController.createFollower(Object.assign(data, spellData)), 500)
+            setTimeout(_ => this.goController.createFollower(Object.assign(data, spellData)), 1000)
             break
         case 'reflect_shield':
             this.modifiers.push(Object.assign({ name: spellName, initial: moment() }, spellData))
@@ -115,13 +115,14 @@ Player.prototype.useSpell = function(spellName, data) {
             }
             break
         case 'explosion':
-            const players = this.goController.gameObjects.filter(x => 
-                x.type === goTypes.PLAYER && 
-                x.id !== this.id &&
-                x.status === 'alive' &&
-                vector.distance(x.position, this.position) < spellData.radius
-            )
             const afterEffect = () => {
+                const players = this.goController.gameObjects.filter(x => 
+                    x.type === goTypes.PLAYER && 
+                    x.id !== this.id &&
+                    x.status === 'alive' &&
+                    vector.distance(x.position, this.position) < spellData.radius
+                )
+                
                 players.forEach(p => {
                     p.knockback(
                         vector.direction(this.position, p.position),

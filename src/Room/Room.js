@@ -107,35 +107,35 @@ Room.prototype.userJoin = function(user) {
         if(!this.gameIsRunning) return
 
         console.log(`SocketIO :: ${this.name} :: Player used fireball :: ${JSON.stringify(message)}`)
-        if(user.player) user.player.useSpell('fireball', message)
+        if(user.player) user.player.useSpell('fireball', message, this.emit.bind(this))
     })
 
     user.socket.on('player_spell_follower', (message) => {
         if(!this.gameIsRunning) return
 
         console.log(`SocketIO :: ${this.name} :: Player used follower :: ${JSON.stringify(message)}`)
-        if(user.player) user.player.useSpell('follower', message)
+        if(user.player) user.player.useSpell('follower', message, this.emit.bind(this))
     })
 
     user.socket.on('player_spell_reflect_shield', (message) => {
         if(!this.gameIsRunning) return
 
         console.log(`SocketIO :: ${this.name} :: Player used reflect_shield :: ${JSON.stringify(message)}`)
-        if(user.player) user.player.useSpell('reflect_shield', message)
+        if(user.player) user.player.useSpell('reflect_shield', message, this.emit.bind(this))
     })
 
     user.socket.on('player_spell_blink', (message) => {
         if(!this.gameIsRunning) return
 
         console.log(`SocketIO :: ${this.name} :: Player used blink :: ${JSON.stringify(message)}`)
-        if(user.player) user.player.useSpell('blink', message)
+        if(user.player) user.player.useSpell('blink', message, this.emit.bind(this))
     })
 
     user.socket.on('player_spell_explosion', (message) => {
         if(!this.gameIsRunning) return
 
         console.log(`SocketIO :: ${this.name} :: Player used explosion :: ${JSON.stringify(message)}`)
-        if(user.player) user.player.useSpell('explosion', message)
+        if(user.player) user.player.useSpell('explosion', message, this.emit.bind(this))
     })
 
     // Game events

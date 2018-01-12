@@ -1,10 +1,12 @@
 const _ = require('lodash')
 const BasicArena = require('./BasicArena')
 const FireArena = require('./FireArena')
+const Grid = require('./Grid')
 
 const MAPS = {
     BasicArena,
     FireArena,
+    Grid,
 }
 
 

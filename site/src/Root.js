@@ -151,6 +151,8 @@ class Root extends Component {
                 <header className='root-header'>
                     {/* <img src={logo} className='root-logo' alt='logo' /> */}
                     <h1 className='root-title'>Welcome to tutu game fuck u ({this.state.ping}ms)</h1>
+                    <a href="/gamedata/linux.zip">Linux</a>
+                    <a href="/gamedata/windows.zip">Windows</a>
                     {
                         !this.state.gameIsRunning ?
                         <div>

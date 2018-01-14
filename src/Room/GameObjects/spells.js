@@ -20,7 +20,7 @@ module.exports = {
     explosion: {
         _type: 'offensive',
         cooldown: 3000,
-        radius: 100,
+        radius: 120,
         knockbackMultiplier: 1,
         knockbackIncrement: 1.3,
         duration: 1000,

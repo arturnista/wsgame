@@ -118,14 +118,13 @@ Player.prototype.useSpell = function(spellName, data, emit) {
             const afterEffect = () => {
                 const players = this.goController.gameObjects.filter(x => 
                     x.type === goTypes.PLAYER && 
-                    x.id !== this.id &&
                     x.status === 'alive' &&
-                    vector.distance(x.position, this.position) < spellData.radius
+                    vector.distance(x.position, data.position) < spellData.radius
                 )
                 
                 players.forEach(p => {
                     p.knockback(
-                        vector.direction(this.position, p.position),
+                        vector.direction(data.position, p.position),
                         spellData.knockbackMultiplier,
                         spellData.knockbackIncrement
                     )

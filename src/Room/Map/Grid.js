@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const goTypes = require('../GameObjects/gameObjectTypes')
 const vector = require('../../utils/vector')
+const colliders = require('../Physics/colliders')
 
 const DECREASE_INCREMENT = 3
 
@@ -19,7 +20,8 @@ Grid.prototype.prepare = function() {
         for (let y = 0; y < gridSize; y++) {
             const xF = (blockSize / 2) + (blockSize * x)
             const yF = (blockSize / 2) + (blockSize * y)
-            this.blocks.push({ status: 'normal', size: blockSize, position: { x: xF, y: yF } })
+            const edges = colliders.createBox(blockSize).edges({ x: xF, y: yF })
+            this.blocks.push({ status: 'normal', size: blockSize, position: { x: xF, y: yF }, edges })
         }
     }
     
@@ -81,7 +83,6 @@ Grid.prototype.nextStep = function() {
                 if(shoudRevive) status = 'toRevive'
                 break
         }
-        console.log(status)
         return Object.assign({}, block, {status})
     })
 }
@@ -92,9 +93,19 @@ Grid.prototype.update = function(deltatime) {
     for (var i = 0; i < players.length; i++) {
         if(players[i].status !== 'alive') continue
 
-        const plDistance = vector.distance(players[i].position, this.position)
-        if(plDistance > this.halfSize) {
-            // players[i].dealDamage(this.damagePerSecond * deltatime)
+        const isInside = this.blocks.find(block => {
+            if(block.status != 'normal' && block.status != 'toDestroy') return false
+
+            if (players[i].position.x > block.edges.max.x) return false // a is left of b
+            if (players[i].position.x < block.edges.min.x) return false // a is right of b
+            if (players[i].position.y > block.edges.max.y) return false // a is above b
+            if (players[i].position.y < block.edges.min.y) return false // a is below b
+
+            return true // boxes overlap
+        })
+        
+        if(isInside == null) {
+            players[i].dealDamage(this.damagePerSecond * deltatime)
         }
     }
 
@@ -104,7 +115,6 @@ Grid.prototype.update = function(deltatime) {
 
         this.nextStep()
         shouldUpdate = true
-        console.log('update')
     }
 
     return shouldUpdate

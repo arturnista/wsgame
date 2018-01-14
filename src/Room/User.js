@@ -23,16 +23,16 @@ User.prototype.info = function () {
 }
 
 User.prototype.selectSpell = function (name) {
-    if(!spells[name]) return false
+    if(!spells[name]) return null
 
-    const offensiveSpells = this.spells.filter(x => spells[x]._type === 'offensive')
-    const defensiveSpells = this.spells.filter(x => spells[x]._type === 'defensive')
+    const offensiveSpells = this.spells.filter(x => spells[x].type === 'offensive')
+    const defensiveSpells = this.spells.filter(x => spells[x].type === 'defensive')
 
-    if(spells[name]._type === 'offensive' && offensiveSpells.length >= spells._config.MAX_OFFENSIVE) return false
-    if(spells[name]._type === 'defensive' && defensiveSpells.length >= spells._config.MAX_DEFENSIVE) return false
+    if(spells[name].type === 'offensive' && offensiveSpells.length >= spells._config.MAX_OFFENSIVE) return false
+    if(spells[name].type === 'defensive' && defensiveSpells.length >= spells._config.MAX_DEFENSIVE) return false
 
     this.spells.push(name)
-    return true
+    return spells[name]
 }
 
 User.prototype.deselectSpell = function (name) {

@@ -84,8 +84,8 @@ Room.prototype.userJoin = function(user) {
         if(this.gameIsRunning) return
 
         console.log(`SocketIO :: ${this.name} :: Player selected spell :: ${JSON.stringify(message)}`)
-        const spellAdded = user.selectSpell(message.spellName)
-        if(spellAdded) this.emit('user_selected_spell', { user: user.id, spellName: message.spellName })
+        const spellData = user.selectSpell(message.spellName)
+        if(spellData) this.emit('user_selected_spell', { user: user.id, spellName: message.spellName, spellData })
     })
 
     user.socket.on('user_deselect_spell', (message) => {

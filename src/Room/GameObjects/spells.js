@@ -4,21 +4,21 @@ module.exports = {
         MAX_DEFENSIVE: 1
     },
     fireball: {
-        _type: 'offensive',
+        type: 'offensive',
         cooldown: 1000,
         knockbackMultiplier: 1,
         knockbackIncrement: 1.2,
         moveSpeed: 400
     },
     follower: {
-        _type: 'offensive',
+        type: 'offensive',
         cooldown: 10000,
         knockbackMultiplier: 1.3,
         knockbackIncrement: 1.5,
         moveSpeed: 500
     },
     explosion: {
-        _type: 'offensive',
+        type: 'offensive',
         cooldown: 3000,
         radius: 120,
         knockbackMultiplier: 1,
@@ -30,7 +30,7 @@ module.exports = {
         }
     },
     reflect_shield: {
-        _type: 'defensive',
+        type: 'defensive',
         cooldown: 6000,
         duration: 1000,
         effects: {
@@ -40,7 +40,7 @@ module.exports = {
         }
     },
     blink: {
-        _type: 'defensive',
+        type: 'defensive',
         cooldown: 5000,
         distance: 300,
         duration: 1000,

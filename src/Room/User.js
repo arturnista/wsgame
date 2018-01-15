@@ -30,13 +30,17 @@ User.prototype.selectSpell = function (name) {
 
     if(spells[name].type === 'offensive' && offensiveSpells.length >= spells._config.MAX_OFFENSIVE) return false
     if(spells[name].type === 'defensive' && defensiveSpells.length >= spells._config.MAX_DEFENSIVE) return false
-
     this.spells.push(name)
     return spells[name]
 }
 
 User.prototype.deselectSpell = function (name) {
     this.spells = this.spells.filter(x => x !== name)
+}
+
+User.prototype.restart = function() {
+    this.player = {}
+    this.spells = []
 }
 
 module.exports = User

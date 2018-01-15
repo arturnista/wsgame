@@ -24,11 +24,12 @@ GameObjectController.prototype.start = function (users) {
 }
 
 GameObjectController.prototype.end = function (users) {
+
     this.gameObjects = []
     for (var i = 0; i < users.length; i++) {
-        users[i].player = {}
-        users[i].player.spells = []
+        users[i].restart()
     }
+
 }
 
 GameObjectController.prototype.allInfos = function () {

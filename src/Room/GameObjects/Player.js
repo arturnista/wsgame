@@ -89,7 +89,7 @@ Player.prototype.useSpell = function(spellName, data, emit) {
     if(this.spellsUsed[spellName] && moment().diff(this.spellsUsed[spellName]) < spellData.cooldown) return
     this.spellsUsed[spellName] = moment()
 
-    emit('player_use_spell', Object.assign({ name: spellName, player: this.info() }, spellData, data))
+    emit('player_use_spell', Object.assign({ spellName, player: this.info() }, spellData, data))
 
     switch (spellName) {
         case 'fireball':
@@ -116,12 +116,12 @@ Player.prototype.useSpell = function(spellName, data, emit) {
             break
         case 'explosion':
             const afterEffect = () => {
-                const players = this.goController.gameObjects.filter(x => 
-                    x.type === goTypes.PLAYER && 
+                const players = this.goController.gameObjects.filter(x =>
+                    x.type === goTypes.PLAYER &&
                     x.status === 'alive' &&
                     vector.distance(x.position, data.position) < spellData.radius
                 )
-                
+
                 players.forEach(p => {
                     p.knockback(
                         vector.direction(data.position, p.position),
@@ -183,7 +183,7 @@ Player.prototype.update = function (deltatime) {
 
     this.moveVelocity = this.modifiers.reduce((p, v) => _.isNil(v.effects.moveVelocity) ? p : p * v.effects.moveVelocity, this.moveVelocity)
     this.knockbackVelocity = this.modifiers.reduce((p, v) => _.isNil(v.effects.knockbackVelocity) ? p : p * v.effects.knockbackVelocity, this.knockbackVelocity)
-    
+
     this.velocity = vector.add(this.moveVelocity, this.knockbackVelocity)
 }
 
@@ -195,7 +195,7 @@ Player.prototype.onCollide = function (object, direction, directionInv) {
     if(object.type === goTypes.OBSTACLE) {
         this.knockbackVelocity = vector.multiply(direction, vector.length(this.knockbackVelocity))
     }
-    
+
 }
 
 module.exports = Player

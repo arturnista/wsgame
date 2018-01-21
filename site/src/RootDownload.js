@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 import moment from 'moment'
+import RootGame from './RootGame'
 
 import './RootDownload.css'
 
@@ -10,17 +11,18 @@ class RootDownload extends Component {
         super(props)
 
         this.state = {
-
+            showGame: false
         }
 
     }
 
     render() {
-
+        if(this.state.showGame) return <RootGame />
+        
         return (
             <div className='root'>
                 <header className='root-header'>
-                    <h1 className='root-header-title'>NW game</h1>
+                    <h1 className='root-header-title' onClick={_ => this.setState({showGame: true})}>NW game</h1>
                     <p className='root-header-subtitle'>Fucking amazing game</p>
                 </header>
                 <div className='root-content'>

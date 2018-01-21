@@ -1,4 +1,4 @@
-.root {
+.root-game {
     text-align: center;
     position: relative;
     display: flex;
@@ -6,23 +6,23 @@
     flex: 1;
 }
 
-.root-logo {
-    animation: root-logo-spin infinite 20s linear;
+.root-game-logo {
+    animation: root-game-logo-spin infinite 20s linear;
     height: 80px;
 }
 
-.root-header {
+.root-game-header {
     background-color: #222;
     height: 160px;
     padding: 20px;
     color: white;
 }
 
-.root-title {
+.root-game-title {
     font-size: 1.5em;
 }
 
-.root-map-name {
+.root-game-map-name {
     font-size: 1.3em;
     color: #FFCC00;
 }
@@ -33,7 +33,7 @@
     flex: 1;
 }
 
-@keyframes root-logo-spin {
+@keyframes root-game-logo-spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }

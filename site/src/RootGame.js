@@ -6,9 +6,9 @@ import Player from './Player'
 import Spell from './Spell'
 import vector from './utils/vector'
 
-import './Root.css'
+import './RootGame.css'
 
-class Root extends Component {
+class RootGame extends Component {
 
     constructor(props) {
         super(props)
@@ -147,10 +147,10 @@ class Root extends Component {
         const halfMapSize = map.size / 2
 
         return (
-            <div className='root'>
-                <header className='root-header'>
-                    {/* <img src={logo} className='root-logo' alt='logo' /> */}
-                    <h1 className='root-title'>Welcome to tutu game fuck u ({this.state.ping}ms)</h1>
+            <div className='root-game'>
+                <header className='root-game-header'>
+                    {/* <img src={logo} className='root-game-logo' alt='logo' /> */}
+                    <h1 className='root-game-title'>Welcome to tutu game fuck u ({this.state.ping}ms)</h1>
                     <a href="/gamedata/linux.zip">Linux</a>
                     <a href="/gamedata/windows.zip">Windows</a>
                     {
@@ -188,7 +188,7 @@ class Root extends Component {
                         </div>
                         :
                         <div>
-                            <p className='root-map-name'>{this.state.mapName}</p>
+                            <p className='root-game-map-name'>{this.state.mapName}</p>
                         </div>
                     }
                     {
@@ -234,4 +234,4 @@ class Root extends Component {
     }
 }
 
-export default Root
+export default RootGame

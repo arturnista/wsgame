@@ -4,6 +4,7 @@ const goTypes = require('./gameObjectTypes')
 
 const Fireball = require('./Fireball')
 const Follower = require('./Follower')
+const Boomerang = require('./Boomerang')
 const Player = require('./Player')
 const Obstacle = require('./Obstacle')
 
@@ -72,6 +73,15 @@ GameObjectController.prototype.createFollower = function (data) {
     this.gameObjects.push( follower )
 
     return follower
+}
+
+GameObjectController.prototype.createBoomerang = function (data) {
+    const id = uuid.v4()
+    const boomerang = new Boomerang(id, data, this)
+
+    this.gameObjects.push( boomerang )
+
+    return boomerang
 }
 
 GameObjectController.prototype.createObstacle = function (position) {

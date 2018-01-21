@@ -4,27 +4,27 @@ const gameObjectController = require('./GameObjectController')
 const vector = require('../../utils/vector')
 const colliders = require('../Physics/colliders')
 
-function Fireball(id, data, goController) {
+function Boomerang(id, data, goController) {
     this.id = id
     this.type = goTypes.SPELL
 
     this.direction = data.direction
+    this.distance = data.distance
     this.goController = goController
+    this.isFollowingPlayer = false
     this.owner = this.goController.gameObjects.find(x => x.id === data.id)
 
-    this.collider = colliders.createCircle(40)
+    this.collider = colliders.createCircle(30)
 
     this.position = { x: 0, y: 0 }
     if(this.owner) {
         this.position = vector.add( this.owner.position, vector.multiply(data.direction, this.owner.collider.size) )
     }
+    this.originalPosition = { x: this.position.x, y: this.position.y }
 
     this.multiplier = data.knockbackMultiplier
     this.increment = data.knockbackIncrement
     this.moveSpeed = data.moveSpeed
-
-    this.lifeTime = 10
-    this._timePassed = 0
 
     this.velocity = {
         x: this.direction.x * this.moveSpeed,
@@ -32,39 +32,46 @@ function Fireball(id, data, goController) {
     }
 }
 
-Fireball.prototype.info = function () {
+Boomerang.prototype.info = function () {
     return {
         id: this.id,
-        type: 'fireball',
+        type: 'boomerang',
         position: this.position,
         collider: this.collider,
         velocity: this.velocity
     }
 }
 
-Fireball.prototype.update = function (deltatime) {
+Boomerang.prototype.update = function (deltatime) {
     const { gameObjects } = this.goController
 
-    this._timePassed += deltatime
-    if(this._timePassed >= this.lifeTime) {
-        this.goController.destroy(this.id)
+    if(!this.isFollowingPlayer) {
+        if(vector.distance(this.position, this.originalPosition) > this.distance) {
+            this.velocity = vector.multiply(this.velocity, -1)
+            this.isFollowingPlayer = true
+        }
+    } else {
+        const playerDir = vector.direction(this.position, this.owner.position)
+        this.velocity = vector.multiply(playerDir, this.moveSpeed)
     }
 }
 
-Fireball.prototype.onCollide = function (object, direction, directionInv) {
+Boomerang.prototype.onCollide = function (object, direction, directionInv) {
     const { gameObjects } = this.goController
 
     if(object.id === this.id) return
-    if(this.owner && object.id === this.owner.id) return
+    if(this.owner && object.id === this.owner.id) {
+        if(this.isFollowingPlayer) {
+            this.owner.resetCooldown('boomerang')
+            this.goController.destroy(this.id)
+        }
+        return
+    }
 
     if(object.type === goTypes.PLAYER) {
         object.knockback(directionInv, this.multiplier, this.increment)
         const shouldReflect = object.modifiers.find(x => x.effects.reflectSpells) != null
-        if(shouldReflect) {
-            this.velocity = vector.multiply(direction, this.moveSpeed)
-            this.owner = null
-            return
-        }
+        if(!shouldReflect) this.owner.resetCooldown('boomerang')
         this.goController.destroy(this.id)
     } else if(object.type === goTypes.OBSTACLE) {
         this.goController.destroy(this.id)
@@ -72,4 +79,4 @@ Fireball.prototype.onCollide = function (object, direction, directionInv) {
     
 }
 
-module.exports = Fireball
+module.exports = Boomerang

@@ -35,6 +35,16 @@ module.exports = {
             silenced: true
         }
     },
+    boomerang: {
+        name: 'Boomerang',
+        description: 'Throws a boomerang that travels for 350 units. After that, it come back to the original owner. If it hits a target or the player catch the boomerang, the cooldown is reseted.',
+        type: 'offensive',
+        cooldown: 5000,
+        distance: 350,
+        moveSpeed: 250,
+        knockbackMultiplier: 1,
+        knockbackIncrement: 1.2,
+    },
     reflect_shield: {
         name: 'Reflect Shield',
         description: 'Protect the player for knockback and reflect some spells.',

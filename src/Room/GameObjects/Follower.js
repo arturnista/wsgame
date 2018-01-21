@@ -53,7 +53,8 @@ Follower.prototype.info = function () {
         id: this.id,
         type: 'follower',
         position: this.position,
-        collider: this.collider
+        collider: this.collider,
+        velocity: this.velocity
     }
 }
 

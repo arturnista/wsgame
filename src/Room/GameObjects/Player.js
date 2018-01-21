@@ -95,6 +95,9 @@ Player.prototype.useSpell = function(spellName, data, emit) {
         case 'fireball':
             this.goController.createFireball(Object.assign(data, spellData))
             break
+        case 'boomerang':
+            this.goController.createBoomerang(Object.assign(data, spellData))
+            break
         case 'follower':
             this.goController.createFollower(Object.assign(data, spellData))
             setTimeout(_ => this.goController.createFollower(Object.assign(data, spellData)), 500)
@@ -133,6 +136,10 @@ Player.prototype.useSpell = function(spellName, data, emit) {
             this.modifiers.push(Object.assign({ name: spellName, initial: moment(), afterEffect }, spellData))
             break
     }
+}
+
+Player.prototype.resetCooldown = function (spellName) {
+    this.spellsUsed[spellName] = null
 }
 
 Player.prototype.update = function (deltatime) {

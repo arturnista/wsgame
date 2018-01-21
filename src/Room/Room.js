@@ -117,6 +117,13 @@ Room.prototype.userJoin = function(user) {
         if(user.player) user.player.useSpell('follower', message, this.emit.bind(this))
     })
 
+    user.socket.on('player_spell_boomerang', (message) => {
+        if(!this.gameIsRunning) return
+
+        console.log(`SocketIO :: ${this.name} :: Player used boomerang :: ${JSON.stringify(message)}`)
+        if(user.player) user.player.useSpell('boomerang', message, this.emit.bind(this))
+    })
+
     user.socket.on('player_spell_reflect_shield', (message) => {
         if(!this.gameIsRunning) return
 

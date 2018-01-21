@@ -196,7 +196,7 @@ Room.prototype.endGame = function () {
 
     this.users.forEach(u => u.status = 'waiting')
 
-    this.emit('game_end')
+    this.emit('game_end', { users: this.users.map(x => x.info()) })
 
     this.gameIsRunning = false
     this._gameEnded = false

@@ -27,6 +27,7 @@ GameObjectController.prototype.end = function (users) {
 
     this.gameObjects = []
     for (var i = 0; i < users.length; i++) {
+        if(users[i].player.status === 'alive') users[i].winCount += 1
         users[i].restart()
     }
 

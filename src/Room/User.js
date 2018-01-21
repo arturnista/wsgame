@@ -10,6 +10,7 @@ function User(socket) {
     this.socket = socket
     this.status = 'waiting'
     this.spells = []
+    this.winCount = 0
 }
 
 User.prototype.info = function () {
@@ -19,6 +20,7 @@ User.prototype.info = function () {
         player: _.isNil(this.player) || _.isEmpty(this.player) || _.isNil(this.player.info) ? this.player : this.player.info(),
         color: this.color,
         status: this.status,
+        winCount: this.winCount,
     }
 }
 

@@ -28,6 +28,10 @@ server.get('/rooms', function(req, res, next) {
     res.status(200).json( WebSocket.getRooms() )
 })
 
+server.get('/spells', function(req, res, next) {
+    res.status(200).json( WebSocket.getSpells() )
+})
+
 const port = process.env.PORT || 5002
 http.listen(port, function() {
     console.log('Gameserver API running! Port: ' + port)

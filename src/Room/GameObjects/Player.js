@@ -184,12 +184,12 @@ Player.prototype.update = function (deltatime) {
         }
 
     }
+
     if(vector.length(this.knockbackVelocity) > 0) {
         this.knockbackVelocity = vector.reduceToZero(this.knockbackVelocity, 300 * deltatime)
     }
 
-    this.moveVelocity = this.modifiers.reduce((p, v) => _.isNil(v.effects.moveVelocity) ? p : p * v.effects.moveVelocity, this.moveVelocity)
-    this.knockbackVelocity = this.modifiers.reduce((p, v) => _.isNil(v.effects.knockbackVelocity) ? p : p * v.effects.knockbackVelocity, this.knockbackVelocity)
+    this.moveVelocity = this.modifiers.reduce((p, v) => _.isNil(v.effects.moveVelocity) ? p : vector.multiply(p, v.effects.moveVelocity), this.moveVelocity)
 
     this.velocity = vector.add(this.moveVelocity, this.knockbackVelocity)
 }

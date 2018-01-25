@@ -5,12 +5,16 @@ const vector = require('../../utils/vector')
 const colliders = require('../Physics/colliders')
 const spells = require('./spells')
 
-function Player(id, goController) {
+function Player(id, opt, goController) {
     this.id = id
     this.type = goTypes.PLAYER
 
     this.collider = colliders.createCircle(25)
     this.goController = goController
+
+    this.emit = opt.emit
+    this.mapController = opt.mapController
+    this.isBot = !!opt.isBot
 
     this.status = 'alive'
     this.color = ''
@@ -30,7 +34,7 @@ Player.prototype.start = function () {
     this.life = 100
     this.knockbackValue = 300
 
-    this.spells = ['fireball', 'follower', 'explosion', 'reflect_shield', 'blink']
+    this.spells = ['fireball', 'explosion', 'blink']
     this.spellsUsed = {}
     this.modifiers = []
 }
@@ -77,7 +81,7 @@ Player.prototype.knockback = function (direction, multiplier, increment) {
     if(knockbackIncrement) this.knockbackValue *= knockbackIncrement
 }
 
-Player.prototype.useSpell = function(spellName, data, emit) {
+Player.prototype.useSpell = function(spellName, data) {
     if(this.status !== 'alive') return
     if(this.spells.indexOf(spellName) === -1) return
     if(!spells[spellName]) return
@@ -89,7 +93,7 @@ Player.prototype.useSpell = function(spellName, data, emit) {
     if(this.spellsUsed[spellName] && moment().diff(this.spellsUsed[spellName]) < spellData.cooldown) return
     this.spellsUsed[spellName] = moment()
 
-    emit('player_use_spell', Object.assign({ spellName, player: this.info() }, spellData, data))
+    if(this.emit) this.emit('player_use_spell', Object.assign({ spellName, player: this.info() }, spellData, data))
 
     switch (spellName) {
         case 'fireball':
@@ -126,8 +130,9 @@ Player.prototype.useSpell = function(spellName, data, emit) {
                 )
 
                 players.forEach(p => {
+                    const dir = vector.direction(data.position, p.position)
                     p.knockback(
-                        vector.direction(data.position, p.position),
+                        dir.x === 0 && dir.y === 0 ? { x: 1, y: 1 } : dir,
                         spellData.knockbackMultiplier,
                         spellData.knockbackIncrement
                     )
@@ -183,6 +188,32 @@ Player.prototype.update = function (deltatime) {
 
         }
 
+    } else {
+        if(this.isBot) {
+            const mapPos = this.mapController.currentMap.position
+            const mapSize = this.mapController.currentMap.size / 2
+            this.positionToGo = {
+                x: _.random(mapPos.x - mapSize, mapPos.x + mapSize),
+                y: _.random(mapPos.y - mapSize, mapPos.y + mapSize),
+            }
+
+            const playersToCast = this.goController.gameObjects.filter(x =>
+                x.type === goTypes.PLAYER && x.status === 'alive' && x.id !== this.id
+            )
+
+            if(playersToCast.length > 0) {
+                const playerToCast = playersToCast[_.random(0, playersToCast.length - 1)]
+                const spellName = this.spells[_.random(0, this.spells.length - 1)]
+                const positionToCast = _.cloneDeep(playerToCast.position)
+
+                const data = {
+                    id: this.id,
+                    position: positionToCast,
+                    direction: vector.direction(this.position, positionToCast)
+                }
+                this.useSpell(spellName, data)
+            }
+        }
     }
 
     if(vector.length(this.knockbackVelocity) > 0) {

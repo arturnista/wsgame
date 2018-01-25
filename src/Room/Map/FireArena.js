@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const goTypes = require('../GameObjects/gameObjectTypes')
 const vector = require('../../utils/vector')
 
@@ -38,7 +39,7 @@ FireArena.prototype.prepare = function() {
     this.spawnPoints.push( { x: 200, y: 400 } )
     this.spawnPoints.push( { x: 200, y: 100 } )
     this.spawnPoints.push( { x: 100, y: 200 } )
-    
+
     this.decreasePerSecond = 0
     this.timeToUpdate = 30
     this._timePassed = 0
@@ -51,8 +52,20 @@ FireArena.prototype.start = function() {
         const player = this.goController.gameObjects[i]
         if(player.type !== goTypes.PLAYER) continue
 
-        player.position = this.spawnPoints[i]
+        if(i < this.spawnPoints.length) player.position = this.spawnPoints[i]
+        else player.position = this.getRandomPosition()
     }
+}
+
+FireArena.prototype.getRandomPosition = function() {
+
+    const mapPos = this.position
+    const mapSize = this.size / 2
+    return {
+        x: _.random(mapPos.x - mapSize, mapPos.x + mapSize),
+        y: _.random(mapPos.y - mapSize, mapPos.y + mapSize),
+    }
+
 }
 
 FireArena.prototype.info = function() {

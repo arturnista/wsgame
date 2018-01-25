@@ -8,26 +8,31 @@ const Boomerang = require('./Boomerang')
 const Player = require('./Player')
 const Obstacle = require('./Obstacle')
 
+const BOT_COUNT = 0
+
 function GameObjectController(emit) {
     this.emit = emit
     this.gameObjects = []
 }
 
-GameObjectController.prototype.start = function (users) {
+GameObjectController.prototype.start = function (users, emit, mapController) {
 
     this.gameObjects = []
-    for (var i = 0; i < users.length; i++) {
-        users[i].player = this.createPlayer()
+    for (let i = 0; i < users.length; i++) {
+        users[i].player = this.createPlayer({ emit, mapController })
         users[i].player.color = users[i].color
         users[i].player.spells = users[i].spells
     }
 
+    for (let i = 0; i < BOT_COUNT; i++) {
+        this.createPlayer({ isBot: true, emit, mapController })
+    }
 }
 
 GameObjectController.prototype.end = function (users) {
 
     this.gameObjects = []
-    for (var i = 0; i < users.length; i++) {
+    for (let i = 0; i < users.length; i++) {
         if(users[i].player.status === 'alive') users[i].winCount += 1
         users[i].restart()
     }
@@ -49,9 +54,9 @@ GameObjectController.prototype.update = function (deltatime) {
 
 }
 
-GameObjectController.prototype.createPlayer = function () {
+GameObjectController.prototype.createPlayer = function (opt) {
     const id = uuid.v4()
-    const player = new Player(id, this)
+    const player = new Player(id, opt, this)
     this.gameObjects.push( player )
 
     return player

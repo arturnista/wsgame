@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const goTypes = require('../GameObjects/gameObjectTypes')
 const vector = require('../../utils/vector')
 
@@ -47,8 +48,20 @@ BasicArena.prototype.start = function() {
         const player = this.goController.gameObjects[i]
         if(player.type !== goTypes.PLAYER) continue
 
-        player.position = this.spawnPoints[i]
+        if(i < this.spawnPoints.length) player.position = this.spawnPoints[i]
+        else player.position = this.getRandomPosition()
     }
+}
+
+BasicArena.prototype.getRandomPosition = function() {
+
+    const mapPos = this.position
+    const mapSize = this.size / 2
+    return {
+        x: _.random(mapPos.x - mapSize, mapPos.x + mapSize),
+        y: _.random(mapPos.y - mapSize, mapPos.y + mapSize),
+    }
+
 }
 
 BasicArena.prototype.info = function() {

@@ -107,42 +107,42 @@ Room.prototype.userJoin = function(user) {
         if(!this.gameIsRunning) return
 
         console.log(`SocketIO :: ${this.name} :: Player used fireball :: ${JSON.stringify(message)}`)
-        if(user.player) user.player.useSpell('fireball', message, this.emit.bind(this))
+        if(user.player) user.player.useSpell('fireball', message)
     })
 
     user.socket.on('player_spell_follower', (message) => {
         if(!this.gameIsRunning) return
 
         console.log(`SocketIO :: ${this.name} :: Player used follower :: ${JSON.stringify(message)}`)
-        if(user.player) user.player.useSpell('follower', message, this.emit.bind(this))
+        if(user.player) user.player.useSpell('follower', message)
     })
 
     user.socket.on('player_spell_boomerang', (message) => {
         if(!this.gameIsRunning) return
 
         console.log(`SocketIO :: ${this.name} :: Player used boomerang :: ${JSON.stringify(message)}`)
-        if(user.player) user.player.useSpell('boomerang', message, this.emit.bind(this))
+        if(user.player) user.player.useSpell('boomerang', message)
     })
 
     user.socket.on('player_spell_reflect_shield', (message) => {
         if(!this.gameIsRunning) return
 
         console.log(`SocketIO :: ${this.name} :: Player used reflect_shield :: ${JSON.stringify(message)}`)
-        if(user.player) user.player.useSpell('reflect_shield', message, this.emit.bind(this))
+        if(user.player) user.player.useSpell('reflect_shield', message)
     })
 
     user.socket.on('player_spell_blink', (message) => {
         if(!this.gameIsRunning) return
 
         console.log(`SocketIO :: ${this.name} :: Player used blink :: ${JSON.stringify(message)}`)
-        if(user.player) user.player.useSpell('blink', message, this.emit.bind(this))
+        if(user.player) user.player.useSpell('blink', message)
     })
 
     user.socket.on('player_spell_explosion', (message) => {
         if(!this.gameIsRunning) return
 
         console.log(`SocketIO :: ${this.name} :: Player used explosion :: ${JSON.stringify(message)}`)
-        if(user.player) user.player.useSpell('explosion', message, this.emit.bind(this))
+        if(user.player) user.player.useSpell('explosion', message)
     })
 
     // Game events
@@ -179,7 +179,7 @@ Room.prototype.userOwner = function (user) {
 Room.prototype.startGame = function (data) {
     const usersReady = this.users.every(x => x.status === 'ready')
     if(usersReady) {
-        this.gameObjectController.start(this.users)
+        this.gameObjectController.start(this.users, this.emit.bind(this), this.mapController)
         this.mapController.start(data && data.map)
 
         this.emit('game_will_start', { time: DELAY_TO_START, map: this.mapController.info() })

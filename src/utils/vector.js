@@ -39,6 +39,7 @@ function normalize(vector) {
     if(vector == null) throw new Error('Vector is undefined')
 
     const tot = Math.abs(vector.x) + Math.abs(vector.y)
+    if(tot === 0) return { x: 0, y: 0 }
     return {
         x: vector.x / tot,
         y: vector.y / tot,

@@ -24,7 +24,7 @@ Grid.prototype.prepare = function() {
             this.blocks.push({ status: 'normal', size: blockSize, position: { x: xF, y: yF }, edges })
         }
     }
-    
+
     this.size = blockSize * gridSize
     this.halfSize = this.size / 2
 
@@ -38,7 +38,7 @@ Grid.prototype.prepare = function() {
     this.spawnPoints.push( { x: 400, y: 400 } )
     this.spawnPoints.push( { x: 400, y: 100 } )
     this.spawnPoints.push( { x: 100, y: 400 } )
-    
+
     this.timeToUpdate = 10
     this._timePassed = 0
 }
@@ -50,8 +50,20 @@ Grid.prototype.start = function() {
         const player = this.goController.gameObjects[i]
         if(player.type !== goTypes.PLAYER) continue
 
-        player.position = this.spawnPoints[i]
+        if(i < this.spawnPoints.length) player.position = this.spawnPoints[i]
+        else player.position = this.getRandomPosition()
     }
+}
+
+Grid.prototype.getRandomPosition = function() {
+
+    const mapPos = this.position
+    const mapSize = this.size / 2
+    return {
+        x: _.random(mapPos.x - mapSize, mapPos.x + mapSize),
+        y: _.random(mapPos.y - mapSize, mapPos.y + mapSize),
+    }
+
 }
 
 Grid.prototype.info = function() {
@@ -103,7 +115,7 @@ Grid.prototype.update = function(deltatime) {
 
             return true // boxes overlap
         })
-        
+
         if(isInside == null) {
             players[i].dealDamage(this.damagePerSecond * deltatime)
         }

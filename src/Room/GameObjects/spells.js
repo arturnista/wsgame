@@ -23,13 +23,13 @@ module.exports = {
     },
     explosion: {
         name: 'Explosion',
-        description: 'Cast an explosion of 60 radius. After 1s (casting time), all players in area receives knockback.',
+        description: 'Cast an explosion of 60 radius. After 0.5s (casting time), all players in area receives knockback.',
         type: 'offensive',
         cooldown: 3000,
         radius: 60,
         knockbackMultiplier: 1,
         knockbackIncrement: 1.3,
-        duration: 1000,
+        duration: 500,
         effects: {
             moveVelocity: 0,
             silenced: true

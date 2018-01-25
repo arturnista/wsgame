@@ -16,6 +16,8 @@ function Follower(id, data, goController) {
         if(item.type !== goTypes.PLAYER) return minor
         if(!minor) return item
 
+        console.log(minor)
+        console.log(item)
         if(vector.distance(minor.position) < vector.distance(item.position)) {
             return item
         }
@@ -60,7 +62,7 @@ Follower.prototype.info = function () {
 
 Follower.prototype.update = function (deltatime) {
     const { gameObjects } = this.goController
-    
+
     this.direction = vector.direction(this.position, this.target.position)
     this.desiredVelocity = {
         x: this.direction.x * this.moveSpeed,
@@ -104,7 +106,7 @@ Follower.prototype.onCollide = function (object, direction, directionInv) {
     } else if(object.type === goTypes.OBSTACLE) {
         this.goController.destroy(this.id)
     }
-    
+
 }
 
 module.exports = Follower

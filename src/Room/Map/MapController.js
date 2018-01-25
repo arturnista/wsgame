@@ -13,6 +13,7 @@ const MAPS = {
 function MapController(goController, emit) {
     this.emit = emit
     this.goController = goController
+    this.currentMap = null
 }
 
 MapController.prototype.selectCurrentMap = function(map) {

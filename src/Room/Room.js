@@ -32,8 +32,21 @@ function Room(socketIo, data) {
 
     this.gameIsRunning = false
     this._gameEnded = false
+    this.cycleTime = null
     this.users = []
     this.owner = null
+}
+
+Room.prototype.delete = function () {
+    console.log(`SocketIO :: ${this.name} :: Deleted`)
+    
+    this.gameIsRunning = false
+    this._gameEnded = false
+
+    clearTimeout(this.cycleTime)
+
+    this.gameObjectController.end(this.users)
+    this.mapController.end()
 }
 
 Room.prototype.info = function () {
@@ -229,7 +242,7 @@ Room.prototype.gameLoop = function () {
     this.emit('sync', infos)
 
     this.now = moment()
-    setTimeout(this.gameLoop.bind(this), 10)
+    this.cycleTime = setTimeout(this.gameLoop.bind(this), 10)
 
     if(this._gameEnded) return
 

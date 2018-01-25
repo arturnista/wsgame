@@ -8,7 +8,7 @@ const Boomerang = require('./Boomerang')
 const Player = require('./Player')
 const Obstacle = require('./Obstacle')
 
-const BOT_COUNT = 0
+const BOT_COUNT = 2
 
 function GameObjectController(emit) {
     this.emit = emit

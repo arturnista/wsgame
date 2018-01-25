@@ -27,7 +27,7 @@ const connect = function(server) {
         socket.on('room_create', function (data) {
             const checkRoom = rooms.find(x => x.name === data.name)
             if(checkRoom) return
-            
+
             user.name = data.userName
             console.log(`SocketIO :: User created ${data.name} :: ${user.id}`)
             room = new Room(socketIo.to(data.name), data)
@@ -41,7 +41,7 @@ const connect = function(server) {
         socket.on('room_join', function (data) {
             room = rooms.find(x => x.name === data.name)
             if(!room) return
-            
+
             user.name = data.userName
             console.log(`SocketIO :: User joined ${data.name} :: ${user.id}`)
             room.userJoin(user)
@@ -53,7 +53,13 @@ const connect = function(server) {
             if(room) room.userDisconnect(user)
 
             users = users.filter(x => x.id !== user.id)
-            rooms = rooms.filter(x => x.users.length > 0)
+            rooms = rooms.filter(r => {
+                if(r.users.length <= 0) {
+                    r.delete()
+                    return false
+                }
+                return true
+            })
         })
 
         socket.on('disconnect', function () {
@@ -61,7 +67,13 @@ const connect = function(server) {
             if(room) room.userDisconnect(user)
 
             users = users.filter(x => x.id !== user.id)
-            rooms = rooms.filter(x => x.users.length > 0)
+            rooms = rooms.filter(r => {
+                if(r.users.length <= 0) {
+                    r.delete()
+                    return false
+                }
+                return true
+            })
         })
 
     })

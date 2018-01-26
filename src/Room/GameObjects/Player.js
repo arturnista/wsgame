@@ -16,12 +16,13 @@ function Player(id, opt, goController) {
     this.emit = opt.emit
     this.mapController = opt.mapController
 
-    this.botBehaviour = null
-    if(opt.isBot) this.botBehaviour = new BotBehaviour(this)
 
     this.status = 'alive'
     this.color = ''
     this.start()
+
+    this.botBehaviour = null
+    if(opt.isBot) this.botBehaviour = new BotBehaviour(this)
 }
 
 Player.prototype.start = function () {
@@ -37,7 +38,7 @@ Player.prototype.start = function () {
     this.life = 100
     this.knockbackValue = 300
 
-    this.spells = ['fireball', 'explosion', 'blink']
+    this.spells = []
     this.spellsUsed = {}
     this.modifiers = []
 }

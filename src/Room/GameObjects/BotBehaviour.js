@@ -6,7 +6,15 @@ const colliders = require('../Physics/colliders')
 const spells = require('./spells')
 
 function BotBehaviour(player) {
+    let offensiveSpells = Object.keys(spells).filter(k => spells[k].type == 'offensive')
+    let defensiveSpells = Object.keys(spells).filter(k => spells[k].type == 'defensive')
+
+    let [ fSpell, sSpell ] = _.shuffle(offensiveSpells)
+    let [ tSpell ] = _.shuffle(defensiveSpells)
+
     this.player = player
+    this.player.spells = [ fSpell, sSpell, tSpell ]
+    console.log(this.player.spells)
     this.lastSpell = 0
     this.spellOffset = _.random(1, 3, true)
 }
@@ -26,6 +34,7 @@ BotBehaviour.prototype.update = function (deltatime) {
     if(this.lastSpell > this.spellOffset) {
         this.lastSpell = 0
         this.spellOffset = _.random(1, 3, true)
+
         const spellName = this.player.spells[_.random(0, this.player.spells.length - 1)]
         const playersToCast = this.player.goController.gameObjects.filter(x =>
             x.type === goTypes.PLAYER && x.status === 'alive' && x.id !== this.player.id

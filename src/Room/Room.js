@@ -39,7 +39,7 @@ function Room(socketIo, data) {
 
 Room.prototype.delete = function () {
     console.log(`SocketIO :: ${this.name} :: Deleted`)
-    
+
     this.gameIsRunning = false
     this._gameEnded = false
 
@@ -179,7 +179,7 @@ Room.prototype.userJoin = function(user) {
 Room.prototype.userDisconnect = function (user) {
     COLORS.push( user.color )
 
-    this.gameObjectController.destroyPlayer(user.id)
+    if(user.player) this.gameObjectController.destroyPlayer(user.player.id)
     this.users = this.users.filter(x => x.id !== user.id)
 
     this.emit('user_left_room', user.info())
@@ -192,7 +192,7 @@ Room.prototype.userOwner = function (user) {
 Room.prototype.startGame = function (data) {
     const usersReady = this.users.every(x => x.status === 'ready')
     if(usersReady) {
-        this.gameObjectController.start(this.users, this.emit.bind(this), this.mapController)
+        this.gameObjectController.start(this.users, { emit: this.emit.bind(this), mapController: this.mapController, botCount: 2 })
         this.mapController.start(data && data.map)
 
         this.emit('game_will_start', { time: DELAY_TO_START, map: this.mapController.info() })

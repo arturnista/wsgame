@@ -8,14 +8,18 @@ const Boomerang = require('./Boomerang')
 const Player = require('./Player')
 const Obstacle = require('./Obstacle')
 
-const BOT_COUNT = 2
+const BOT_COLORS = [
+    '#4A148C',
+    '#00695C',
+    '#388E3C'
+]
 
 function GameObjectController(emit) {
     this.emit = emit
     this.gameObjects = []
 }
 
-GameObjectController.prototype.start = function (users, emit, mapController) {
+GameObjectController.prototype.start = function (users, { emit, mapController, botCount }) {
 
     this.gameObjects = []
     for (let i = 0; i < users.length; i++) {
@@ -24,8 +28,9 @@ GameObjectController.prototype.start = function (users, emit, mapController) {
         users[i].player.spells = users[i].spells
     }
 
-    for (let i = 0; i < BOT_COUNT; i++) {
-        this.createPlayer({ isBot: true, emit, mapController })
+    for (let i = 0; i < botCount; i++) {
+        let player = this.createPlayer({ isBot: true, emit, mapController })
+        player.color = BOT_COLORS[_.random(0, BOT_COLORS.length - 1)]
     }
 }
 
@@ -111,7 +116,7 @@ GameObjectController.prototype.destroy = function (gameObject) {
 }
 
 GameObjectController.prototype.destroyPlayer = function (id) {
-    this.gameObjects = this.gameObjects.filter(x => x.id !== id && (x.owner == null || x.owner.id !== id))
+    this.gameObjects = this.gameObjects.filter(x => x.id !== id)
 }
 
 module.exports = GameObjectController

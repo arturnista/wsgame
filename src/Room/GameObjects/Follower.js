@@ -11,25 +11,24 @@ function Follower(id, data, goController) {
     this.goController = goController
     this.owner = this.goController.gameObjects.find(x => x.id === data.id)
 
+    this.position = { x: 0, y: 0 }
+    if(this.owner) {
+        this.position = vector.add( this.owner.position, vector.multiply(data.direction, this.owner.collider.size) )
+    }
+
     this.target = this.goController.gameObjects.reduce((minor, item) => {
         if(item.id === this.owner.id) return minor
         if(item.type !== goTypes.PLAYER) return minor
+        if(item.status !== 'alive') return minor
         if(!minor) return item
 
-        console.log(minor)
-        console.log(item)
-        if(vector.distance(minor.position) < vector.distance(item.position)) {
+        if(vector.distance(this.position, minor.position) < vector.distance(this.position, item.position)) {
             return item
         }
         return minor
     }, null)
 
     this.collider = colliders.createCircle(20)
-
-    this.position = { x: 0, y: 0 }
-    if(this.owner) {
-        this.position = vector.add( this.owner.position, vector.multiply(data.direction, this.owner.collider.size) )
-    }
 
     this.multiplier = data.knockbackMultiplier
     this.increment = data.knockbackIncrement

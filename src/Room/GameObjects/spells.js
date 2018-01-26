@@ -29,6 +29,7 @@ module.exports = {
         radius: 60,
         knockbackMultiplier: 1,
         knockbackIncrement: 1.3,
+        distance: 500,
         duration: 500,
         effects: {
             moveVelocity: 0,

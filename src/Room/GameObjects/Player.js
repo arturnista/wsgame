@@ -3,6 +3,7 @@ const moment = require('moment')
 const goTypes = require('./gameObjectTypes')
 const vector = require('../../utils/vector')
 const colliders = require('../Physics/colliders')
+const BotBehaviour = require('./BotBehaviour')
 const spells = require('./spells')
 
 function Player(id, opt, goController) {
@@ -14,7 +15,9 @@ function Player(id, opt, goController) {
 
     this.emit = opt.emit
     this.mapController = opt.mapController
-    this.isBot = !!opt.isBot
+
+    this.botBehaviour = null
+    if(opt.isBot) this.botBehaviour = new BotBehaviour(this)
 
     this.status = 'alive'
     this.color = ''
@@ -93,8 +96,6 @@ Player.prototype.useSpell = function(spellName, data) {
     if(this.spellsUsed[spellName] && moment().diff(this.spellsUsed[spellName]) < spellData.cooldown) return
     this.spellsUsed[spellName] = moment()
 
-    if(this.emit) this.emit('player_use_spell', Object.assign({ spellName, player: this.info() }, spellData, data))
-
     switch (spellName) {
         case 'fireball':
             this.goController.createFireball(Object.assign(data, spellData))
@@ -122,6 +123,13 @@ Player.prototype.useSpell = function(spellName, data) {
             }
             break
         case 'explosion':
+            if(vector.distance(this.position, data.position) >= spellData.distance) {
+                const dir = vector.direction(this.position, data.position)
+                data.position = vector.add(this.position, vector.multiply(dir, spellData.distance))
+            } else {
+                data.position = data.position
+            }
+
             const afterEffect = () => {
                 const players = this.goController.gameObjects.filter(x =>
                     x.type === goTypes.PLAYER &&
@@ -141,6 +149,8 @@ Player.prototype.useSpell = function(spellName, data) {
             this.modifiers.push(Object.assign({ name: spellName, initial: moment(), afterEffect }, spellData))
             break
     }
+
+    if(this.emit) this.emit('player_use_spell', Object.assign({ spellName, player: this.info() }, spellData, data))
 }
 
 Player.prototype.resetCooldown = function (spellName) {
@@ -160,6 +170,9 @@ Player.prototype.update = function (deltatime) {
         }
         return true
     })
+
+
+    if(this.botBehaviour) this.botBehaviour.update(deltatime)
 
     if(this.positionToGo != null) {
 
@@ -188,32 +201,6 @@ Player.prototype.update = function (deltatime) {
 
         }
 
-    } else {
-        if(this.isBot) {
-            const mapPos = this.mapController.currentMap.position
-            const mapSize = this.mapController.currentMap.size / 2
-            this.positionToGo = {
-                x: _.random(mapPos.x - mapSize, mapPos.x + mapSize),
-                y: _.random(mapPos.y - mapSize, mapPos.y + mapSize),
-            }
-
-            const playersToCast = this.goController.gameObjects.filter(x =>
-                x.type === goTypes.PLAYER && x.status === 'alive' && x.id !== this.id
-            )
-
-            if(playersToCast.length > 0) {
-                const playerToCast = playersToCast[_.random(0, playersToCast.length - 1)]
-                const spellName = this.spells[_.random(0, this.spells.length - 1)]
-                const positionToCast = _.cloneDeep(playerToCast.position)
-
-                const data = {
-                    id: this.id,
-                    position: positionToCast,
-                    direction: vector.direction(this.position, positionToCast)
-                }
-                this.useSpell(spellName, data)
-            }
-        }
     }
 
     if(vector.length(this.knockbackVelocity) > 0) {

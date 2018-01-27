@@ -5,7 +5,7 @@ const GameObjectController = require('./GameObjects/GameObjectController')
 const Physics = require('./Physics')
 const MapController = require('./Map/MapController')
 
-const DELAY_TO_START = 3000
+const DELAY_TO_START = 4000
 const DELAY_TO_END = 5000
 
 let COLORS = [
@@ -196,7 +196,6 @@ Room.prototype.startGame = function (data) {
         this.mapController.start(data && data.map)
 
         this.emit('game_will_start', { time: DELAY_TO_START, map: this.mapController.info() })
-
         setTimeout(() => {
             this.users.forEach(u => u.socket.emit('player_create', u.player.info()))
             this.emit('map_create', this.mapController.info())

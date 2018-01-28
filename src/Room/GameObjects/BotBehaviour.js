@@ -14,20 +14,19 @@ function BotBehaviour(player) {
 
     this.player = player
     this.player.spells = [ fSpell, sSpell, tSpell ]
-    console.log(this.player.spells)
+    this.offensiveSpells = [ fSpell, sSpell ]
+    this.defensiveSpells = [ tSpell ]
+    
     this.lastSpell = 0
     this.spellOffset = _.random(1, 3, true)
+    this.lastCheck = 0
+    this.checkForProjectile = 1
 }
 
 
 BotBehaviour.prototype.update = function (deltatime) {
     if(this.player.positionToGo == null) {
-        const mapPos = this.player.mapController.currentMap.position
-        const mapSize = this.player.mapController.currentMap.size / 2
-        this.player.positionToGo = {
-            x: _.random(mapPos.x - mapSize, mapPos.x + mapSize),
-            y: _.random(mapPos.y - mapSize, mapPos.y + mapSize),
-        }
+        this.setPosition()
     }
 
     this.lastSpell += deltatime
@@ -35,7 +34,7 @@ BotBehaviour.prototype.update = function (deltatime) {
         this.lastSpell = 0
         this.spellOffset = _.random(1, 3, true)
 
-        const spellName = this.player.spells[_.random(0, this.player.spells.length - 1)]
+        const spellName = this.offensiveSpells[_.random(0, this.offensiveSpells.length - 1)]
         const playersToCast = this.player.goController.gameObjects.filter(x =>
             x.type === goTypes.PLAYER && x.status === 'alive' && x.id !== this.player.id
         )
@@ -43,15 +42,54 @@ BotBehaviour.prototype.update = function (deltatime) {
         if(playersToCast.length > 0) {
             const playerToCast = playersToCast[_.random(0, playersToCast.length - 1)]
             const positionToCast = _.clone(playerToCast.position)
-
-            const data = {
-                id: this.player.id,
-                position: positionToCast,
-                direction: vector.direction(this.player.position, positionToCast)
-            }
-            this.player.useSpell(spellName, data)
+            this.castSpell(spellName, positionToCast)
         }
     }
+
+    this.lastCheck += deltatime   
+    if(this.lastCheck > this.checkForProjectile) {
+        this.lastCheck = 0
+        const spells = this.player.goController.gameObjects.filter(x => x.type === goTypes.SPELL)
+
+        spells.forEach(sp => {
+            const spellDirection = vector.direction(sp.position, this.player.position)
+            const spellVelocity = vector.normalize(sp.velocity)
+
+            const isGoing = vector.length( vector.sub( spellVelocity, spellDirection ) )
+            if(isGoing < 0.5) {
+                const spellName = this.defensiveSpells[_.random(0, this.defensiveSpells.length - 1)]
+                this.setPosition()
+                if(this.canCastSpell(spellName)) {
+                    this.castSpell(spellName, this.player.positionToGo)
+                }
+            }
+        })
+    }
+}
+
+BotBehaviour.prototype.setPosition = function() {
+
+    const mapPos = this.player.mapController.currentMap.position
+    const mapSize = this.player.mapController.currentMap.size / 2
+    this.player.positionToGo = {
+        x: _.random(mapPos.x - mapSize, mapPos.x + mapSize),
+        y: _.random(mapPos.y - mapSize, mapPos.y + mapSize),
+    }
+
+}
+
+BotBehaviour.prototype.canCastSpell = function(spellName) {
+    const spellData = spells[spellName]
+    return !this.player.spellsUsed[spellName] || moment().diff(this.player.spellsUsed[spellName]) >= spellData.cooldown
+}
+
+BotBehaviour.prototype.castSpell = function(spellName, positionToCast) {
+    const data = {
+        id: this.player.id,
+        position: positionToCast,
+        direction: vector.direction(this.player.position, positionToCast)
+    }
+    this.player.useSpell(spellName, data)
 }
 
 module.exports = BotBehaviour

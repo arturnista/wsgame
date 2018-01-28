@@ -192,7 +192,7 @@ Room.prototype.userOwner = function (user) {
 Room.prototype.startGame = function (data) {
     const usersReady = this.users.every(x => x.status === 'ready')
     if(usersReady) {
-        this.gameObjectController.start(this.users, { emit: this.emit.bind(this), mapController: this.mapController, botCount: 2 })
+        this.gameObjectController.start(this.users, { emit: this.emit.bind(this), mapController: this.mapController, botCount: 0 })
         this.mapController.start(data && data.map)
 
         this.emit('game_will_start', { time: DELAY_TO_START, map: this.mapController.info() })

@@ -37,6 +37,7 @@ function Follower(id, data, goController) {
     this.lifeTime = 10
     this._timePassed = 0
 
+    if(this.target == null) return
     this.direction = vector.direction(this.position, this.target.position)
     this.acceleration = 30
     this.desiredVelocity = {
@@ -60,6 +61,10 @@ Follower.prototype.info = function () {
 }
 
 Follower.prototype.update = function (deltatime) {
+    if(this.target == null) {
+        this.goController.destroy(this)
+        return
+    }
     const { gameObjects } = this.goController
 
     this.direction = vector.direction(this.position, this.target.position)
@@ -85,8 +90,10 @@ Follower.prototype.onCollide = function (object, direction, directionInv) {
 
     if(object.id === this.id) return
     if(this.owner && object.id === this.owner.id) return
-
+    
     if(object.type === goTypes.PLAYER) {
+        if(object.status !== 'alive') return
+        
         object.knockback(directionInv, this.multiplier, this.increment)
         const shouldReflect = object.modifiers.find(x => x.effects.reflectSpells) != null
         if(shouldReflect) {

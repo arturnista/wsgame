@@ -56,6 +56,16 @@ function add(pos1, pos2) {
     }
 }
 
+function sub(pos1, pos2) {
+    if(pos1 == null) throw new Error('Position 1 is undefined')
+    if(pos2 == null) throw new Error('Position 2 is undefined')
+
+    return {
+        x: pos2.x - pos1.x,
+        y: pos2.y - pos1.y
+    }
+}
+
 function reduceToZero(vector, value) {
     if(value < 0) value *= -1
 
@@ -82,5 +92,6 @@ module.exports = {
     length,
     multiply,
     add,
+    sub,
     reduceToZero
 }

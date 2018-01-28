@@ -59,6 +59,7 @@ Player.prototype.info = function () {
         status: this.status,
         knockbackValue: this.knockbackValue,
         color: this.color,
+        userId: this.user ? this.user.id : '',
         modifiers: this.modifiers.map(x => x.name)
     }
 }

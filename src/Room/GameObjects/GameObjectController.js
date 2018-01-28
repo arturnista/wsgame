@@ -26,6 +26,7 @@ GameObjectController.prototype.start = function (users, { emit, mapController, b
         users[i].player = this.createPlayer({ emit, mapController })
         users[i].player.color = users[i].color
         users[i].player.spells = users[i].spells
+        users[i].player.user = users[i]
     }
 
     for (let i = 0; i < botCount; i++) {

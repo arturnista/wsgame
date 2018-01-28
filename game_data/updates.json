@@ -86,7 +86,7 @@
             "NW_Data/sharedassets0.assets.resS",
             "NW_Data/sharedassets2.assets",
             "NW_Data/level1",
-            "NW_Data/sharedassets2.assets.resS",
+            "NW_Data/sharedassets2.assets.resS"
         ]
     },
     "linux": {
@@ -222,7 +222,7 @@
             "NW_Data/sharedassets2.assets",
             "NW_Data/Plugins/x86/ScreenSelector.so",
             "NW_Data/level1",
-            "NW_Data/sharedassets2.assets.resS",
+            "NW_Data/sharedassets2.assets.resS"
         ]
     }
 }

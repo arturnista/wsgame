@@ -1,5 +1,5 @@
 const moment = require('moment')
-const updates = require('./game_data/updates')
+const updates = require('./game_data/updates.json')
 const express = require('express')
 const server = express()
 const http = require('http').Server(server)
@@ -21,7 +21,7 @@ server.get('/static/:filetype/:filename', function(req, res, next) {
     res.sendFile(filename)
 })
 
-server.get('/rooms/updates', function(req, res, next) {
+server.get('/game/updates', function(req, res, next) {
     res.status(200).json( updates )
 })
 

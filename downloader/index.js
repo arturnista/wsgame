@@ -2,13 +2,14 @@ var http = require('http')
 var fs = require('fs')
 const path = require('path')
 
+const baseDir = './'
+
 const serverUrl = `http://tutuonline.herokuapp.com`
-const platform = 'linux'
+const platform = 'windows'
 const filesUrl = `${serverUrl}/gamedata/${platform}`
 
 function mkDirByPathSync(targetDir, sep = path.sep) {
     const initDir = path.isAbsolute(targetDir) ? sep : ''
-    const baseDir = __dirname
 
     targetDir.split(sep).reduce((parentDir, childDir) => {
         const curDir = path.resolve(baseDir, parentDir, childDir)
@@ -74,10 +75,8 @@ get(serverUrl + '/game/updates')
         })
     }
     files = files.filter((v,i) => files.indexOf(v) === i)
-    console.log(files)
 
-
-    for (var i = 0; i < files.length; i++) downloadFile(files[i])
+    for (let i = 0; i < files.length; i++) downloadFile(files[i])
 
     const f = { lastUpdate: (new Date()).toISOString() }
     fs.writeFileSync('meta', JSON.stringify(f))

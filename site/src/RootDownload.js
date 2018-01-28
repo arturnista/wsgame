@@ -18,7 +18,7 @@ class RootDownload extends Component {
 
     render() {
         if(this.state.showGame) return <RootGame />
-        
+
         return (
             <div className='root'>
                 <header className='root-header'>
@@ -28,13 +28,13 @@ class RootDownload extends Component {
                 <div className='root-content'>
                     <div className='root-content-game'>
                         <h2 className='root-content-game-title'>Windows version</h2>
-                        <a className='root-content-game-link' href='/gamedata/windows.zip'>
+                        <a className='root-content-game-link' href='/gamedata/nw.exe'>
                             Click to download
                         </a>
                     </div>
                     <div className='root-content-game'>
                         <h2 className='root-content-game-title'>Linux version</h2>
-                        <a className='root-content-game-link' href='/gamedata/linux.zip'>
+                        <a className='root-content-game-link' href='/gamedata/nw.sh'>
                             Click to download
                         </a>
                     </div>

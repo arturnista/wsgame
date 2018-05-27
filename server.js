@@ -13,6 +13,10 @@ const packageJson = require('./package.json')
 server.get('/', function(req, res, next) {
     res.render('site/index.html')
 })
+server.get('/:filetype/:filename', function(req, res, next) {
+    const filename = `${__dirname}/site/${req.params.filetype}/${req.params.filename}`
+    res.sendFile(filename)
+})
 server.get('/static/:filetype/:filename', function(req, res, next) {
     const filename = `${__dirname}/site/static/${req.params.filetype}/${req.params.filename}`
     res.sendFile(filename)

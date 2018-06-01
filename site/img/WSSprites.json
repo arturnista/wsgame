@@ -1,155 +1,254 @@
-{
-    "frames": {
-      "fireball.png": {
-        "frame": {
-          "x": 0,
-          "y": 0,
-          "w": 32,
-          "h": 32
-        },
-        "rotated": false,
-        "trimmed": false,
-        "spriteSourceSize": {
-          "x": 0,
-          "y": 0,
-          "w": 32,
-          "h": 32
-        },
-        "sourceSize": {
-          "w": 32,
-          "h": 32
-        }
+{  
+   "frames":{  
+      "fireball.png":{  
+         "frame":{  
+            "x":0,
+            "y":0,
+            "w":32,
+            "h":32
+         },
+         "rotated":false,
+         "trimmed":false,
+         "spriteSourceSize":{  
+            "x":0,
+            "y":0,
+            "w":32,
+            "h":32
+         },
+         "sourceSize":{  
+            "w":32,
+            "h":32
+         }
       },
-      "explosion.png": {
-        "frame": {
-          "x": 32,
-          "y": 0,
-          "w": 32,
-          "h": 32
-        },
-        "rotated": false,
-        "trimmed": false,
-        "spriteSourceSize": {
-          "x": 0,
-          "y": 0,
-          "w": 32,
-          "h": 32
-        },
-        "sourceSize": {
-          "w": 32,
-          "h": 32
-        }
+      "explosion.png":{  
+         "frame":{  
+            "x":32,
+            "y":0,
+            "w":32,
+            "h":32
+         },
+         "rotated":false,
+         "trimmed":false,
+         "spriteSourceSize":{  
+            "x":0,
+            "y":0,
+            "w":32,
+            "h":32
+         },
+         "sourceSize":{  
+            "w":32,
+            "h":32
+         }
       },
-      "follower.png": {
-        "frame": {
-          "x": 64,
-          "y": 0,
-          "w": 32,
-          "h": 32
-        },
-        "rotated": false,
-        "trimmed": false,
-        "spriteSourceSize": {
-          "x": 0,
-          "y": 0,
-          "w": 32,
-          "h": 32
-        },
-        "sourceSize": {
-          "w": 32,
-          "h": 32
-        }
+      "bomb.png":{  
+         "frame":{  
+            "x":64,
+            "y":0,
+            "w":32,
+            "h":32
+         },
+         "rotated":false,
+         "trimmed":false,
+         "spriteSourceSize":{  
+            "x":0,
+            "y":0,
+            "w":32,
+            "h":32
+         },
+         "sourceSize":{  
+            "w":32,
+            "h":32
+         }
       },
-      "boomerang.png": {
-        "frame": {
-          "x": 0,
-          "y": 32,
-          "w": 32,
-          "h": 32
-        },
-        "rotated": false,
-        "trimmed": false,
-        "spriteSourceSize": {
-          "x": 0,
-          "y": 0,
-          "w": 32,
-          "h": 32
-        },
-        "sourceSize": {
-          "w": 32,
-          "h": 32
-        }
+      "follower_00.png":{  
+         "frame":{  
+            "x":0,
+            "y":32,
+            "w":32,
+            "h":32
+         },
+         "rotated":false,
+         "trimmed":false,
+         "spriteSourceSize":{  
+            "x":0,
+            "y":0,
+            "w":32,
+            "h":32
+         },
+         "sourceSize":{  
+            "w":32,
+            "h":32
+         }
       },
-      "shield_00.png": {
-        "frame": {
-          "x": 32,
-          "y": 32,
-          "w": 32,
-          "h": 32
-        },
-        "rotated": false,
-        "trimmed": false,
-        "spriteSourceSize": {
-          "x": 0,
-          "y": 0,
-          "w": 32,
-          "h": 32
-        },
-        "sourceSize": {
-          "w": 32,
-          "h": 32
-        }
+      "follower_01.png":{  
+         "frame":{  
+            "x":32,
+            "y":32,
+            "w":32,
+            "h":32
+         },
+         "rotated":false,
+         "trimmed":false,
+         "spriteSourceSize":{  
+            "x":0,
+            "y":0,
+            "w":32,
+            "h":32
+         },
+         "sourceSize":{  
+            "w":32,
+            "h":32
+         }
       },
-      "shield_01.png": {
-        "frame": {
-          "x": 64,
-          "y": 32,
-          "w": 32,
-          "h": 32
-        },
-        "rotated": false,
-        "trimmed": false,
-        "spriteSourceSize": {
-          "x": 0,
-          "y": 0,
-          "w": 32,
-          "h": 32
-        },
-        "sourceSize": {
-          "w": 32,
-          "h": 32
-        }
+      "coin.png":{  
+         "frame":{  
+            "x":64,
+            "y":32,
+            "w":32,
+            "h":32
+         },
+         "rotated":false,
+         "trimmed":false,
+         "spriteSourceSize":{  
+            "x":0,
+            "y":0,
+            "w":32,
+            "h":32
+         },
+         "sourceSize":{  
+            "w":32,
+            "h":32
+         }
       },
-      "WSSprites6.png": {
-        "frame": {
-          "x": 0,
-          "y": 64,
-          "w": 32,
-          "h": 32
-        },
-        "rotated": false,
-        "trimmed": false,
-        "spriteSourceSize": {
-          "x": 0,
-          "y": 0,
-          "w": 32,
-          "h": 32
-        },
-        "sourceSize": {
-          "w": 32,
-          "h": 32
-        }
+      "boomerang.png":{  
+         "frame":{  
+            "x":0,
+            "y":64,
+            "w":32,
+            "h":32
+         },
+         "rotated":false,
+         "trimmed":false,
+         "spriteSourceSize":{  
+            "x":0,
+            "y":0,
+            "w":32,
+            "h":32
+         },
+         "sourceSize":{  
+            "w":32,
+            "h":32
+         }
+      },
+      "WSSprites7.png":{  
+         "frame":{  
+            "x":32,
+            "y":64,
+            "w":32,
+            "h":32
+         },
+         "rotated":false,
+         "trimmed":false,
+         "spriteSourceSize":{  
+            "x":0,
+            "y":0,
+            "w":32,
+            "h":32
+         },
+         "sourceSize":{  
+            "w":32,
+            "h":32
+         }
+      },
+      "WSSprites8.png":{  
+         "frame":{  
+            "x":64,
+            "y":64,
+            "w":32,
+            "h":32
+         },
+         "rotated":false,
+         "trimmed":false,
+         "spriteSourceSize":{  
+            "x":0,
+            "y":0,
+            "w":32,
+            "h":32
+         },
+         "sourceSize":{  
+            "w":32,
+            "h":32
+         }
+      },
+      "shield.png":{  
+         "frame":{  
+            "x":0,
+            "y":96,
+            "w":32,
+            "h":32
+         },
+         "rotated":false,
+         "trimmed":false,
+         "spriteSourceSize":{  
+            "x":0,
+            "y":0,
+            "w":32,
+            "h":32
+         },
+         "sourceSize":{  
+            "w":32,
+            "h":32
+         }
+      },
+      "WSSprites10.png":{  
+         "frame":{  
+            "x":32,
+            "y":96,
+            "w":32,
+            "h":32
+         },
+         "rotated":false,
+         "trimmed":false,
+         "spriteSourceSize":{  
+            "x":0,
+            "y":0,
+            "w":32,
+            "h":32
+         },
+         "sourceSize":{  
+            "w":32,
+            "h":32
+         }
+      },
+      "player.png":{  
+         "frame":{  
+            "x":64,
+            "y":96,
+            "w":32,
+            "h":32
+         },
+         "rotated":false,
+         "trimmed":false,
+         "spriteSourceSize":{  
+            "x":0,
+            "y":0,
+            "w":32,
+            "h":32
+         },
+         "sourceSize":{  
+            "w":32,
+            "h":32
+         }
       }
-    },
-    "meta": {
-      "app": "https://github.com/piskelapp/piskel/",
-      "version": "1.0",
-      "image": "WSSprites.png",
-      "format": "RGBA8888",
-      "size": {
-        "w": 96,
-        "h": 96
+   },
+   "meta":{  
+      "app":"https://github.com/piskelapp/piskel/",
+      "version":"1.0",
+      "image":"WSSprites.png",
+      "format":"RGBA8888",
+      "size":{  
+         "w":96,
+         "h":128
       }
-    }
-  }
-  
+   }
+}

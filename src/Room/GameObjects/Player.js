@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const uuid = require('uuid')
 const moment = require('moment')
 const goTypes = require('./gameObjectTypes')
 const vector = require('../../utils/vector')
@@ -152,7 +153,7 @@ Player.prototype.useSpell = function(spellName, data) {
             break
     }
 
-    if(this.emit) this.emit('player_use_spell', Object.assign({ spellName, player: this.info() }, spellData, data))
+    if(this.emit) this.emit('player_use_spell', Object.assign({ spellName, player: this.info() }, spellData, data, { id: uuid.v4() }))
 }
 
 Player.prototype.resetCooldown = function (spellName) {

@@ -3,20 +3,18 @@ const express = require('express')
 const cors = require('cors')
 const server = express()
 const http = require('http').Server(server)
+const WebSocket = require('./src/WebSocket')
 
 var whitelist = ['http://localhost:3000']
 var corsOptionsDelegate = function (req, callback) {
-    const corsOptions = { origin: whitelist.indexOf(req.header('Origin')) !== -1 }
-    callback(null, corsOptions)
+    callback(null, {})
+    // const corsOptions = { origin: whitelist.indexOf(req.header('Origin')) !== -1 }
+    // callback(null, corsOptions)
 }
 server.use(cors(corsOptionsDelegate))
 
 server.set('views', __dirname + '')
 server.engine('html', require('ejs').renderFile)
-
-const WebSocket = require('./src/WebSocket')
-const packageJson = require('./package.json')
-
 
 server.get('/', function(req, res, next) {
     res.render('site/index.html')
@@ -31,10 +29,12 @@ server.get('/static/:filetype/:filename', function(req, res, next) {
 })
 
 server.get('/rooms', function(req, res, next) {
+    console.log('Http Req :: Get Rooms :: ' + req.headers.origin)
     res.status(200).json( WebSocket.getRooms() )
 })
 
 server.get('/spells', function(req, res, next) {
+    console.log('Http Req :: Get Spells :: ' + req.headers.origin)
     res.status(200).json( WebSocket.getSpells() )
 })
 

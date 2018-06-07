@@ -34,6 +34,7 @@ function Room(socketIo, data) {
     this._gameEnded = false
     this.cycleTime = null
     this.users = []
+    this.chat = []
     this.owner = null
 }
 
@@ -53,7 +54,8 @@ Room.prototype.info = function () {
     return {
         name: this.name,
         owner: this.owner.info(),
-        users: this.users.map(x => x.info())
+        users: this.users.map(x => x.info()),
+        chat: this.chat,
     }
 }
 
@@ -107,6 +109,18 @@ Room.prototype.userJoin = function(user) {
         console.log(`SocketIO :: ${this.name} :: Player deselected spell :: ${JSON.stringify(message)}`)
         user.deselectSpell(message.spellName)
         this.emit('user_deselected_spell', { user: user.id, spellName: message.spellName })
+    })
+
+    user.socket.on('user_submit_message', (message) => {
+        console.log(`SocketIO :: ${this.name} :: Player submit message :: ${JSON.stringify(message)}`)
+        const user = this.users.find(x => x.id === message.user)
+        this.chat.push({
+            id: user.id,
+            message: message.message,
+            name: user.name,
+            createdAt: moment().toISOString(),
+        })
+        this.emit('room_chat_new_message', { chat: this.chat })
     })
 
     // Player events

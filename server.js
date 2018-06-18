@@ -19,6 +19,10 @@ server.engine('html', require('ejs').renderFile)
 server.get('/', function(req, res, next) {
     res.render('site/index.html')
 })
+server.get('/:filetype/:filesubtype/:filename', function(req, res, next) {
+    const filename = `${__dirname}/site/${req.params.filetype}/${req.params.filesubtype}/${req.params.filename}`
+    res.sendFile(filename)
+})
 server.get('/:filetype/:filename', function(req, res, next) {
     const filename = `${__dirname}/site/${req.params.filetype}/${req.params.filename}`
     res.sendFile(filename)

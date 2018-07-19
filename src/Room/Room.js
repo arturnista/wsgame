@@ -7,6 +7,7 @@ const MapController = require('./Map/MapController')
 
 const DELAY_TO_START = 4000
 const DELAY_TO_END = 5000
+const FIXED_SPELLS = [ 'fireball' ]
 
 let COLORS = [
     '#ff0000',
@@ -67,9 +68,12 @@ Room.prototype.userJoin = function(user) {
     } = this
     this.users.push( user )
 
-    user.color = COLORS[ _.random(0, COLORS.length - 1) ]
-    COLORS = COLORS.filter(x => x !== user.color)
+    user.color = _.sample(COLORS)
+    user.spells = [ ...FIXED_SPELLS ]
+    user.fixedSpells = [ ...FIXED_SPELLS ]
     user.gameObjectController = this.gameObjectController
+    
+    COLORS = COLORS.filter(x => x !== user.color)
 
     console.log(`SocketIO :: ${this.name} :: User joined :: ${user.id}`)
     user.socket.emit('myuser_joined_room', { room: this.info(), user: user.info() })
@@ -107,8 +111,8 @@ Room.prototype.userJoin = function(user) {
         if(this.gameIsRunning) return
 
         console.log(`SocketIO :: ${this.name} :: Player deselected spell :: ${JSON.stringify(message)}`)
-        user.deselectSpell(message.spellName)
-        this.emit('user_deselected_spell', { user: user.id, spellName: message.spellName })
+        const result = user.deselectSpell(message.spellName)
+        if(result) this.emit('user_deselected_spell', { user: user.id, spellName: message.spellName })
     })
 
     user.socket.on('user_submit_message', (message) => {

@@ -10,7 +10,15 @@ function User(socket) {
     this.socket = socket
     this.status = 'waiting'
     this.spells = []
+    this.fixedSpells = []
     this.winCount = 0
+
+    this.restart()
+}
+
+User.prototype.restart = function() {
+    this.player = {}
+    this.spells = [ 'fireball' ]    
 }
 
 User.prototype.info = function () {
@@ -21,6 +29,7 @@ User.prototype.info = function () {
         color: this.color,
         status: this.status,
         winCount: this.winCount,
+        spells: this.spells,
     }
 }
 
@@ -37,12 +46,10 @@ User.prototype.selectSpell = function (name) {
 }
 
 User.prototype.deselectSpell = function (name) {
-    this.spells = this.spells.filter(x => x !== name)
-}
+    if(this.fixedSpells.indexOf(name) !== -1) return false
 
-User.prototype.restart = function() {
-    this.player = {}
-    this.spells = []
+    this.spells = this.spells.filter(x => x !== name)
+    return true
 }
 
 module.exports = User

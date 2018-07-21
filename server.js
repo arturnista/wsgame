@@ -15,6 +15,13 @@ server.use(cors(corsOptionsDelegate))
 
 server.set('views', __dirname + '')
 server.engine('html', require('ejs').renderFile)
+server.use(function forceLiveDomain(req, res, next) {
+    var host = req.get('Host')
+    if (host === 'nwgame.herokuapp.com') {
+        return res.redirect(301, 'http://18.231.33.111/')
+    }
+    return next()
+})
 
 server.get('/', function(req, res, next) {
     res.render('site/index.html')

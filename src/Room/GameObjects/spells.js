@@ -14,7 +14,7 @@ module.exports = {
     },
     follower: {
         name: 'Follower',
-        description: 'Summons 3 followers, each one follows the closest player for 10 seconds.',
+        description: 'Summons 3 followers, each one follows the closest player for 6 seconds.',
         type: 'offensive',
         cooldown: 10000,
         knockbackMultiplier: 1,
@@ -23,7 +23,7 @@ module.exports = {
     },
     explosion: {
         name: 'Explosion',
-        description: 'Cast an explosion of 60 radius. After 0.5s (casting time), all players in area receives knockback.',
+        description: 'Cast an explosion of 70 radius. After 0.5s (casting time), all players in area receives knockback.',
         type: 'offensive',
         cooldown: 3000,
         radius: 70,

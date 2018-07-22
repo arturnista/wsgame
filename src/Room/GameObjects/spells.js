@@ -17,8 +17,8 @@ module.exports = {
         description: 'Summons 3 followers, each one follows the closest player for 10 seconds.',
         type: 'offensive',
         cooldown: 10000,
-        knockbackMultiplier: 1.3,
-        knockbackIncrement: 1.5,
+        knockbackMultiplier: 1,
+        knockbackIncrement: 1.6,
         moveSpeed: 500,
     },
     explosion: {
@@ -26,10 +26,10 @@ module.exports = {
         description: 'Cast an explosion of 60 radius. After 0.5s (casting time), all players in area receives knockback.',
         type: 'offensive',
         cooldown: 3000,
-        radius: 60,
+        radius: 70,
         knockbackMultiplier: 1,
-        knockbackIncrement: 1.3,
-        distance: 500,
+        knockbackIncrement: 1.4,
+        distance: 600,
         duration: 500,
         effects: {
             moveVelocity: 0,
@@ -42,9 +42,9 @@ module.exports = {
         type: 'offensive',
         cooldown: 5000,
         distance: 350,
-        moveSpeed: 250,
+        moveSpeed: 400,
         knockbackMultiplier: 1,
-        knockbackIncrement: 1.2,
+        knockbackIncrement: 1.3,
     },
     reflect_shield: {
         name: 'Reflect Shield',
@@ -60,14 +60,14 @@ module.exports = {
     },
     blink: {
         name: 'Blink',
-        description: 'Instant teleports the player for 300 units. After the blink, the player gets stunned for 1s.',
+        description: 'Instant teleports the player for 300 units.',
         type: 'defensive',
         cooldown: 5000,
         distance: 300,
-        duration: 1000,
-        effects: {
-            moveVelocity: 0,
-            silenced: true
-        }
+        // duration: 1000,
+        // effects: {
+        //     moveVelocity: 0,
+        //     silenced: true
+        // }
     },
 }

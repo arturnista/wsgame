@@ -23,7 +23,7 @@ function Fireball(id, data, goController) {
     this.increment = data.knockbackIncrement
     this.moveSpeed = data.moveSpeed
 
-    this.lifeTime = 10
+    this.lifeTime = 5
     this._timePassed = 0
 
     this.velocity = {

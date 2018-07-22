@@ -117,7 +117,8 @@ Player.prototype.useSpell = function(spellName, data) {
         case 'blink':
             this.positionToGo = null
             this.moveVelocity = { x: 0, y: 0 }
-            this.modifiers.push(Object.assign({ name: spellName, initial: moment() }, spellData))
+            this.knockbackVelocity = vector.multiply(this.knockbackVelocity, .5)
+            // this.modifiers.push(Object.assign({ name: spellName, initial: moment() }, spellData))
             if(vector.distance(this.position, data.position) >= spellData.distance) {
                 const dir = vector.direction(this.position, data.position)
                 this.position = vector.add(this.position, vector.multiply(dir, spellData.distance))

@@ -12,6 +12,7 @@ function User(socket) {
     this.spells = []
     this.fixedSpells = []
     this.winCount = 0
+    this.isObserver = false
 
     this.restart()
 }
@@ -30,6 +31,7 @@ User.prototype.info = function () {
         status: this.status,
         winCount: this.winCount,
         spells: this.spells,
+        isObserver: this.isObserver,
     }
 }
 

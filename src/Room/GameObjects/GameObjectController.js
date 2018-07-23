@@ -23,6 +23,8 @@ GameObjectController.prototype.start = function (users, { emit, mapController, b
 
     this.gameObjects = []
     for (let i = 0; i < users.length; i++) {
+        if(users[i].isObserver) continue
+
         users[i].player = this.createPlayer({ emit, mapController })
         users[i].player.color = users[i].color
         users[i].player.spells = users[i].spells

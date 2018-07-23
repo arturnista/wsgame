@@ -99,6 +99,14 @@ Room.prototype.userJoin = function(user) {
         }
     })
 
+    user.socket.on('user_become_observer', (message) => {
+        user.isObserver = true
+    })
+
+    user.socket.on('user_become_player', (message) => {
+        user.isObserver = false
+    })
+
     user.socket.on('user_select_spell', (message) => {
         if(this.gameIsRunning) return
 
@@ -130,12 +138,14 @@ Room.prototype.userJoin = function(user) {
     // Player events
     user.socket.on('player_move', (message) => {
         if(!this.gameIsRunning) return
+        if(user.isObserver) return
         console.log(`SocketIO :: ${this.name} :: Player move :: ${JSON.stringify(message)}`)
         if(user.player && user.player.status === 'alive') user.player.setPositionToGo(message.position)
     })
 
     user.socket.on('player_spell_fireball', (message) => {
         if(!this.gameIsRunning) return
+        if(user.isObserver) return
 
         console.log(`SocketIO :: ${this.name} :: Player used fireball :: ${JSON.stringify(message)}`)
         if(user.player) user.player.useSpell('fireball', message)
@@ -143,6 +153,7 @@ Room.prototype.userJoin = function(user) {
 
     user.socket.on('player_spell_follower', (message) => {
         if(!this.gameIsRunning) return
+        if(user.isObserver) return
 
         console.log(`SocketIO :: ${this.name} :: Player used follower :: ${JSON.stringify(message)}`)
         if(user.player) user.player.useSpell('follower', message)
@@ -150,6 +161,7 @@ Room.prototype.userJoin = function(user) {
 
     user.socket.on('player_spell_boomerang', (message) => {
         if(!this.gameIsRunning) return
+        if(user.isObserver) return
 
         console.log(`SocketIO :: ${this.name} :: Player used boomerang :: ${JSON.stringify(message)}`)
         if(user.player) user.player.useSpell('boomerang', message)
@@ -157,6 +169,7 @@ Room.prototype.userJoin = function(user) {
 
     user.socket.on('player_spell_reflect_shield', (message) => {
         if(!this.gameIsRunning) return
+        if(user.isObserver) return
 
         console.log(`SocketIO :: ${this.name} :: Player used reflect_shield :: ${JSON.stringify(message)}`)
         if(user.player) user.player.useSpell('reflect_shield', message)
@@ -164,6 +177,7 @@ Room.prototype.userJoin = function(user) {
 
     user.socket.on('player_spell_blink', (message) => {
         if(!this.gameIsRunning) return
+        if(user.isObserver) return
 
         console.log(`SocketIO :: ${this.name} :: Player used blink :: ${JSON.stringify(message)}`)
         if(user.player) user.player.useSpell('blink', message)
@@ -171,6 +185,7 @@ Room.prototype.userJoin = function(user) {
 
     user.socket.on('player_spell_explosion', (message) => {
         if(!this.gameIsRunning) return
+        if(user.isObserver) return
 
         console.log(`SocketIO :: ${this.name} :: Player used explosion :: ${JSON.stringify(message)}`)
         if(user.player) user.player.useSpell('explosion', message)
@@ -215,7 +230,7 @@ Room.prototype.startGame = function (data) {
 
         this.emit('game_will_start', { time: DELAY_TO_START, map: this.mapController.info() })
         setTimeout(() => {
-            this.users.forEach(u => u.socket.emit('player_create', u.player.info()))
+            this.users.forEach(u => !_.isEmpty(u.player) && u.socket.emit('player_create', u.player.info()))
             this.emit('map_create', this.mapController.info())
 
             this.gameIsRunning = true

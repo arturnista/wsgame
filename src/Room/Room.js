@@ -100,11 +100,19 @@ Room.prototype.userJoin = function(user) {
     })
 
     user.socket.on('user_become_observer', (message) => {
+        if(this.gameIsRunning) return
+        
+        console.log(`SocketIO :: ${this.name} :: User become observer :: ${JSON.stringify(message)}`)
         user.isObserver = true
+        this.emit('room_update', { room: this.info() })
     })
 
     user.socket.on('user_become_player', (message) => {
+        if(this.gameIsRunning) return
+        
+        console.log(`SocketIO :: ${this.name} :: User become player :: ${JSON.stringify(message)}`)
         user.isObserver = false
+        this.emit('room_update', { room: this.info() })
     })
 
     user.socket.on('user_select_spell', (message) => {

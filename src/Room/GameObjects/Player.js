@@ -61,7 +61,8 @@ Player.prototype.info = function () {
         knockbackValue: this.knockbackValue,
         color: this.color,
         userId: this.user ? this.user.id : '',
-        modifiers: this.modifiers.map(x => x.name)
+        modifiers: this.modifiers.map(x => x.name),
+        spells: this.spells
     }
 }
 

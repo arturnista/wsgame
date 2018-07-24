@@ -21,6 +21,8 @@ function GameObjectController(emit) {
 
 GameObjectController.prototype.start = function (users, { emit, mapController, botCount }) {
 
+    const players = []
+
     this.gameObjects = []
     for (let i = 0; i < users.length; i++) {
         if(users[i].isObserver) continue
@@ -29,12 +31,16 @@ GameObjectController.prototype.start = function (users, { emit, mapController, b
         users[i].player.color = users[i].color
         users[i].player.spells = users[i].spells
         users[i].player.user = users[i]
+        players.push(users[i].player)
     }
 
     for (let i = 0; i < botCount; i++) {
         let player = this.createPlayer({ isBot: true, emit, mapController })
         player.color = BOT_COLORS[_.random(0, BOT_COLORS.length - 1)]
+        players.push(player)
     }
+
+    return players
 }
 
 GameObjectController.prototype.end = function (users) {

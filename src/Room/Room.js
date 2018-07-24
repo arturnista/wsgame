@@ -231,7 +231,10 @@ Room.prototype.userOwner = function (user) {
 }
 
 Room.prototype.startGame = function (data) {
-    const usersReady = this.users.every(x => x.status === 'ready')
+    const availableUsers = this.users.filter(x => !x.isObserver)
+    if(availableUsers.length === 0) return
+    
+    const usersReady = availableUsers.every(x => x.status === 'ready')
     if(usersReady) {
         players = this.gameObjectController.start(this.users, { emit: this.emit.bind(this), mapController: this.mapController, botCount: data.botCount || 0 })
         this.mapController.start(data && data.map)

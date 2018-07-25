@@ -19,7 +19,7 @@ function User(socket) {
 
 User.prototype.restart = function() {
     this.player = {}
-    this.spells = [ 'fireball' ]    
+    this.spells = this.spells.length === 0 ? [ 'fireball' ] : this.spells
 }
 
 User.prototype.info = function () {

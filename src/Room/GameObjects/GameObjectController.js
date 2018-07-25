@@ -31,12 +31,14 @@ GameObjectController.prototype.start = function (users, { emit, mapController, b
         users[i].player.color = users[i].color
         users[i].player.spells = users[i].spells
         users[i].player.user = users[i]
+        users[i].player.name = users[i].name
         players.push(users[i].player)
     }
 
     for (let i = 0; i < botCount; i++) {
         let player = this.createPlayer({ isBot: true, emit, mapController })
         player.color = BOT_COLORS[_.random(0, BOT_COLORS.length - 1)]
+        player.name = 'Bot Ulysses'
         players.push(player)
     }
 

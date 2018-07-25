@@ -17,8 +17,8 @@ function Player(id, opt, goController) {
     this.emit = opt.emit
     this.mapController = opt.mapController
 
-
     this.status = 'alive'
+    this.name = ''
     this.color = ''
     this.start()
 
@@ -54,6 +54,7 @@ Player.prototype.info = function () {
     return {
         id: this.id,
         life: this.life,
+        name: this.name,
         position: this.position,
         collider: this.collider,
         velocity: this.velocity,

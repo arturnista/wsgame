@@ -232,10 +232,10 @@ Room.prototype.userOwner = function (user) {
 
 Room.prototype.startGame = function (data) {
     const availableUsers = this.users.filter(x => !x.isObserver)
-    if(availableUsers.length === 0) return
+    if(data.botCount === 0 && availableUsers.length === 0) return
     
     const usersReady = availableUsers.every(x => x.status === 'ready')
-    if(usersReady) {
+    if(usersReady || (availableUsers.length === 0 && data.botCount > 0)) {
         players = this.gameObjectController.start(this.users, { emit: this.emit.bind(this), mapController: this.mapController, botCount: data.botCount || 0 })
         this.mapController.start(data && data.map)
 

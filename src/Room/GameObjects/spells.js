@@ -26,7 +26,7 @@ module.exports = {
         description: 'Cast an explosion of 65 radius. After 650ms (casting time), all players in area receives knockback.',
         type: 'offensive',
         cooldown: 3000,
-        radius: 65,
+        radius: 5,
         knockbackMultiplier: 1,
         knockbackIncrement: 1.2,
         distance: 600,

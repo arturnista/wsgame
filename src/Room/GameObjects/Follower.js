@@ -34,7 +34,7 @@ function Follower(id, data, goController) {
     this.increment = data.knockbackIncrement
     this.moveSpeed = data.moveSpeed
 
-    this.lifeTime = 6
+    this.lifeTime = 8
     this._timePassed = 0
 
     if(this.target == null) return

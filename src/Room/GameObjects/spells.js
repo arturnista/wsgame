@@ -16,21 +16,21 @@ module.exports = {
         name: 'Follower',
         description: 'Summons 3 followers, each one follows the closest player for 6 seconds.',
         type: 'offensive',
-        cooldown: 10000,
+        cooldown: 14000,
         knockbackMultiplier: 1,
         knockbackIncrement: 1.6,
         moveSpeed: 500,
     },
     explosion: {
         name: 'Explosion',
-        description: 'Cast an explosion of 70 radius. After 0.5s (casting time), all players in area receives knockback.',
+        description: 'Cast an explosion of 80 radius. After 650ms (casting time), all players in area receives knockback.',
         type: 'offensive',
         cooldown: 3000,
-        radius: 70,
+        radius: 80,
         knockbackMultiplier: 1,
-        knockbackIncrement: 1.4,
+        knockbackIncrement: 1.2,
         distance: 600,
-        duration: 500,
+        duration: 650,
         effects: {
             moveVelocity: 0,
             silenced: true
@@ -63,11 +63,6 @@ module.exports = {
         description: 'Instant teleports the player for 300 units.',
         type: 'defensive',
         cooldown: 5000,
-        distance: 300,
-        // duration: 1000,
-        // effects: {
-        //     moveVelocity: 0,
-        //     silenced: true
-        // }
+        distance: 300
     },
 }

@@ -2,7 +2,7 @@ const _ = require('lodash')
 const goTypes = require('../GameObjects/gameObjectTypes')
 const vector = require('../../utils/vector')
 
-const DECREASE_INCREMENT = 3
+const DECREASE_INCREMENT = 7
 
 function FireArena(goController) {
     this.goController = goController
@@ -40,8 +40,8 @@ FireArena.prototype.prepare = function() {
     this.spawnPoints.push( { x: 200, y: 100 } )
     this.spawnPoints.push( { x: 100, y: 200 } )
 
-    this.decreasePerSecond = 0
-    this.timeToUpdate = 30
+    this.decreasePerSecond = 3
+    this.timeToUpdate = 10
     this._timePassed = 0
 }
 

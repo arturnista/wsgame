@@ -34,7 +34,7 @@ BotBehaviour.prototype.update = function (deltatime) {
         this.lastSpell = 0
         this.spellOffset = _.random(1, 3, true)
 
-        const spellName = this.offensiveSpells[_.random(0, this.offensiveSpells.length - 1)]
+        const spellName = _.sample(this.offensiveSpells)
         const playersToCast = this.player.goController.gameObjects.filter(x =>
             x.type === goTypes.PLAYER && x.status === 'alive' && x.id !== this.player.id
         )
@@ -57,7 +57,7 @@ BotBehaviour.prototype.update = function (deltatime) {
 
             const isGoing = vector.length( vector.sub( spellVelocity, spellDirection ) )
             if(isGoing < 0.5) {
-                const spellName = this.defensiveSpells[_.random(0, this.defensiveSpells.length - 1)]
+                const spellName = _.sample(this.defensiveSpells)
                 this.setPosition()
                 if(this.canCastSpell(spellName)) {
                     this.castSpell(spellName, this.player.positionToGo)

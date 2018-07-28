@@ -23,7 +23,7 @@ function Player(id, opt, goController) {
     this.start()
 
     this.botBehaviour = null
-    if(opt.isBot) this.botBehaviour = new BotBehaviour(this)
+    // if(opt.isBot) this.botBehaviour = new BotBehaviour(this)
 }
 
 Player.prototype.start = function () {
@@ -101,6 +101,10 @@ Player.prototype.useSpell = function(spellName, data) {
     if(this.spellsUsed[spellName] && moment().diff(this.spellsUsed[spellName]) < spellData.cooldown) return
     this.spellsUsed[spellName] = moment()
 
+    if(spellData.effects || spellData.afterEffects) {
+        this.modifiers.push(Object.assign({ name: spellName, initial: moment() }, spellData))
+    }
+
     switch (spellName) {
         case 'fireball':
             this.goController.createFireball(Object.assign(data, spellData))
@@ -113,17 +117,16 @@ Player.prototype.useSpell = function(spellName, data) {
             setTimeout(_ => this.goController.createFollower(Object.assign(data, spellData)), 500)
             setTimeout(_ => this.goController.createFollower(Object.assign(data, spellData)), 1000)
             break
-        case 'reflect_shield':
-            this.modifiers.push(Object.assign({ name: spellName, initial: moment() }, spellData))
-            break
         case 'blink':
             this.positionToGo = null
             this.moveVelocity = { x: 0, y: 0 }
             this.knockbackVelocity = vector.multiply(this.knockbackVelocity, .5)
-            // this.modifiers.push(Object.assign({ name: spellName, initial: moment() }, spellData))
             if(vector.distance(this.position, data.position) >= spellData.distance) {
                 const dir = vector.direction(this.position, data.position)
-                this.position = vector.add(this.position, vector.multiply(dir, spellData.distance))
+                const angle = Math.atan2(dir.y, dir.x)
+                const xProj = Math.cos(angle) * spellData.distance
+                const yProj = Math.sin(angle) * spellData.distance
+                this.position = vector.add(this.position, { x: xProj, y: yProj })
             } else {
                 this.position = data.position
             }
@@ -131,25 +134,24 @@ Player.prototype.useSpell = function(spellName, data) {
         case 'explosion':
             if(vector.distance(this.position, data.position) >= spellData.distance) {
                 const dir = vector.direction(this.position, data.position)
-                data.position = vector.add(this.position, vector.multiply(dir, spellData.distance))
+                const angle = Math.atan2(dir.y, dir.x)
+                const xProj = Math.cos(angle) * spellData.distance
+                const yProj = Math.sin(angle) * spellData.distance
+                data.position = vector.add(this.position, { x: xProj, y: yProj })
             } else {
                 data.position = data.position
             }
 
             const afterEffect = () => {
-                const players = this.goController.gameObjects.filter(x =>
-                    x.type === goTypes.PLAYER &&
-                    x.status === 'alive' &&
-                    vector.distance(x.position, data.position) < spellData.radius
-                )
-
-                players.forEach(p => {
-                    const dir = vector.direction(data.position, p.position)
-                    p.knockback(
-                        dir.x === 0 && dir.y === 0 ? { x: 1, y: 1 } : dir,
-                        spellData.knockbackMultiplier,
-                        spellData.knockbackIncrement
-                    )
+                const players = this.goController.gameObjects.forEach(x => {
+                    if(x.type === goTypes.PLAYER && x.status === 'alive' && vector.distance(x.position, data.position) < (spellData.radius + x.collider.radius)) {
+                        const dir = vector.direction(data.position, x.position)
+                        x.knockback(
+                            dir.x === 0 && dir.y === 0 ? { x: 1, y: 1 } : dir,
+                            spellData.knockbackMultiplier,
+                            spellData.knockbackIncrement
+                        )
+                    }
                 })
             }
             this.modifiers.push(Object.assign({ name: spellName, initial: moment(), afterEffect }, spellData))

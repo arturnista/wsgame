@@ -97,10 +97,9 @@ Follower.prototype.onCollide = function (object, direction, directionInv) {
         object.knockback(directionInv, this.multiplier, this.increment)
         const shouldReflect = object.modifiers.find(x => x.effects.reflectSpells) != null
         if(shouldReflect) {
-            const newTarget = _.cloneDeep(this.owner)
             const newOwner = _.cloneDeep(object)
+            this.target = this.owner
             this.owner = newOwner
-            this.target = newTarget
 
             this.velocity = {
                 x: 0,

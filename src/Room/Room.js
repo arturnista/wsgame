@@ -290,7 +290,7 @@ Room.prototype.gameLoop = function () {
     if(this._gameEnded) return
 
     const alivePlayers = infos.players.filter(x => x.status === 'alive')
-    if(alivePlayers.length === 1) {
+    if(alivePlayers.length <= 1) {
         this._gameEnded = true
         this.emit('game_will_end', { time: DELAY_TO_END, winner: alivePlayers[0] })
         setTimeout(this.endGame.bind(this), DELAY_TO_END)

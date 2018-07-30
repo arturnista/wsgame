@@ -26,6 +26,9 @@ server.use(function forceLiveDomain(req, res, next) {
 server.get('/', function(req, res, next) {
     res.render('site/index.html')
 })
+server.get('/whatsnew', function(req, res, next) {
+    res.render('site/index.html')
+})
 server.get('/room', function(req, res, next) {
     return res.redirect(301, '/')
 })

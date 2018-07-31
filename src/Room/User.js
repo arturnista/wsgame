@@ -39,10 +39,10 @@ User.prototype.selectSpell = function (name) {
     if(!spells[name]) return null
 
     const offensiveSpells = this.spells.filter(x => spells[x].type === 'offensive')
-    const defensiveSpells = this.spells.filter(x => spells[x].type === 'defensive')
+    const supportSpells = this.spells.filter(x => spells[x].type === 'support')
 
     if(spells[name].type === 'offensive' && offensiveSpells.length >= spells._config.MAX_OFFENSIVE) return false
-    if(spells[name].type === 'defensive' && defensiveSpells.length >= spells._config.MAX_DEFENSIVE) return false
+    if(spells[name].type === 'support' && supportSpells.length >= spells._config.MAX_SUPPORT) return false
     this.spells.push(name)
     return spells[name]
 }

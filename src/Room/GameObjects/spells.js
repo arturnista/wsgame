@@ -1,7 +1,7 @@
 module.exports = {
     _config: {
         MAX_OFFENSIVE: 2,
-        MAX_DEFENSIVE: 1
+        MAX_SUPPORT: 1
     },
     fireball: {
         name: 'Fireball',
@@ -49,7 +49,7 @@ module.exports = {
     reflect_shield: {
         name: 'Reflect Shield',
         description: 'Protect the player for knockback and reflect some spells.',
-        type: 'defensive',
+        type: 'support',
         cooldown: 6000,
         duration: 1000,
         effects: {
@@ -61,7 +61,7 @@ module.exports = {
     blink: {
         name: 'Blink',
         description: 'Instant teleports the player for 300 units.',
-        type: 'defensive',
+        type: 'support',
         cooldown: 5000,
         distance: 300
     },

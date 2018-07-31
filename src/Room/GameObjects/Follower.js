@@ -4,6 +4,8 @@ const gameObjectController = require('./GameObjectController')
 const vector = require('../../utils/vector')
 const colliders = require('../Physics/colliders')
 
+const LIFE_TIME = 8
+
 function Follower(id, data, goController) {
     this.id = id
     this.type = goTypes.SPELL
@@ -34,7 +36,7 @@ function Follower(id, data, goController) {
     this.increment = data.knockbackIncrement
     this.moveSpeed = data.moveSpeed
 
-    this.lifeTime = 8
+    this.lifeTime = LIFE_TIME
     this._timePassed = 0
 
     if(this.target == null) return
@@ -101,6 +103,7 @@ Follower.prototype.onCollide = function (object, direction, directionInv) {
             this.target = this.owner
             this.owner = newOwner
 
+            this.lifeTime = LIFE_TIME
             this.velocity = {
                 x: 0,
                 y: 0

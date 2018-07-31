@@ -52,7 +52,7 @@ module.exports = {
         type: 'offensive',
         cooldown: 5000,
         distance: 450,
-        moveSpeed: 250,
+        moveSpeed: 350,
         knockbackMultiplier: 1,
         knockbackIncrement: 1.3,
     },

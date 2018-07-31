@@ -113,12 +113,13 @@ Player.prototype.useSpell = function(spellName, data) {
             this.goController.createBoomerang(Object.assign(data, spellData))
             break
         case 'teleportation_orb':
-            if(this.goController.isAlive(this.teleportationOrb)) {
+            if(this.teleportationOrb && this.teleportationOrb.exists) {
                 this.position = this.teleportationOrb.position
                 this.goController.destroy(this.teleportationOrb.id)
                 this.teleportationOrb = null
             } else {
                 this.teleportationOrb = this.goController.createTeleportationOrb(Object.assign(data, spellData))
+                this.spellsUsed[spellName] = null
             }
             break
         case 'follower':

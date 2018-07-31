@@ -75,6 +75,7 @@ GameObjectController.prototype.createPlayer = function (opt) {
     const id = uuid.v4()
     const player = new Player(id, opt, this)
     this.gameObjects.push( player )
+    player.exists = true
 
     return player
 }
@@ -84,6 +85,7 @@ GameObjectController.prototype.createFireball = function (data) {
     const fireball = new Fireball(id, data, this)
 
     this.gameObjects.push( fireball )
+    fireball.exists = true
 
     return fireball
 }
@@ -93,6 +95,7 @@ GameObjectController.prototype.createFollower = function (data) {
     const follower = new Follower(id, data, this)
 
     this.gameObjects.push( follower )
+    follower.exists = true
 
     return follower
 }
@@ -102,6 +105,7 @@ GameObjectController.prototype.createBoomerang = function (data) {
     const boomerang = new Boomerang(id, data, this)
 
     this.gameObjects.push( boomerang )
+    boomerang.exists = true
 
     return boomerang
 }
@@ -111,6 +115,7 @@ GameObjectController.prototype.createTeleportationOrb = function (data) {
     const telOrb = new TeleportationOrb(id, data, this)
 
     this.gameObjects.push( telOrb )
+    telOrb.exists = true
 
     return telOrb
 }
@@ -119,17 +124,9 @@ GameObjectController.prototype.createObstacle = function (position) {
     const id = uuid.v4()
     const obs = new Obstacle(id, position, this)
     this.gameObjects.push(obs)
+    obs.exists = true
 
     return obs
-}
-
-GameObjectController.prototype.isAlive = function (gameObject) {
-    if(typeof gameObject === 'string') {
-        gameObject = { id: gameObject }
-    }
-    if(!gameObject || !gameObject.id) return false
-
-    return this.gameObjects.find(x => x.id === gameObject.id) !== null
 }
 
 GameObjectController.prototype.destroy = function (gameObject) {
@@ -143,6 +140,7 @@ GameObjectController.prototype.destroy = function (gameObject) {
     })
 
     if(goDeleted) this.emit('gameobject_delete', goDeleted.info())
+    goDeleted.exists = false
 }
 
 GameObjectController.prototype.destroyPlayer = function (id) {

@@ -1,11 +1,12 @@
 const _ = require('lodash')
+const uuid = require('uuid')
 const goTypes = require('./gameObjectTypes')
 const gameObjectController = require('./GameObjectController')
 const vector = require('../../utils/vector')
 const colliders = require('../Physics/colliders')
 
-function Obstacle(id, {position, size}, goController) {
-    this.id = id
+function Obstacle({position, size}, goController) {
+    this.id = uuid.v4()
     this.type = goTypes.OBSTACLE
 
     this.goController = goController
@@ -21,6 +22,7 @@ function Obstacle(id, {position, size}, goController) {
 Obstacle.prototype.info = function () {
     return {
         id: this.id,
+        type: 'map_obstacle',
         position: this.position,
         collider: this.collider
     }

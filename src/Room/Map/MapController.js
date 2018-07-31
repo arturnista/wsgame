@@ -10,8 +10,8 @@ const MAPS = {
 }
 
 
-function MapController(goController, emit) {
-    this.emit = emit
+function MapController(goController, addState) {
+    this.addState = addState
     this.goController = goController
     this.currentMap = null
 }
@@ -50,7 +50,7 @@ MapController.prototype.update = function(deltatime) {
 
     let shouldUpdate = this.currentMap.update(deltatime)
     if(shouldUpdate) {
-        this.emit('map_update', this.info())
+        this.addState('map_update', this.info())
     }
 }
 

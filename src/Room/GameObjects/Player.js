@@ -7,14 +7,14 @@ const colliders = require('../Physics/colliders')
 const BotBehaviour = require('./BotBehaviour')
 const spells = require('./spells')
 
-function Player(id, opt, goController) {
-    this.id = id
+function Player(opt, goController) {
+    this.id = uuid.v4()
     this.type = goTypes.PLAYER
 
     this.collider = colliders.createCircle(25)
     this.goController = goController
 
-    this.emit = opt.emit
+    this.addState = opt.addState
     this.mapController = opt.mapController
 
     this.status = 'alive'
@@ -23,7 +23,7 @@ function Player(id, opt, goController) {
     this.start()
 
     this.botBehaviour = null
-    if(opt.isBot) this.botBehaviour = new BotBehaviour(this)
+    // if(opt.isBot) this.botBehaviour = new BotBehaviour(this)
 }
 
 Player.prototype.start = function () {
@@ -53,6 +53,7 @@ Player.prototype.restart = function () {
 Player.prototype.info = function () {
     return {
         id: this.id,
+        type: 'player',
         life: this.life,
         name: this.name,
         position: this.position,
@@ -172,7 +173,7 @@ Player.prototype.useSpell = function(spellName, data) {
             break
     }
     
-    if(this.emit) this.emit('player_use_spell', Object.assign({ spellName, player: this.info() }, spellData, data, spellEntity && spellEntity.info()))
+    if(this.addState) this.addState('spell_casted', Object.assign({ spellName, player: this.info() }, spellData, data, spellEntity && spellEntity.info()))
 }
 
 Player.prototype.resetCooldown = function (spellName) {

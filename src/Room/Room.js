@@ -27,8 +27,8 @@ function Room(socketIo, data) {
 
     this.socketIo = socketIo
 
-    this.gameObjectController = new GameObjectController(this.emit.bind(this))
-    this.mapController = new MapController(this.gameObjectController, this.emit.bind(this))
+    this.gameObjectController = new GameObjectController(this.addState.bind(this))
+    this.mapController = new MapController(this.gameObjectController, this.addState.bind(this))
     this.physics = new Physics(this.gameObjectController)
 
     this.gameIsRunning = false
@@ -37,6 +37,8 @@ function Room(socketIo, data) {
     this.users = []
     this.chat = []
     this.owner = null
+
+    this.nextState = {}
 }
 
 Room.prototype.delete = function () {
@@ -220,7 +222,6 @@ Room.prototype.userJoin = function(user) {
         console.log(`SocketIO :: ${this.name} :: Game restarted :: ${JSON.stringify(message)}`)
         if(this.owner.id !== message.id) return
 
-
     })
 
 }
@@ -244,12 +245,11 @@ Room.prototype.startGame = function (data) {
     
     const usersReady = availableUsers.every(x => x.status === 'ready')
     if(usersReady || (availableUsers.length === 0 && data.botCount > 0)) {
-        players = this.gameObjectController.start(this.users, { emit: this.emit.bind(this), mapController: this.mapController, botCount: data.botCount || 0 })
+        players = this.gameObjectController.start(this.users, { addState: this.addState.bind(this), mapController: this.mapController, botCount: data.botCount || 0 })
         this.mapController.start(data && data.map)
 
         this.emit('game_will_start', { time: DELAY_TO_START, map: this.mapController.info() })
         setTimeout(() => {
-            this.users.forEach(u => !_.isEmpty(u.player) && u.socket.emit('player_create', u.player.info()))
             this.emit('map_create', this.mapController.info())
 
             this.gameIsRunning = true
@@ -290,7 +290,8 @@ Room.prototype.gameLoop = function () {
     mapController.update(deltatime)
 
     const infos = gameObjectController.allInfos()
-    this.emit('sync', infos)
+    this.emit('game_state', Object.assign({ entities: infos }, this.nextState))
+    this.nextState = {}
 
     this.now = moment()
     this.cycleTime = setTimeout(this.gameLoop.bind(this), 10)
@@ -303,6 +304,11 @@ Room.prototype.gameLoop = function () {
         this.emit('game_will_end', { time: DELAY_TO_END, winner: alivePlayers[0] })
         setTimeout(this.endGame.bind(this), DELAY_TO_END)
     }
+}
+
+Room.prototype.addState = function(type, data) {
+    if(!this.nextState[type]) this.nextState[type] = []
+    this.nextState[type].push(data)
 }
 
 Room.prototype.emit = function(name, data) {

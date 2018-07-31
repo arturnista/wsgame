@@ -1,11 +1,12 @@
 const _ = require('lodash')
+const uuid = require('uuid')
 const goTypes = require('./gameObjectTypes')
 const gameObjectController = require('./GameObjectController')
 const vector = require('../../utils/vector')
 const colliders = require('../Physics/colliders')
 
-function Boomerang(id, data, goController) {
-    this.id = id
+function Boomerang(data, goController) {
+    this.id = uuid.v4()
     this.type = goTypes.SPELL
 
     this.direction = data.direction

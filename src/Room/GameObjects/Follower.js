@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const uuid = require('uuid')
 const goTypes = require('./gameObjectTypes')
 const gameObjectController = require('./GameObjectController')
 const vector = require('../../utils/vector')
@@ -6,8 +7,8 @@ const colliders = require('../Physics/colliders')
 
 const LIFE_TIME = 8
 
-function Follower(id, data, goController) {
-    this.id = id
+function Follower(data, goController) {
+    this.id = uuid.v4()
     this.type = goTypes.SPELL
 
     this.goController = goController

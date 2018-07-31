@@ -15,12 +15,12 @@ const BOT_COLORS = [
     '#388E3C'
 ]
 
-function GameObjectController(emit) {
-    this.emit = emit
+function GameObjectController(addState) {
+    this.addState = addState
     this.gameObjects = []
 }
 
-GameObjectController.prototype.start = function (users, { emit, mapController, botCount }) {
+GameObjectController.prototype.start = function (users, { addState, mapController, botCount }) {
 
     const players = []
 
@@ -28,7 +28,7 @@ GameObjectController.prototype.start = function (users, { emit, mapController, b
     for (let i = 0; i < users.length; i++) {
         if(users[i].isObserver) continue
 
-        users[i].player = this.createPlayer({ emit, mapController })
+        users[i].player = this.createPlayer({ addState, mapController })
         users[i].player.color = users[i].color
         users[i].player.spells = users[i].spells
         users[i].player.user = users[i]
@@ -37,12 +37,13 @@ GameObjectController.prototype.start = function (users, { emit, mapController, b
     }
 
     for (let i = 0; i < botCount; i++) {
-        let player = this.createPlayer({ isBot: true, emit, mapController })
+        let player = this.createPlayer({ isBot: true, addState, mapController })
         player.color = BOT_COLORS[_.random(0, BOT_COLORS.length - 1)]
         player.name = 'Bot Ulysses'
         players.push(player)
     }
-
+    
+    players.forEach(p => this.create(p))
     return players
 }
 
@@ -72,61 +73,49 @@ GameObjectController.prototype.update = function (deltatime) {
 }
 
 GameObjectController.prototype.createPlayer = function (opt) {
-    const id = uuid.v4()
-    const player = new Player(id, opt, this)
-    this.gameObjects.push( player )
-    player.exists = true
-
+    const player = new Player(opt, this)
     return player
 }
 
 GameObjectController.prototype.createFireball = function (data) {
-    const id = uuid.v4()
-    const fireball = new Fireball(id, data, this)
-
-    this.gameObjects.push( fireball )
-    fireball.exists = true
+    const fireball = new Fireball(data, this)
+    this.create(fireball)
 
     return fireball
 }
 
 GameObjectController.prototype.createFollower = function (data) {
-    const id = uuid.v4()
-    const follower = new Follower(id, data, this)
-
-    this.gameObjects.push( follower )
-    follower.exists = true
+    const follower = new Follower(data, this)
+    this.create(follower)
 
     return follower
 }
 
 GameObjectController.prototype.createBoomerang = function (data) {
-    const id = uuid.v4()
-    const boomerang = new Boomerang(id, data, this)
-
-    this.gameObjects.push( boomerang )
-    boomerang.exists = true
+    const boomerang = new Boomerang(data, this)
+    this.create(boomerang)
 
     return boomerang
 }
 
 GameObjectController.prototype.createTeleportationOrb = function (data) {
-    const id = uuid.v4()
-    const telOrb = new TeleportationOrb(id, data, this)
-
-    this.gameObjects.push( telOrb )
-    telOrb.exists = true
+    const telOrb = new TeleportationOrb(data, this)
+    this.create(telOrb)
 
     return telOrb
 }
 
 GameObjectController.prototype.createObstacle = function (position) {
-    const id = uuid.v4()
-    const obs = new Obstacle(id, position, this)
-    this.gameObjects.push(obs)
-    obs.exists = true
+    const obs = new Obstacle(position, this)
+    this.create(obs, { supressEmit: true })
 
     return obs
+}
+
+GameObjectController.prototype.create = function(entity, { supressEmit } = {}) {
+    this.gameObjects.push(entity)
+    entity.exists = true
+    if(!supressEmit) this.addState('entity_created', entity.info())
 }
 
 GameObjectController.prototype.destroy = function (gameObject) {
@@ -139,8 +128,10 @@ GameObjectController.prototype.destroy = function (gameObject) {
         return x.id !== gameObject.id
     })
 
-    if(goDeleted) this.emit('gameobject_delete', goDeleted.info())
-    goDeleted.exists = false
+    if(goDeleted) {
+        this.addState('entity_deleted', goDeleted.info())
+        goDeleted.exists = false
+    }
 }
 
 GameObjectController.prototype.destroyPlayer = function (id) {

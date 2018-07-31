@@ -105,21 +105,25 @@ Player.prototype.useSpell = function(spellName, data) {
         this.modifiers.push(Object.assign({ name: spellName, initial: moment() }, spellData))
     }
 
+    let spellEntity = null
     switch (spellName) {
         case 'fireball':
-            this.goController.createFireball(Object.assign(data, spellData))
+            spellEntity = this.goController.createFireball(Object.assign(data, spellData))
             break
         case 'boomerang':
-            this.goController.createBoomerang(Object.assign(data, spellData))
+            spellEntity = this.goController.createBoomerang(Object.assign(data, spellData))
             break
         case 'teleportation_orb':
             if(this.teleportationOrb && this.teleportationOrb.exists) {
                 this.position = this.teleportationOrb.position
                 this.goController.destroy(this.teleportationOrb.id)
+
+                this.positionToGo = null
                 this.teleportationOrb = null
             } else {
                 this.teleportationOrb = this.goController.createTeleportationOrb(Object.assign(data, spellData))
                 this.spellsUsed[spellName] = null
+                spellEntity = this.teleportationOrb
             }
             break
         case 'follower':
@@ -167,8 +171,8 @@ Player.prototype.useSpell = function(spellName, data) {
             this.modifiers.push(Object.assign({ name: spellName, initial: moment(), afterEffect }, spellData))
             break
     }
-
-    if(this.emit) this.emit('player_use_spell', Object.assign({ spellName, player: this.info() }, spellData, data, { id: uuid.v4() }))
+    
+    if(this.emit) this.emit('player_use_spell', Object.assign({ spellName, player: this.info() }, spellData, data, spellEntity && spellEntity.info()))
 }
 
 Player.prototype.resetCooldown = function (spellName) {

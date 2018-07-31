@@ -38,7 +38,8 @@ Boomerang.prototype.info = function () {
         type: 'boomerang',
         position: this.position,
         collider: this.collider,
-        velocity: this.velocity
+        velocity: this.velocity,
+        owner: this.owner ? this.owner.id : ''
     }
 }
 

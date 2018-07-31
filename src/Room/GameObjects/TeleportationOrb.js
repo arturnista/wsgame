@@ -38,7 +38,8 @@ TeleportationOrb.prototype.info = function () {
         type: 'teleportation_orb',
         position: this.position,
         collider: this.collider,
-        velocity: this.velocity
+        velocity: this.velocity,
+        owner: this.owner ? this.owner.id : ''
     }
 }
 

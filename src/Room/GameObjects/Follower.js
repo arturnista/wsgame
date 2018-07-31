@@ -58,7 +58,8 @@ Follower.prototype.info = function () {
         type: 'follower',
         position: this.position,
         collider: this.collider,
-        velocity: this.velocity
+        velocity: this.velocity,
+        owner: this.owner ? this.owner.id : ''
     }
 }
 

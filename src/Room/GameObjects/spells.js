@@ -46,6 +46,16 @@ module.exports = {
         knockbackMultiplier: 1,
         knockbackIncrement: 1.3,
     },
+    teleportation_orb: {
+        name: 'Teleportation Orb',
+        description: 'Lorem ipsun.',
+        type: 'offensive',
+        cooldown: 5000,
+        distance: 450,
+        moveSpeed: 250,
+        knockbackMultiplier: 1,
+        knockbackIncrement: 1.3,
+    },
     reflect_shield: {
         name: 'Reflect Shield',
         description: 'Protect the player for knockback and reflect some spells.',

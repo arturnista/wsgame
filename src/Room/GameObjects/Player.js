@@ -112,6 +112,15 @@ Player.prototype.useSpell = function(spellName, data) {
         case 'boomerang':
             this.goController.createBoomerang(Object.assign(data, spellData))
             break
+        case 'teleportation_orb':
+            if(this.goController.isAlive(this.teleportationOrb)) {
+                this.position = this.teleportationOrb.position
+                this.goController.destroy(this.teleportationOrb.id)
+                this.teleportationOrb = null
+            } else {
+                this.teleportationOrb = this.goController.createTeleportationOrb(Object.assign(data, spellData))
+            }
+            break
         case 'follower':
             this.goController.createFollower(Object.assign(data, spellData))
             setTimeout(_ => this.goController.createFollower(Object.assign(data, spellData)), 500)

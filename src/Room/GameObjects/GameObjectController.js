@@ -5,6 +5,7 @@ const goTypes = require('./gameObjectTypes')
 const Fireball = require('./Fireball')
 const Follower = require('./Follower')
 const Boomerang = require('./Boomerang')
+const TeleportationOrb = require('./TeleportationOrb')
 const Player = require('./Player')
 const Obstacle = require('./Obstacle')
 
@@ -105,12 +106,30 @@ GameObjectController.prototype.createBoomerang = function (data) {
     return boomerang
 }
 
+GameObjectController.prototype.createTeleportationOrb = function (data) {
+    const id = uuid.v4()
+    const telOrb = new TeleportationOrb(id, data, this)
+
+    this.gameObjects.push( telOrb )
+
+    return telOrb
+}
+
 GameObjectController.prototype.createObstacle = function (position) {
     const id = uuid.v4()
     const obs = new Obstacle(id, position, this)
     this.gameObjects.push(obs)
 
     return obs
+}
+
+GameObjectController.prototype.isAlive = function (gameObject) {
+    if(typeof gameObject === 'string') {
+        gameObject = { id: gameObject }
+    }
+    if(!gameObject || !gameObject.id) return false
+
+    return this.gameObjects.find(x => x.id === gameObject.id) !== null
 }
 
 GameObjectController.prototype.destroy = function (gameObject) {

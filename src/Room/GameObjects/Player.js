@@ -158,22 +158,31 @@ Player.prototype.useSpell = function(spellName, data) {
             }
 
             const afterEffect = () => {
-                const players = this.goController.gameObjects.forEach(x => {
-                    if(x.type === goTypes.PLAYER && x.status === 'alive' && vector.distance(x.position, data.position) < (spellData.radius + x.collider.radius)) {
-                        const dir = vector.direction(data.position, x.position)
-                        x.knockback(
-                            dir.x === 0 && dir.y === 0 ? { x: 1, y: 1 } : dir,
-                            spellData.knockbackMultiplier,
-                            spellData.knockbackIncrement
-                        )
-                    }
+                this.goController.gameObjects.forEach(x => {
+                    if(x.type !== goTypes.PLAYER || x.status !== 'alive' || vector.distance(x.position, data.position) > (spellData.radius + x.collider.radius)) return
+
+                    const dir = vector.direction(data.position, x.position)
+                    x.knockback(
+                        dir.x === 0 && dir.y === 0 ? { x: 1, y: 1 } : dir,
+                        spellData.knockbackMultiplier,
+                        spellData.knockbackIncrement
+                    )
                 })
             }
             this.modifiers.push(Object.assign({ name: spellName, initial: moment(), afterEffect }, spellData))
             break
     }
     
-    if(this.addState) this.addState('spell_casted', Object.assign({ spellName, player: this.info() }, spellData, data, spellEntity && spellEntity.info()))
+    if(this.addState) {
+        this.addState('spell_casted', 
+            Object.assign({
+                spellName,
+                player: this.info(),
+                entity: spellEntity && spellEntity.info(),
+                castData: data
+            }, spellData)
+        )
+    }
 }
 
 Player.prototype.resetCooldown = function (spellName) {

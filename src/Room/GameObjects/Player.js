@@ -23,7 +23,7 @@ function Player(opt, goController) {
     this.start()
 
     this.botBehaviour = null
-    // if(opt.isBot) this.botBehaviour = new BotBehaviour(this)
+    if(opt.isBot) this.botBehaviour = new BotBehaviour(this)
 }
 
 Player.prototype.start = function () {
@@ -42,12 +42,12 @@ Player.prototype.start = function () {
     this.spells = []
     this.spellsUsed = {}
     this.modifiers = []
+    
+    this.status = 'alive'    
 }
 
 Player.prototype.restart = function () {
     this.start()
-
-    this.status = 'alive'
 }
 
 Player.prototype.info = function () {
@@ -64,7 +64,7 @@ Player.prototype.info = function () {
         color: this.color,
         userId: this.user ? this.user.id : '',
         modifiers: this.modifiers.map(x => x.name),
-        spells: this.spells
+        spells: this.spells.map(x => ({ name: x, cd: this.spellsUsed[x] ? this.spellsUsed[x].toISOString() : '' }))
     }
 }
 

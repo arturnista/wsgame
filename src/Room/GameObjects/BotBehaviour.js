@@ -7,15 +7,15 @@ const spells = require('./spells')
 
 function BotBehaviour(player) {
     let offensiveSpells = Object.keys(spells).filter(k => spells[k].type == 'offensive')
-    let defensiveSpells = Object.keys(spells).filter(k => spells[k].type == 'defensive')
+    let supportSpells = Object.keys(spells).filter(k => spells[k].type == 'support')
 
     let [ fSpell, sSpell ] = _.shuffle(offensiveSpells)
-    let [ tSpell ] = _.shuffle(defensiveSpells)
+    let [ tSpell ] = _.shuffle(supportSpells)
 
     this.player = player
     this.player.spells = [ fSpell, sSpell, tSpell ]
     this.offensiveSpells = [ fSpell, sSpell ]
-    this.defensiveSpells = [ tSpell ]
+    this.supportSpells = [ tSpell ]
     
     this.lastSpell = 0
     this.spellOffset = _.random(1, 3, true)
@@ -57,7 +57,7 @@ BotBehaviour.prototype.update = function (deltatime) {
 
             const isGoing = vector.length( vector.sub( spellVelocity, spellDirection ) )
             if(isGoing < 0.5) {
-                const spellName = _.sample(this.defensiveSpells)
+                const spellName = _.sample(this.supportSpells)
                 this.setPosition()
                 if(this.canCastSpell(spellName)) {
                     this.castSpell(spellName, this.player.positionToGo)

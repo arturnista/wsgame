@@ -1,6 +1,5 @@
 const io = require('socket.io')
 const _ = require('lodash')
-const moment = require('moment')
 const uuid = require('uuid')
 const Room = require('./Room/Room')
 const User = require('./Room/User')

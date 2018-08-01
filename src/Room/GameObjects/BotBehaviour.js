@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const moment = require('moment')
 const goTypes = require('./gameObjectTypes')
 const vector = require('../../utils/vector')
 const colliders = require('../Physics/colliders')
@@ -80,7 +79,7 @@ BotBehaviour.prototype.setPosition = function() {
 
 BotBehaviour.prototype.canCastSpell = function(spellName) {
     const spellData = spells[spellName]
-    return !this.player.spellsUsed[spellName] || moment().diff(this.player.spellsUsed[spellName]) >= spellData.cooldown
+    return !this.player.spellsUsed[spellName] || (new Date() - this.player.spellsUsed[spellName]) >= spellData.cooldown
 }
 
 BotBehaviour.prototype.castSpell = function(spellName, positionToCast) {

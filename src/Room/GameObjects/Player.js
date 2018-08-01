@@ -1,6 +1,5 @@
 const _ = require('lodash')
 const uuid = require('uuid')
-const moment = require('moment')
 const goTypes = require('./gameObjectTypes')
 const vector = require('../../utils/vector')
 const colliders = require('../Physics/colliders')
@@ -99,11 +98,11 @@ Player.prototype.useSpell = function(spellName, data) {
     if(isSilenced) return
 
     const spellData = spells[spellName]
-    if(this.spellsUsed[spellName] && moment().diff(this.spellsUsed[spellName]) < spellData.cooldown) return
-    this.spellsUsed[spellName] = moment()
+    if(this.spellsUsed[spellName] && (new Date() - this.spellsUsed[spellName]) < spellData.cooldown) return
+    this.spellsUsed[spellName] = new Date()
 
     if(spellData.effects || spellData.afterEffects) {
-        this.modifiers.push(Object.assign({ name: spellName, initial: moment() }, spellData))
+        this.modifiers.push(Object.assign({ name: spellName, initial: new Date() }, spellData))
     }
 
     let spellEntity = null
@@ -120,6 +119,7 @@ Player.prototype.useSpell = function(spellName, data) {
                 this.goController.destroy(this.teleportationOrb.id)
 
                 this.positionToGo = null
+                this.moveVelocity = { x: 0, y: 0 }
                 this.teleportationOrb = null
             } else {
                 this.teleportationOrb = this.goController.createTeleportationOrb(Object.assign(data, spellData))
@@ -169,7 +169,7 @@ Player.prototype.useSpell = function(spellName, data) {
                     )
                 })
             }
-            this.modifiers.push(Object.assign({ name: spellName, initial: moment(), afterEffect }, spellData))
+            this.modifiers.push(Object.assign({ name: spellName, initial: new Date(), afterEffect }, spellData))
             break
     }
     
@@ -196,7 +196,7 @@ Player.prototype.update = function (deltatime) {
     }
 
     this.modifiers = this.modifiers.filter(m => {
-        if(moment().diff(m.initial) > m.duration) {
+        if((new Date() - m.initial) > m.duration) {
             if(m.afterEffect) m.afterEffect()
             return false
         }

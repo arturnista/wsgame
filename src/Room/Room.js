@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const moment = require('moment')
 const uuid = require('uuid')
 const GameObjectController = require('./GameObjects/GameObjectController')
 const Physics = require('./Physics')
@@ -22,7 +21,7 @@ let COLORS = [
 ]
 
 function Room(socketIo, data) {
-    this.now = moment()
+    this.lastFrameTime = new Date()
     this.name = data.name
 
     this.socketIo = socketIo
@@ -140,7 +139,7 @@ Room.prototype.userJoin = function(user) {
             id: user.id,
             message: message.message,
             name: user.name,
-            createdAt: moment().toISOString(),
+            createdAt: (new Date()).toISOString(),
         })
         this.emit('room_chat_new_message', { chat: this.chat })
     })
@@ -253,7 +252,7 @@ Room.prototype.startGame = function (data) {
             this.emit('map_create', this.mapController.info())
 
             this.gameIsRunning = true
-            this.now = moment()
+            this.lastFrameTime = new Date()
             this.gameLoop()
 
             this.emit('game_start', { players: players.map(x => x.info()) })
@@ -282,7 +281,7 @@ Room.prototype.gameLoop = function () {
 
     if(!this.gameIsRunning) return
 
-    let deltatime = this.now.diff() / 1000 * -1
+    let deltatime = (new Date() - this.lastFrameTime) / 1000
     if(deltatime === 0) deltatime = .0001
 
     physics.update(deltatime)
@@ -293,7 +292,7 @@ Room.prototype.gameLoop = function () {
     this.emit('game_state', Object.assign({ entities: infos }, this.nextState))
     this.nextState = {}
 
-    this.now = moment()
+    this.lastFrameTime = new Date()
     this.cycleTime = setTimeout(this.gameLoop.bind(this), 10)
 
     if(this._gameEnded) return
@@ -313,7 +312,7 @@ Room.prototype.addState = function(type, data) {
 
 Room.prototype.emit = function(name, data) {
     const emitData = data || {}
-    emitData.sendTime = moment().toISOString()
+    emitData.sendTime = (new Date()).toISOString()
 
     // this.socketIo.emit(name, emitData)
     this.users.forEach(u => u.socket.emit(name, emitData))

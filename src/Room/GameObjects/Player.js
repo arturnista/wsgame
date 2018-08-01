@@ -98,7 +98,9 @@ Player.prototype.useSpell = function(spellName, data) {
     if(isSilenced) return
 
     const spellData = spells[spellName]
-    if(this.spellsUsed[spellName] && (new Date() - this.spellsUsed[spellName]) < spellData.cooldown) return
+    if(this.spellsUsed[spellName] && (new Date() - this.spellsUsed[spellName]) < spellData.cooldown) {
+        if(spellName !== 'teleportation_orb' || !this.teleportationOrb || !this.teleportationOrb.exists) return
+    }
     this.spellsUsed[spellName] = new Date()
 
     if(spellData.effects || spellData.afterEffects) {
@@ -123,7 +125,6 @@ Player.prototype.useSpell = function(spellName, data) {
                 this.teleportationOrb = null
             } else {
                 this.teleportationOrb = this.goController.createTeleportationOrb(Object.assign(data, spellData))
-                this.spellsUsed[spellName] = null
                 spellEntity = this.teleportationOrb
             }
             break

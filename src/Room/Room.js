@@ -152,68 +152,12 @@ Room.prototype.userJoin = function(user) {
         if(user.player && user.player.status === 'alive') user.player.setPositionToGo(message.position)
     })
 
-    user.socket.on('player_spell_fireball', (message) => {
+    user.socket.on('player_spell', (message) => {
         if(!this.gameIsRunning) return
         if(user.isObserver) return
-
-        console.log(`SocketIO :: ${this.name} :: Player used fireball :: ${JSON.stringify(message)}`)
-        if(user.player) user.player.useSpell('fireball', message)
-    })
-
-    user.socket.on('player_spell_follower', (message) => {
-        if(!this.gameIsRunning) return
-        if(user.isObserver) return
-
-        console.log(`SocketIO :: ${this.name} :: Player used follower :: ${JSON.stringify(message)}`)
-        if(user.player) user.player.useSpell('follower', message)
-    })
-
-    user.socket.on('player_spell_boomerang', (message) => {
-        if(!this.gameIsRunning) return
-        if(user.isObserver) return
-
-        console.log(`SocketIO :: ${this.name} :: Player used boomerang :: ${JSON.stringify(message)}`)
-        if(user.player) user.player.useSpell('boomerang', message)
-    })
-
-    user.socket.on('player_spell_reflect_shield', (message) => {
-        if(!this.gameIsRunning) return
-        if(user.isObserver) return
-
-        console.log(`SocketIO :: ${this.name} :: Player used reflect_shield :: ${JSON.stringify(message)}`)
-        if(user.player) user.player.useSpell('reflect_shield', message)
-    })
-
-    user.socket.on('player_spell_blink', (message) => {
-        if(!this.gameIsRunning) return
-        if(user.isObserver) return
-
-        console.log(`SocketIO :: ${this.name} :: Player used blink :: ${JSON.stringify(message)}`)
-        if(user.player) user.player.useSpell('blink', message)
-    })
-
-    user.socket.on('player_spell_explosion', (message) => {
-        if(!this.gameIsRunning) return
-        if(user.isObserver) return
-
-        console.log(`SocketIO :: ${this.name} :: Player used explosion :: ${JSON.stringify(message)}`)
-        if(user.player) user.player.useSpell('explosion', message)
-    })
-
-    user.socket.on('player_spell_teleportation_orb', (message) => {
-        if(!this.gameIsRunning) return
-        if(user.isObserver) return
-
-        console.log(`SocketIO :: ${this.name} :: Player used teleportation_orb :: ${JSON.stringify(message)}`)
-        if(user.player) user.player.useSpell('teleportation_orb', message)
-    })
-
-    user.socket.on('player_spell_repel', (message) => {
-        if(!this.gameIsRunning) return
-        if(user.isObserver) return
-
-        console.log(`SocketIO :: ${this.name} :: Player used repel :: ${JSON.stringify(message)}`)
-        if(user.player) user.player.useSpell('repel', message)
+        
+        console.log(`SocketIO :: ${this.name} :: Player used ${message.spellName} :: ${JSON.stringify(message)}`)
+        if(user.player) user.player.useSpell(message.spellName, message)
     })
 
     // Game events

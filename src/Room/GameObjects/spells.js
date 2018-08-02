@@ -65,6 +65,19 @@ module.exports = {
         knockbackMultiplier: .7,
         knockbackIncrement: 1.1,
     },
+    poison_dagger: {
+        name: 'Poison Dagger',
+        description: 'Throws a dagger that slow down hit enemies by 60% for 1s. Increases the knockback, but not pushes the target.',
+        type: 'support',
+        cooldown: 5000,
+        moveSpeed: 550,
+        knockbackMultiplier: 0,
+        knockbackIncrement: 1.1,
+        duration: 1000,
+        hitEffects: {
+            moveVelocity: .4,
+        }
+    },
     reflect_shield: {
         name: 'Reflect Shield',
         description: 'Protect the player for knockback and reflect some spells.',

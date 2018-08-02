@@ -6,6 +6,7 @@ const Fireball = require('./Fireball')
 const Follower = require('./Follower')
 const Boomerang = require('./Boomerang')
 const TeleportationOrb = require('./TeleportationOrb')
+const PoisonDagger = require('./PoisonDagger')
 const Player = require('./Player')
 const Obstacle = require('./Obstacle')
 
@@ -96,6 +97,13 @@ GameObjectController.prototype.createBoomerang = function (data) {
     this.create(boomerang)
 
     return boomerang
+}
+
+GameObjectController.prototype.createPoisonDagger = function (data) {
+    const poisonDagger = new PoisonDagger(data, this)
+    this.create(poisonDagger)
+
+    return poisonDagger
 }
 
 GameObjectController.prototype.createTeleportationOrb = function (data) {

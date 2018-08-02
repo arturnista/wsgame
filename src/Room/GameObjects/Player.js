@@ -104,7 +104,7 @@ Player.prototype.useSpell = function(spellName, data) {
     this.spellsUsed[spellName] = new Date()
 
     if(spellData.effects || spellData.afterEffects) {
-        this.modifiers.push(Object.assign({ name: spellName, initial: new Date() }, spellData))
+        this.addModifier(spellName, spellData)
     }
 
     let spellEntity = null
@@ -114,6 +114,9 @@ Player.prototype.useSpell = function(spellName, data) {
             break
         case 'boomerang':
             spellEntity = this.goController.createBoomerang(Object.assign(data, spellData))
+            break
+        case 'poison_dagger':
+            spellEntity = this.goController.createPoisonDagger(Object.assign(data, spellData))
             break
         case 'teleportation_orb':
             if(this.teleportationOrb && this.teleportationOrb.exists) {
@@ -189,7 +192,7 @@ Player.prototype.useSpell = function(spellName, data) {
                     )
                 })
             }
-            this.modifiers.push(Object.assign({ name: spellName, initial: new Date(), afterEffect }, spellData))
+            this.addModifier(spellName, Object.assign({ afterEffect }, spellData))
             break
     }
     
@@ -203,6 +206,17 @@ Player.prototype.useSpell = function(spellName, data) {
             }, spellData)
         )
     }
+}
+
+Player.prototype.addModifier = function(name, effectData) {
+    const data = {
+        name,
+        initial: new Date(),
+        duration: effectData.duration
+    }
+    if(effectData.effects) data.effects = effectData.effects
+    if(effectData.afterEffect) data.afterEffect = effectData.afterEffect
+    this.modifiers.push(data)
 }
 
 Player.prototype.resetCooldown = function (spellName) {

@@ -100,7 +100,7 @@ Player.prototype.knockback = function (direction, multiplier, increment) {
     if(lifeDrainAmount > 0) this.heal(lifeDrainAmount * knockbackValueOriginal)
 }
 
-Player.prototype.useSpell = function(spellName, data) {
+Player.prototype.useSpell = function(spellName, data, { cannotReplicate = false } = {}) {
     if(this.status !== 'alive') return
     if(this.spells.indexOf(spellName) === -1) return
     if(!spells[spellName]) return
@@ -118,6 +118,12 @@ Player.prototype.useSpell = function(spellName, data) {
         this.addModifier(spellName, spellData)
     }
 
+    if(!cannotReplicate && this.voodooDollEntity && this.voodooDollEntity.exists) {
+        const replicatedData = Object.assign({}, data, { id: this.voodooDollEntity.id })
+        console.log('replicate ', replicatedData.id === data.id);
+        this.useSpell(spellName, replicatedData, { cannotReplicate: true })
+    }
+
     let spellEntity = null
     switch (spellName) {
         case 'fireball':
@@ -128,6 +134,10 @@ Player.prototype.useSpell = function(spellName, data) {
             break
         case 'poison_dagger':
             spellEntity = this.goController.createPoisonDagger(Object.assign(data, spellData))
+            break
+        case 'voodoo_doll':
+            spellEntity = this.goController.createVoodooDoll(Object.assign(data, spellData))
+            this.voodooDollEntity = spellEntity
             break
         case 'teleportation_orb':
             if(this.teleportationOrb && this.teleportationOrb.exists) {

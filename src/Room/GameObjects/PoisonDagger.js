@@ -13,7 +13,7 @@ function PoisonDagger(data, goController) {
     this.goController = goController
     this.owner = this.goController.gameObjects.find(x => x.id === data.id)
 
-    this.collider = colliders.createCircle(40)
+    this.collider = colliders.createCircle(25)
 
     this.position = { x: 0, y: 0 }
     if(this.owner) {

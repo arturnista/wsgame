@@ -7,6 +7,7 @@ const Follower = require('./Follower')
 const Boomerang = require('./Boomerang')
 const TeleportationOrb = require('./TeleportationOrb')
 const PoisonDagger = require('./PoisonDagger')
+const VoodooDoll = require('./VoodooDoll')
 const Player = require('./Player')
 const Obstacle = require('./Obstacle')
 
@@ -104,6 +105,13 @@ GameObjectController.prototype.createPoisonDagger = function (data) {
     this.create(poisonDagger)
 
     return poisonDagger
+}
+
+GameObjectController.prototype.createVoodooDoll = function (data) {
+    const voodooDoll = new VoodooDoll(data, this)
+    this.create(voodooDoll)
+
+    return voodooDoll
 }
 
 GameObjectController.prototype.createTeleportationOrb = function (data) {

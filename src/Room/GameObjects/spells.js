@@ -60,11 +60,11 @@ module.exports = {
     repel: {
         name: 'Repel',
         description: 'Pushes all spells and enemies in a 70 units area around you.',
-        type: 'support',
+        type: 'offensive',
         radius: 70,
         cooldown: 5000,
-        knockbackMultiplier: .7,
-        knockbackIncrement: 1.1,
+        knockbackMultiplier: 1,
+        knockbackIncrement: 1.3,
     },
     poison_dagger: {
         name: 'Poison Dagger',

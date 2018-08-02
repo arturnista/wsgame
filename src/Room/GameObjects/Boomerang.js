@@ -13,7 +13,7 @@ function Boomerang(data, goController) {
     this.distance = data.distance
     this.goController = goController
     this.isFollowingPlayer = false
-    this.owner = this.goController.gameObjects.find(x => x.id === data.id)
+    this.owner = this.goController.gameObjects.find(x => x.id === data.owner)
 
     this.collider = colliders.createCircle(30)
 
@@ -68,7 +68,7 @@ Boomerang.prototype.onCollide = function (object, direction, directionInv) {
     if(object.id === this.id) return
     if(this.owner && object.id === this.owner.id) {
         if(this.isFollowingPlayer) {
-            this.owner.resetCooldown('boomerang')
+            if(this.owner.resetCooldown) this.owner.resetCooldown('boomerang')
             this.goController.destroy(this.id)
         }
         return
@@ -79,7 +79,7 @@ Boomerang.prototype.onCollide = function (object, direction, directionInv) {
 
         const shouldReflect = object.modifiers.find(x => x.effects.reflectSpells) != null
         if(!shouldReflect) {
-            this.owner.resetCooldown('boomerang')
+            if(this.owner.resetCooldown) this.owner.resetCooldown('boomerang')
             object.knockback(directionInv, this.multiplier, this.increment)
         }
         

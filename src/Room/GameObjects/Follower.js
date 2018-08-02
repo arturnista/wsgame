@@ -10,7 +10,7 @@ function Follower(data, goController) {
     this.type = goTypes.SPELL
 
     this.goController = goController
-    this.owner = this.goController.gameObjects.find(x => x.id === data.id)
+    this.owner = this.goController.gameObjects.find(x => x.id === data.owner)
 
     this.position = { x: 0, y: 0 }
     if(this.owner) {

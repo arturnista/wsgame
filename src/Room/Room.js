@@ -208,6 +208,14 @@ Room.prototype.userJoin = function(user) {
         if(user.player) user.player.useSpell('teleportation_orb', message)
     })
 
+    user.socket.on('player_spell_repel', (message) => {
+        if(!this.gameIsRunning) return
+        if(user.isObserver) return
+
+        console.log(`SocketIO :: ${this.name} :: Player used repel :: ${JSON.stringify(message)}`)
+        if(user.player) user.player.useSpell('repel', message)
+    })
+
     // Game events
     user.socket.on('game_start', (message) => {
         if(this.gameIsRunning) return

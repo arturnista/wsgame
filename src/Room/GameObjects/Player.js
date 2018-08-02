@@ -147,6 +147,25 @@ Player.prototype.useSpell = function(spellName, data) {
                 this.position = data.position
             }
             break
+        case 'repel':
+            this.goController.gameObjects.forEach(object => {
+                if(object.id === this.id) return
+                if(object.type === goTypes.PLAYER && object.status !== 'alive') return
+                if(vector.distance(object.position, this.position) > (spellData.radius + object.collider.radius)) return
+
+                const dir = vector.direction(this.position, object.position)
+                console.log(object.type)
+                if(object.type === goTypes.PLAYER) {
+                    object.knockback(
+                        dir.x === 0 && dir.y === 0 ? { x: 1, y: 1 } : dir,
+                        spellData.knockbackMultiplier,
+                        spellData.knockbackIncrement
+                    )
+                } else if(object.type === goTypes.SPELL) {
+                    object.reflect(this, dir)
+                }
+            })
+            break
         case 'explosion':
             if(vector.distance(this.position, data.position) >= spellData.distance) {
                 const dir = vector.direction(this.position, data.position)
@@ -159,11 +178,11 @@ Player.prototype.useSpell = function(spellName, data) {
             }
 
             const afterEffect = () => {
-                this.goController.gameObjects.forEach(x => {
-                    if(x.type !== goTypes.PLAYER || x.status !== 'alive' || vector.distance(x.position, data.position) > (spellData.radius + x.collider.radius)) return
+                this.goController.gameObjects.forEach(object => {
+                    if(object.type !== goTypes.PLAYER || object.status !== 'alive' || vector.distance(object.position, data.position) > (spellData.radius + object.collider.radius)) return
 
-                    const dir = vector.direction(data.position, x.position)
-                    x.knockback(
+                    const dir = vector.direction(data.position, object.position)
+                    object.knockback(
                         dir.x === 0 && dir.y === 0 ? { x: 1, y: 1 } : dir,
                         spellData.knockbackMultiplier,
                         spellData.knockbackIncrement

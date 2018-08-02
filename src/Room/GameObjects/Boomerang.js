@@ -58,6 +58,10 @@ Boomerang.prototype.update = function (deltatime) {
     }
 }
 
+Boomerang.prototype.reflect = function(object, direction) {
+    
+}
+
 Boomerang.prototype.onCollide = function (object, direction, directionInv) {
     const { gameObjects } = this.goController
 

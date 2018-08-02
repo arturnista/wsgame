@@ -56,6 +56,15 @@ module.exports = {
         knockbackMultiplier: 1,
         knockbackIncrement: 1.2,
     },
+    repel: {
+        name: 'Repel',
+        description: 'Pushes all spells and enemies in a 70 units area around you.',
+        type: 'support',
+        radius: 70,
+        cooldown: 5000,
+        knockbackMultiplier: .7,
+        knockbackIncrement: 1.1,
+    },
     reflect_shield: {
         name: 'Reflect Shield',
         description: 'Protect the player for knockback and reflect some spells.',

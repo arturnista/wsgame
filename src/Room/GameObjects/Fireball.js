@@ -53,6 +53,11 @@ Fireball.prototype.update = function (deltatime) {
     }
 }
 
+Fireball.prototype.reflect = function(object, direction) {
+    this.velocity = vector.multiply(direction, this.moveSpeed)
+    this.owner = null
+}
+
 Fireball.prototype.onCollide = function (object, direction, directionInv) {
     const { gameObjects } = this.goController
 
@@ -65,8 +70,7 @@ Fireball.prototype.onCollide = function (object, direction, directionInv) {
         object.knockback(directionInv, this.multiplier, this.increment)
         const shouldReflect = object.modifiers.find(x => x.effects.reflectSpells) != null
         if(shouldReflect) {
-            this.velocity = vector.multiply(direction, this.moveSpeed)
-            this.owner = null
+            this.reflect(object, direction)
             return
         }
         this.goController.destroy(this.id)

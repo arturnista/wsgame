@@ -78,6 +78,21 @@ module.exports = {
             moveVelocity: .4,
         }
     },
+    life_drain: {
+        name: 'Life Drain',
+        description: 'Transform 10% of the received knockback into life.',
+        type: 'support',
+        cooldown: 5000,
+        moveSpeed: 550,
+        knockbackMultiplier: 0,
+        knockbackIncrement: 1.1,
+        duration: 1000,
+        effects: {
+            knockbackValue: 0,
+            knockbackIncrement: 0,
+            lifeDrain: .1,
+        }
+    },
     reflect_shield: {
         name: 'Reflect Shield',
         description: 'Protect the player for knockback and reflect some spells.',

@@ -16,6 +16,7 @@ function Player(opt, goController) {
     this.addState = opt.addState
     this.mapController = opt.mapController
 
+    this.maxLife = 100
     this.status = 'alive'
     this.name = ''
     this.color = ''
@@ -35,7 +36,7 @@ Player.prototype.start = function () {
     this.knockbackVelocity = { x: 0, y: 0 }
     this.moveVelocity = { x: 0, y: 0 }
 
-    this.life = 100
+    this.life = this.maxLife
     this.knockbackValue = 300
 
     this.spells = []
@@ -78,15 +79,25 @@ Player.prototype.dealDamage = function (damage) {
     }
 }
 
+Player.prototype.heal = function (amount) {
+    this.life += amount
+    if(this.life > this.maxLife) {
+        this.life = this.maxLife
+    }
+}
+
 Player.prototype.knockback = function (direction, multiplier, increment) {
-    let knockbackValue = this.knockbackValue * multiplier
-    knockbackValue = this.modifiers.reduce((v, m) => _.isNil(m.effects.knockbackValue) ? v : v * m.effects.knockbackValue, knockbackValue)
+    let knockbackValueOriginal = this.knockbackValue * multiplier
+    let knockbackValue = this.modifiers.reduce((v, m) => _.isNil(m.effects.knockbackValue) ? v : v * m.effects.knockbackValue, knockbackValueOriginal)
 
     let knockbackIncrement = increment
     knockbackIncrement = this.modifiers.reduce((v, m) => _.isNil(m.effects.knockbackIncrement) ? v : v * m.effects.knockbackIncrement, knockbackIncrement)
 
     if(knockbackValue) this.knockbackVelocity = vector.add(this.knockbackVelocity, vector.multiply(direction, knockbackValue))
     if(knockbackIncrement) this.knockbackValue *= knockbackIncrement
+
+    const lifeDrainAmount = this.modifiers.reduce((v, m) => _.isNil(m.effects.lifeDrain) ? v : v + m.effects.lifeDrain, 0)
+    if(lifeDrainAmount > 0) this.heal(lifeDrainAmount * knockbackValueOriginal)
 }
 
 Player.prototype.useSpell = function(spellName, data) {
@@ -193,6 +204,9 @@ Player.prototype.useSpell = function(spellName, data) {
                 })
             }
             this.addModifier(spellName, Object.assign({ afterEffect }, spellData))
+            break
+        // Just add the effect, nothing more
+        case 'life_drain':
             break
     }
     

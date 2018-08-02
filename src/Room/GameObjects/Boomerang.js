@@ -77,9 +77,12 @@ Boomerang.prototype.onCollide = function (object, direction, directionInv) {
     if(object.type === goTypes.PLAYER) {
         if(object.status !== 'alive') return
 
-        object.knockback(directionInv, this.multiplier, this.increment)
         const shouldReflect = object.modifiers.find(x => x.effects.reflectSpells) != null
-        if(!shouldReflect) this.owner.resetCooldown('boomerang')
+        if(!shouldReflect) {
+            this.owner.resetCooldown('boomerang')
+            object.knockback(directionInv, this.multiplier, this.increment)
+        }
+        
         this.goController.destroy(this.id)
     } else if(object.type === goTypes.OBSTACLE) {
         this.goController.destroy(this.id)

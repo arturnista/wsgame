@@ -67,12 +67,12 @@ Fireball.prototype.onCollide = function (object, direction, directionInv) {
     if(object.type === goTypes.PLAYER) {
         if(object.status !== 'alive') return
 
-        object.knockback(directionInv, this.multiplier, this.increment)
         const shouldReflect = object.modifiers.find(x => x.effects.reflectSpells) != null
         if(shouldReflect) {
             this.reflect(object, direction)
             return
         }
+        object.knockback(directionInv, this.multiplier, this.increment)
         this.goController.destroy(this.id)
     } else if(object.type === goTypes.OBSTACLE) {
         this.goController.destroy(this.id)

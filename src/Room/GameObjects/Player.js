@@ -100,7 +100,7 @@ Player.prototype.knockback = function (direction, multiplier, increment) {
     if(lifeDrainAmount > 0) this.heal(lifeDrainAmount * knockbackValueOriginal)
 }
 
-Player.prototype.useSpell = function(spellName, data) {
+Player.prototype.useSpell = function(spellName, data, { cannotReplicate = false, ignoreCooldown = false } = {}) {
     if(this.status !== 'alive') return
     if(this.spells.indexOf(spellName) === -1) return
     if(!spells[spellName]) return
@@ -109,7 +109,7 @@ Player.prototype.useSpell = function(spellName, data) {
     if(isSilenced) return
 
     const spellData = spells[spellName]
-    if(this.spellsUsed[spellName] && (new Date() - this.spellsUsed[spellName]) < spellData.cooldown) {
+    if(!ignoreCooldown && this.spellsUsed[spellName] && (new Date() - this.spellsUsed[spellName]) < spellData.cooldown) {
         if(spellName !== 'teleportation_orb' || !this.teleportationOrb || !this.teleportationOrb.exists) return
     }
     this.spellsUsed[spellName] = new Date()
@@ -118,16 +118,27 @@ Player.prototype.useSpell = function(spellName, data) {
         this.addModifier(spellName, spellData)
     }
 
+    if(!cannotReplicate && this.voodooDollEntity && this.voodooDollEntity.exists) {
+        const replicatedData = Object.assign({}, data, { id: this.voodooDollEntity.id })
+        replicatedData.direction = vector.direction( this.voodooDollEntity.position, data.position )
+        replicatedData.owner = this.voodooDollEntity.id
+        this.useSpell(spellName, replicatedData, { cannotReplicate: true, ignoreCooldown: true })
+    }
+    
     let spellEntity = null
     switch (spellName) {
         case 'fireball':
-            spellEntity = this.goController.createFireball(Object.assign(data, spellData))
+            spellEntity = this.goController.createFireball(Object.assign({ owner: data.id }, data, spellData))
             break
         case 'boomerang':
-            spellEntity = this.goController.createBoomerang(Object.assign(data, spellData))
+            spellEntity = this.goController.createBoomerang(Object.assign({ owner: data.id }, data, spellData))
             break
         case 'poison_dagger':
-            spellEntity = this.goController.createPoisonDagger(Object.assign(data, spellData))
+            spellEntity = this.goController.createPoisonDagger(Object.assign({ owner: data.id }, data, spellData))
+            break
+        case 'voodoo_doll':
+            spellEntity = this.goController.createVoodooDoll(Object.assign({ owner: data.id }, data, spellData))
+            this.voodooDollEntity = spellEntity
             break
         case 'teleportation_orb':
             if(this.teleportationOrb && this.teleportationOrb.exists) {
@@ -138,14 +149,14 @@ Player.prototype.useSpell = function(spellName, data) {
                 this.moveVelocity = { x: 0, y: 0 }
                 this.teleportationOrb = null
             } else {
-                this.teleportationOrb = this.goController.createTeleportationOrb(Object.assign(data, spellData))
+                this.teleportationOrb = this.goController.createTeleportationOrb(Object.assign({ owner: data.id }, data, spellData))
                 spellEntity = this.teleportationOrb
             }
             break
         case 'follower':
-            this.goController.createFollower(Object.assign(data, spellData))
-            setTimeout(_ => this.goController.createFollower(Object.assign(data, spellData)), 500)
-            setTimeout(_ => this.goController.createFollower(Object.assign(data, spellData)), 1000)
+            this.goController.createFollower(Object.assign({ owner: data.id }, data, spellData))
+            setTimeout(_ => this.goController.createFollower(Object.assign({ owner: data.id }, data, spellData)), 500)
+            setTimeout(_ => this.goController.createFollower(Object.assign({ owner: data.id }, data, spellData)), 1000)
             break
         case 'blink':
             this.positionToGo = null

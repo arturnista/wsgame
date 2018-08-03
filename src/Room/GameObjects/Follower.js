@@ -5,14 +5,12 @@ const gameObjectController = require('./GameObjectController')
 const vector = require('../../utils/vector')
 const colliders = require('../Physics/colliders')
 
-const LIFE_TIME = 8
-
 function Follower(data, goController) {
     this.id = uuid.v4()
     this.type = goTypes.SPELL
 
     this.goController = goController
-    this.owner = this.goController.gameObjects.find(x => x.id === data.id)
+    this.owner = this.goController.gameObjects.find(x => x.id === data.owner)
 
     this.position = { x: 0, y: 0 }
     if(this.owner) {
@@ -37,7 +35,8 @@ function Follower(data, goController) {
     this.increment = data.knockbackIncrement
     this.moveSpeed = data.moveSpeed
 
-    this.lifeTime = LIFE_TIME
+    this.duration = data.duration / 1000
+    this.lifeTime = this.duration
     this._timePassed = 0
 
     if(this.target == null) return
@@ -65,7 +64,7 @@ Follower.prototype.info = function () {
 }
 
 Follower.prototype.update = function (deltatime) {
-    if(this.target == null) {
+    if(!this.target || !this.target.exists) {
         this.goController.destroy(this)
         return
     }
@@ -94,7 +93,7 @@ Follower.prototype.reflect = function(object, direction) {
     this.target = this.owner
     this.owner = newOwner
 
-    this.lifeTime = LIFE_TIME
+    this.lifeTime = this.duration
     this.velocity = {
         x: 0,
         y: 0

@@ -17,6 +17,7 @@ module.exports = {
         description: 'Summons 3 followers, each one follows the closest player for 6 seconds.',
         type: 'offensive',
         cooldown: 14000,
+        duration: 8000,
         knockbackMultiplier: 1,
         knockbackIncrement: 1.6,
         moveSpeed: 500,
@@ -59,11 +60,11 @@ module.exports = {
     repel: {
         name: 'Repel',
         description: 'Pushes all spells and enemies in a 70 units area around you.',
-        type: 'support',
+        type: 'offensive',
         radius: 70,
         cooldown: 5000,
-        knockbackMultiplier: .7,
-        knockbackIncrement: 1.1,
+        knockbackMultiplier: 1,
+        knockbackIncrement: 1.3,
     },
     poison_dagger: {
         name: 'Poison Dagger',
@@ -92,6 +93,13 @@ module.exports = {
             knockbackIncrement: 0,
             lifeDrain: .1,
         }
+    },
+    voodoo_doll: {
+        name: 'Voodoo Doll',
+        description: 'Creates a doll that replicate all spells that you cast.',
+        type: 'support',
+        cooldown: 15000,
+        duration: 5000,
     },
     reflect_shield: {
         name: 'Reflect Shield',

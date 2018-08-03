@@ -11,7 +11,7 @@ function TeleportationOrb(data, goController) {
 
     this.direction = data.direction
     this.goController = goController
-    this.owner = this.goController.gameObjects.find(x => x.id === data.id)
+    this.owner = this.goController.gameObjects.find(x => x.id === data.owner)
 
     this.collider = colliders.createCircle(40)
 

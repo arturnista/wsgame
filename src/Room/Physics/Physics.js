@@ -41,9 +41,19 @@ Physics.prototype.update = function (deltatime) {
                 if (object.onCollide) onCollideFunctions.push(_ => object.onCollide(objectCmp, dirCollision, dirCollisionInv))
 
                 if (goTypes.isType(objectCmp.type, goTypes.OBSTACLE)) {
-                    directionToMove = vector.multiply(dirCollision, vector.length(directionToMove))
+                    if(goTypes.isType(objectCmp.type, goTypes.EMPTY)) {
+                        if(collided === 'inside') continue // directionToMove = vector.multiply(dirCollisionInv, vector.length(directionToMove))
+                        else directionToMove = vector.multiply(dirCollision, vector.length(directionToMove))
+                    } else {
+                        directionToMove = vector.multiply(dirCollision, vector.length(directionToMove))
+                    }
                 } else if (goTypes.isType(object.type, goTypes.OBSTACLE)) {
-                    directionToMove = vector.multiply(dirCollision, vector.length(directionToMove))
+                    if(goTypes.isType(object.type, goTypes.EMPTY)) {
+                        if(collided === 'inside') continue // directionToMove = vector.multiply(dirCollisionInv, vector.length(directionToMove))
+                        else directionToMove = vector.multiply(dirCollision, vector.length(directionToMove))
+                    } else {
+                        directionToMove = vector.multiply(dirCollision, vector.length(directionToMove))
+                    }
                 }
             }
         }
@@ -61,10 +71,11 @@ Physics.prototype.update = function (deltatime) {
 }
 
 Physics.prototype.circleCollision = function (obj1, obj2) {
-    const centerDiff = Math.pow((obj1.position.x - obj2.position.x), 2) + Math.pow((obj1.position.y - obj2.position.y), 2)
-    const radiusDiff = Math.pow((obj1.collider.radius + obj2.collider.radius), 2)
-
-    return radiusDiff >= centerDiff
+    const objectsDistance = Math.pow((obj1.position.x - obj2.position.x), 2) + Math.pow((obj1.position.y - obj2.position.y), 2)
+    const radiusSum = Math.pow((obj1.collider.radius + obj2.collider.radius), 2)
+    if(radiusSum < objectsDistance) return false
+    const object2Radius = Math.pow(obj2.collider.radius, 2)
+    return objectsDistance < object2Radius ? 'inside' : 'outside'
 }
 
 Physics.prototype.boxCollision = function (obj1, obj2) {

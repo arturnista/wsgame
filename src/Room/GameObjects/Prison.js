@@ -7,7 +7,7 @@ const colliders = require('../Physics/colliders')
 
 function Prison(data, goController) {
     this.id = uuid.v4()
-    this.type = [goTypes.OBSTACLE]
+    this.type = goTypes.create(goTypes.OBSTACLE, goTypes.SPELL, goTypes.EMPTY)
 
     this.direction = data.direction
     this.goController = goController

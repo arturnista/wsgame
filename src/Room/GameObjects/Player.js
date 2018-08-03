@@ -8,7 +8,7 @@ const spells = require('./spells')
 
 function Player(opt, goController) {
     this.id = uuid.v4()
-    this.type = [goTypes.PLAYER]
+    this.type = goTypes.create(goTypes.PLAYER)
 
     this.collider = colliders.createCircle(25)
     this.goController = goController

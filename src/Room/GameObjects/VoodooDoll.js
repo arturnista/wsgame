@@ -7,7 +7,7 @@ const colliders = require('../Physics/colliders')
 
 function VoodooDoll(data, goController) {
     this.id = uuid.v4()
-    this.type = [goTypes.SPELL]
+    this.type = goTypes.create(goTypes.SPELL)
 
     this.direction = data.direction
     this.goController = goController

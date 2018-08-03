@@ -100,7 +100,7 @@ Player.prototype.knockback = function (direction, multiplier, increment) {
     if(lifeDrainAmount > 0) this.heal(lifeDrainAmount * knockbackValueOriginal)
 }
 
-Player.prototype.useSpell = function(spellName, data, { cannotReplicate = false, ignoreCooldown = false } = {}) {
+Player.prototype.useSpell = function(spellName, data, { isReplica = false, ignoreCooldown = false } = {}) {
     if(this.status !== 'alive') return
     if(this.spells.indexOf(spellName) === -1) return
     if(!spells[spellName]) return
@@ -109,8 +109,10 @@ Player.prototype.useSpell = function(spellName, data, { cannotReplicate = false,
     if(isSilenced) return
 
     const spellData = spells[spellName]
+    if(spellName === 'teleportation_orb' && this.teleportationOrb && this.teleportationOrb.exists) spellName = 'teleportation_orb_tel'
+
     if(!ignoreCooldown && this.spellsUsed[spellName] && (new Date() - this.spellsUsed[spellName]) < spellData.cooldown) {
-        if(spellName !== 'teleportation_orb' || !this.teleportationOrb || !this.teleportationOrb.exists) return
+        return
     }
     this.spellsUsed[spellName] = new Date()
 
@@ -118,11 +120,11 @@ Player.prototype.useSpell = function(spellName, data, { cannotReplicate = false,
         this.addModifier(spellName, spellData)
     }
 
-    if(!cannotReplicate && this.voodooDollEntity && this.voodooDollEntity.exists) {
+    if(!isReplica && this.voodooDollEntity && this.voodooDollEntity.exists) {
         const replicatedData = Object.assign({}, data, { id: this.voodooDollEntity.id })
         replicatedData.direction = vector.direction( this.voodooDollEntity.position, data.position )
         replicatedData.owner = this.voodooDollEntity.id
-        this.useSpell(spellName, replicatedData, { cannotReplicate: true, ignoreCooldown: true })
+        this.useSpell(spellName, replicatedData, { isReplica: true, ignoreCooldown: true })
     }
     
     let spellEntity = null
@@ -140,18 +142,19 @@ Player.prototype.useSpell = function(spellName, data, { cannotReplicate = false,
             spellEntity = this.goController.createVoodooDoll(Object.assign({ owner: data.id }, data, spellData))
             this.voodooDollEntity = spellEntity
             break
-        case 'teleportation_orb':
-            if(this.teleportationOrb && this.teleportationOrb.exists) {
-                this.position = this.teleportationOrb.position
-                this.goController.destroy(this.teleportationOrb.id)
+        case 'teleportation_orb_tel':
+            if(isReplica || !this.teleportationOrb || !this.teleportationOrb.exists) break
 
-                this.positionToGo = null
-                this.moveVelocity = { x: 0, y: 0 }
-                this.teleportationOrb = null
-            } else {
-                this.teleportationOrb = this.goController.createTeleportationOrb(Object.assign({ owner: data.id }, data, spellData))
-                spellEntity = this.teleportationOrb
-            }
+            this.position = this.teleportationOrb.position
+            this.goController.destroy(this.teleportationOrb.id)
+
+            this.positionToGo = null
+            this.moveVelocity = { x: 0, y: 0 }
+            this.teleportationOrb = null
+            break
+        case 'teleportation_orb':
+            spellEntity = this.goController.createTeleportationOrb(Object.assign({ owner: data.id }, data, spellData))
+            if(!isReplica) this.teleportationOrb = spellEntity
             break
         case 'follower':
             this.goController.createFollower(Object.assign({ owner: data.id }, data, spellData))

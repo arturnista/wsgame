@@ -8,7 +8,7 @@ const spells = require('./spells')
 
 function Player(opt, goController) {
     this.id = uuid.v4()
-    this.type = goTypes.PLAYER
+    this.type = [goTypes.PLAYER]
 
     this.collider = colliders.createCircle(25)
     this.goController = goController
@@ -23,7 +23,7 @@ function Player(opt, goController) {
     this.start()
 
     this.botBehaviour = null
-    if(opt.isBot) this.botBehaviour = new BotBehaviour(this)
+    // if(opt.isBot) this.botBehaviour = new BotBehaviour(this)
 }
 
 Player.prototype.start = function () {
@@ -138,6 +138,9 @@ Player.prototype.useSpell = function(spellName, data, { isReplica = false, ignor
         case 'poison_dagger':
             spellEntity = this.goController.createPoisonDagger(Object.assign({ owner: data.id }, data, spellData))
             break
+        case 'prison':
+            spellEntity = this.goController.createPrison(Object.assign({ owner: data.id }, data, spellData))
+            break
         case 'voodoo_doll':
             spellEntity = this.goController.createVoodooDoll(Object.assign({ owner: data.id }, data, spellData))
             this.voodooDollEntity = spellEntity
@@ -178,18 +181,18 @@ Player.prototype.useSpell = function(spellName, data, { isReplica = false, ignor
         case 'repel':
             this.goController.gameObjects.forEach(object => {
                 if(object.id === this.id) return
-                if(object.type === goTypes.PLAYER && object.status !== 'alive') return
+                if(goTypes.isType(object.type, goTypes.PLAYER) && object.status !== 'alive') return
                 if(vector.distance(object.position, this.position) > (spellData.radius + object.collider.radius)) return
 
                 const dir = vector.direction(this.position, object.position)
                 console.log(object.type)
-                if(object.type === goTypes.PLAYER) {
+                if(goTypes.isType(object.type, goTypes.PLAYER)) {
                     object.knockback(
                         dir.x === 0 && dir.y === 0 ? { x: 1, y: 1 } : dir,
                         spellData.knockbackMultiplier,
                         spellData.knockbackIncrement
                     )
-                } else if(object.type === goTypes.SPELL) {
+                } else if(goTypes.isType(object.type, goTypes.SPELL)) {
                     object.reflect(this, dir)
                 }
             })
@@ -207,7 +210,7 @@ Player.prototype.useSpell = function(spellName, data, { isReplica = false, ignor
 
             const afterEffect = () => {
                 this.goController.gameObjects.forEach(object => {
-                    if(object.type !== goTypes.PLAYER || object.status !== 'alive' || vector.distance(object.position, data.position) > (spellData.radius + object.collider.radius)) return
+                    if(!goTypes.isType(object.type, goTypes.PLAYER) || object.status !== 'alive' || vector.distance(object.position, data.position) > (spellData.radius + object.collider.radius)) return
 
                     const dir = vector.direction(data.position, object.position)
                     object.knockback(
@@ -311,7 +314,7 @@ Player.prototype.onCollide = function (object, direction, directionInv) {
 
     if(object.id === this.id) return
 
-    if(object.type === goTypes.OBSTACLE) {
+    if(goTypes.isType(object.type, goTypes.OBSTACLE)) {
         this.knockbackVelocity = vector.multiply(direction, vector.length(this.knockbackVelocity))
     }
 

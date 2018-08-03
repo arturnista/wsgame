@@ -6,6 +6,7 @@ const Fireball = require('./Fireball')
 const Follower = require('./Follower')
 const Boomerang = require('./Boomerang')
 const TeleportationOrb = require('./TeleportationOrb')
+const Prison = require('./Prison')
 const PoisonDagger = require('./PoisonDagger')
 const VoodooDoll = require('./VoodooDoll')
 const Player = require('./Player')
@@ -62,8 +63,8 @@ GameObjectController.prototype.end = function (users) {
 GameObjectController.prototype.allInfos = function () {
 
     return {
-        players: this.gameObjects.filter(x => x.type === goTypes.PLAYER).map(x => x.info()),
-        spells: this.gameObjects.filter(x => x.type === goTypes.SPELL).map(x => x.info()),
+        players: this.gameObjects.filter(x => goTypes.isType(x.type, goTypes.PLAYER)).map(x => x.info()),
+        spells: this.gameObjects.filter(x => goTypes.isType(x.type, goTypes.SPELL)).map(x => x.info()),
     }
 
 }
@@ -119,6 +120,13 @@ GameObjectController.prototype.createTeleportationOrb = function (data) {
     this.create(telOrb)
 
     return telOrb
+}
+
+GameObjectController.prototype.createPrison = function (data) {
+    const prison = new Prison(data, this)
+    this.create(prison)
+
+    return prison
 }
 
 GameObjectController.prototype.createObstacle = function (position) {

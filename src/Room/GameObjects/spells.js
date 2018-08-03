@@ -57,6 +57,15 @@ module.exports = {
         knockbackMultiplier: 1,
         knockbackIncrement: 1.2,
     },
+    prison: {
+        name: 'Prison',
+        description: 'Trap enemies inside.',
+        type: 'support',
+        distance: 300,
+        radius: 200,
+        cooldown: 10000,
+        duration: 5000,
+    },
     repel: {
         name: 'Repel',
         description: 'Pushes all spells and enemies in a 70 units area around you.',
@@ -68,7 +77,7 @@ module.exports = {
     },
     poison_dagger: {
         name: 'Poison Dagger',
-        description: 'Throws a dagger that slow down hit enemies by 60% for 1s. Increases the knockback, but not pushes the target.',
+        description: 'Throws a dagger that slow down enemies by 60% for 1s. Increases the knockback, but not pushes the target.',
         type: 'support',
         cooldown: 5000,
         moveSpeed: 550,

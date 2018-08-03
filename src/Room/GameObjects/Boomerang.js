@@ -7,7 +7,7 @@ const colliders = require('../Physics/colliders')
 
 function Boomerang(data, goController) {
     this.id = uuid.v4()
-    this.type = goTypes.SPELL
+    this.type = [goTypes.SPELL]
 
     this.direction = data.direction
     this.distance = data.distance
@@ -74,7 +74,7 @@ Boomerang.prototype.onCollide = function (object, direction, directionInv) {
         return
     }
 
-    if(object.type === goTypes.PLAYER) {
+    if(goTypes.isType(object.type, goTypes.PLAYER)) {
         if(object.status !== 'alive') return
 
         const shouldReflect = object.modifiers.find(x => x.effects.reflectSpells) != null
@@ -84,7 +84,7 @@ Boomerang.prototype.onCollide = function (object, direction, directionInv) {
         }
         
         this.goController.destroy(this.id)
-    } else if(object.type === goTypes.OBSTACLE) {
+    } else if(goTypes.isType(object.type, goTypes.OBSTACLE)) {
         this.goController.destroy(this.id)
     }
     

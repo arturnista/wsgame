@@ -7,7 +7,7 @@ const colliders = require('../Physics/colliders')
 
 function Fireball(data, goController) {
     this.id = uuid.v4()
-    this.type = goTypes.SPELL
+    this.type = [goTypes.SPELL]
 
     this.direction = data.direction
     this.goController = goController
@@ -64,7 +64,7 @@ Fireball.prototype.onCollide = function (object, direction, directionInv) {
     if(object.id === this.id) return
     if(this.owner && object.id === this.owner.id) return
 
-    if(object.type === goTypes.PLAYER) {
+    if(goTypes.isType(object.type, goTypes.PLAYER)) {
         if(object.status !== 'alive') return
 
         const shouldReflect = object.modifiers.find(x => x.effects.reflectSpells) != null
@@ -74,7 +74,7 @@ Fireball.prototype.onCollide = function (object, direction, directionInv) {
         }
         object.knockback(directionInv, this.multiplier, this.increment)
         this.goController.destroy(this.id)
-    } else if(object.type === goTypes.OBSTACLE) {
+    } else if(goTypes.isType(object.type, goTypes.OBSTACLE)) {
         this.goController.destroy(this.id)
     }
     

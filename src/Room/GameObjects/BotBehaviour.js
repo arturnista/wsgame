@@ -35,7 +35,7 @@ BotBehaviour.prototype.update = function (deltatime) {
 
         const spellName = _.sample(this.offensiveSpells)
         const playersToCast = this.player.goController.gameObjects.filter(x =>
-            x.type === goTypes.PLAYER && x.status === 'alive' && x.id !== this.player.id
+            goTypes.isType(x.type, goTypes.PLAYER) && x.status === 'alive' && x.id !== this.player.id
         )
 
         if(playersToCast.length > 0) {
@@ -48,7 +48,7 @@ BotBehaviour.prototype.update = function (deltatime) {
     this.lastCheck += deltatime   
     if(this.lastCheck > this.checkForProjectile) {
         this.lastCheck = 0
-        const spells = this.player.goController.gameObjects.filter(x => x.type === goTypes.SPELL)
+        const spells = this.player.goController.gameObjects.filter(x => goTypes.isType(x.type, goTypes.SPELL))
 
         spells.forEach(sp => {
             const spellDirection = vector.direction(sp.position, this.player.position)

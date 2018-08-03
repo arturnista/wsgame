@@ -48,7 +48,7 @@ Grid.prototype.start = function() {
 
     for (var i = 0; i < this.goController.gameObjects.length; i++) {
         const player = this.goController.gameObjects[i]
-        if(player.type !== goTypes.PLAYER) continue
+        if(!goTypes.isType(player.type, goTypes.PLAYER)) continue
 
         if(i < this.spawnPoints.length) player.position = this.spawnPoints[i]
         else player.position = this.getRandomPosition()
@@ -101,7 +101,7 @@ Grid.prototype.nextStep = function() {
 
 Grid.prototype.update = function(deltatime) {
     let shouldUpdate = false
-    const players = this.goController.gameObjects.filter(x => x.type === goTypes.PLAYER)
+    const players = this.goController.gameObjects.filter(x => goTypes.isType(x.type, goTypes.PLAYER))
     for (var i = 0; i < players.length; i++) {
         if(players[i].status !== 'alive') continue
 

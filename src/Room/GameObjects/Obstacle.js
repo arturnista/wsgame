@@ -7,7 +7,7 @@ const colliders = require('../Physics/colliders')
 
 function Obstacle({position, size}, goController) {
     this.id = uuid.v4()
-    this.type = goTypes.OBSTACLE
+    this.type = [goTypes.OBSTACLE]
 
     this.goController = goController
     this.collider = colliders.createCircle(size)

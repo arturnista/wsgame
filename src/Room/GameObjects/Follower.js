@@ -7,7 +7,7 @@ const colliders = require('../Physics/colliders')
 
 function Follower(data, goController) {
     this.id = uuid.v4()
-    this.type = goTypes.SPELL
+    this.type = [goTypes.SPELL]
 
     this.goController = goController
     this.owner = this.goController.gameObjects.find(x => x.id === data.owner)
@@ -19,7 +19,7 @@ function Follower(data, goController) {
 
     this.target = this.goController.gameObjects.reduce((minor, item) => {
         if(item.id === this.owner.id) return minor
-        if(item.type !== goTypes.PLAYER) return minor
+        if(!goTypes.isType(item.type, goTypes.PLAYER)) return minor
         if(item.status !== 'alive') return minor
         if(!minor) return item
 
@@ -106,7 +106,7 @@ Follower.prototype.onCollide = function (object, direction, directionInv) {
     if(object.id === this.id) return
     if(this.owner && object.id === this.owner.id) return
     
-    if(object.type === goTypes.PLAYER) {
+    if(goTypes.isType(object.type, goTypes.PLAYER)) {
         if(object.status !== 'alive') return
         
         const shouldReflect = object.modifiers.find(x => x.effects.reflectSpells) != null
@@ -116,7 +116,7 @@ Follower.prototype.onCollide = function (object, direction, directionInv) {
         }
         object.knockback(directionInv, this.multiplier, this.increment)
         this.goController.destroy(this.id)
-    } else if(object.type === goTypes.OBSTACLE) {
+    } else if(goTypes.isType(object.type, goTypes.OBSTACLE)) {
         this.goController.destroy(this.id)
     }
 

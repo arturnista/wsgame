@@ -11,7 +11,8 @@ function Prison(data, goController) {
 
     this.direction = data.direction
     this.goController = goController
-    this.owner = this.goController.gameObjects.find(x => x.id === data.owner)
+    this.owner = this.goController.gameObjects.find(x => x.id === data.id)
+    this.caster = this.goController.gameObjects.find(x => x.id === data.caster)
 
     let radius = data.radius
     if(!_.isNil(data.size)) {

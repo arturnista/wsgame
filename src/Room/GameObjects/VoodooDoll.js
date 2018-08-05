@@ -11,13 +11,14 @@ function VoodooDoll(data, goController) {
 
     this.direction = data.direction
     this.goController = goController
-    this.owner = this.goController.gameObjects.find(x => x.id === data.owner)
+    this.owner = this.goController.gameObjects.find(x => x.id === data.id)
+    this.caster = this.goController.gameObjects.find(x => x.id === data.caster)
 
     this.collider = colliders.createCircle(32)
 
     this.position = { x: 0, y: 0 }
     if(this.owner) {
-        this.position = _.clone(this.owner.position)
+        this.position = _.clone(this.caster.position)
     }
 
     this.lifeTime = data.duration / 1000

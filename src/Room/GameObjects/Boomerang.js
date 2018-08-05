@@ -13,13 +13,14 @@ function Boomerang(data, goController) {
     this.distance = data.distance
     this.goController = goController
     this.isFollowingPlayer = false
-    this.owner = this.goController.gameObjects.find(x => x.id === data.owner)
+    this.owner = this.goController.gameObjects.find(x => x.id === data.id)
+    this.caster = this.goController.gameObjects.find(x => x.id === data.caster)
 
     this.collider = colliders.createCircle(30)
 
     this.position = { x: 0, y: 0 }
     if(this.owner) {
-        this.position = vector.add( this.owner.position, vector.multiply(data.direction, this.owner.collider.size) )
+        this.position = vector.add( this.caster.position, vector.multiply(data.direction, this.owner.collider.size) )
     }
     this.originalPosition = { x: this.position.x, y: this.position.y }
 

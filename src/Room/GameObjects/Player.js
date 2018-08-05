@@ -111,9 +111,7 @@ Player.prototype.useSpell = function(spellName, data, { isReplica = false, ignor
     const spellData = spells[spellName]
     if(spellName === 'teleportation_orb' && this.teleportationOrb && this.teleportationOrb.exists) spellName = 'teleportation_orb_tel'
 
-    if(!ignoreCooldown && this.spellsUsed[spellName] && (new Date() - this.spellsUsed[spellName]) < spellData.cooldown) {
-        return
-    }
+    if(!ignoreCooldown && this.spellsUsed[spellName] && (new Date() - this.spellsUsed[spellName]) < spellData.cooldown) return
     this.spellsUsed[spellName] = new Date()
 
     if(spellData.effects || spellData.afterEffects) {
@@ -121,9 +119,9 @@ Player.prototype.useSpell = function(spellName, data, { isReplica = false, ignor
     }
 
     if(!isReplica && this.voodooDollEntity && this.voodooDollEntity.exists) {
-        const replicatedData = Object.assign({}, data, { id: this.voodooDollEntity.id })
+        const replicatedData = _.cloneDeep(data)
         replicatedData.direction = vector.direction( this.voodooDollEntity.position, data.position )
-        replicatedData.owner = this.voodooDollEntity.id
+        replicatedData.caster = this.voodooDollEntity.id
         this.useSpell(spellName, replicatedData, { isReplica: true, ignoreCooldown: true })
     }
 
@@ -140,23 +138,23 @@ Player.prototype.useSpell = function(spellName, data, { isReplica = false, ignor
     let spellEntity = null
     switch (spellName) {
         case 'fireball':
-            spellEntity = this.goController.createFireball(Object.assign({ owner: data.id }, data, spellData))
+            spellEntity = this.goController.createFireball(Object.assign({ caster: data.id }, data, spellData))
             break
         case 'boomerang':
-            spellEntity = this.goController.createBoomerang(Object.assign({ owner: data.id }, data, spellData))
+            spellEntity = this.goController.createBoomerang(Object.assign({ caster: data.id }, data, spellData))
             break
         case 'poison_dagger':
-            spellEntity = this.goController.createPoisonDagger(Object.assign({ owner: data.id }, data, spellData))
+            spellEntity = this.goController.createPoisonDagger(Object.assign({ caster: data.id }, data, spellData))
             break
         case 'prison':
-            spellEntity = this.goController.createPrison(Object.assign({ owner: data.id }, data, spellData))
+            spellEntity = this.goController.createPrison(Object.assign({ caster: data.id }, data, spellData))
             break
         case 'prison_drag':
             const size = vector.distance(data.position, data.finalPosition)
-            spellEntity = this.goController.createPrison(Object.assign({ owner: data.id, size }, data, spellData))
+            spellEntity = this.goController.createPrison(Object.assign({ caster: data.id, size }, data, spellData))
             break
         case 'voodoo_doll':
-            spellEntity = this.goController.createVoodooDoll(Object.assign({ owner: data.id }, data, spellData))
+            spellEntity = this.goController.createVoodooDoll(Object.assign({ caster: data.id }, data, spellData))
             this.voodooDollEntity = spellEntity
             break
         case 'teleportation_orb_tel':
@@ -170,13 +168,13 @@ Player.prototype.useSpell = function(spellName, data, { isReplica = false, ignor
             this.teleportationOrb = null
             break
         case 'teleportation_orb':
-            spellEntity = this.goController.createTeleportationOrb(Object.assign({ owner: data.id }, data, spellData))
+            spellEntity = this.goController.createTeleportationOrb(Object.assign({ caster: data.id }, data, spellData))
             if(!isReplica) this.teleportationOrb = spellEntity
             break
         case 'follower':
-            this.goController.createFollower(Object.assign({ owner: data.id }, data, spellData))
-            setTimeout(_ => this.goController.createFollower(Object.assign({ owner: data.id }, data, spellData)), 500)
-            setTimeout(_ => this.goController.createFollower(Object.assign({ owner: data.id }, data, spellData)), 1000)
+            this.goController.createFollower(Object.assign({ caster: data.id }, data, spellData))
+            setTimeout(_ => this.goController.createFollower(Object.assign({ caster: data.id }, data, spellData)), 500)
+            setTimeout(_ => this.goController.createFollower(Object.assign({ caster: data.id }, data, spellData)), 1000)
             break
         case 'blink':
             this.positionToGo = null

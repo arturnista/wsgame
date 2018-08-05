@@ -49,7 +49,7 @@ const connect = function(server) {
 
         socket.on('room_left', function (data) {
             console.log(`SocketIO :: User left room :: ${user.id}`)
-            if(room) room.userDisconnect(user)
+            if(room) room.userLeftRoom(user)
 
             users = users.filter(x => x.id !== user.id)
             rooms = rooms.filter(r => {
@@ -63,7 +63,7 @@ const connect = function(server) {
 
         socket.on('disconnect', function () {
             console.log(`SocketIO :: User disconnect :: ${user.id}`)
-            if(room) room.userDisconnect(user)
+            if(room) room.userLeftRoom(user)
 
             users = users.filter(x => x.id !== user.id)
             rooms = rooms.filter(r => {

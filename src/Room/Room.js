@@ -67,6 +67,9 @@ Room.prototype.userJoin = function(user) {
         mapController,
         physics
     } = this
+
+    if(this.users.find(x => x.id === user.id) != null) return
+
     this.users.push( user )
 
     user.color = _.sample(COLORS)
@@ -79,6 +82,24 @@ Room.prototype.userJoin = function(user) {
     console.log(`SocketIO :: ${this.name} :: User joined :: ${user.id}`)
     user.socket.emit('myuser_joined_room', { room: this.info(), user: user.info() })
     this.emit('user_joined_room', { room: this.info(), user: user.info() })
+
+    // Room events
+    user.socket.on('room_kick_user', (message) => {
+        if(this.gameIsRunning) return
+        if(this.owner.id !== user.id) return
+        if(message.userId !== user.id) return
+
+        console.log(`SocketIO :: ${this.name} :: User kicked :: ${JSON.stringify(message)}`)
+        this.userLeftRoom(user)
+    })
+    user.socket.on('room_kick_user', (message) => {
+        if(this.gameIsRunning) return
+        if(this.owner.id !== user.id) return
+        if(message.userId !== user.id) return
+
+        console.log(`SocketIO :: ${this.name} :: User kicked :: ${JSON.stringify(message)}`)
+        this.userLeftRoom(user)
+    })
 
     // User events
     user.socket.on('user_ready', (message) => {
@@ -177,7 +198,7 @@ Room.prototype.userJoin = function(user) {
 
 }
 
-Room.prototype.userDisconnect = function (user) {
+Room.prototype.userLeftRoom = function (user) {
     COLORS.push( user.color )
 
     if(user.player) this.gameObjectController.destroyPlayer(user.player.id)

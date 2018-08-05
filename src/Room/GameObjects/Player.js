@@ -23,7 +23,7 @@ function Player(opt, goController) {
     this.start()
 
     this.botBehaviour = null
-    // if(opt.isBot) this.botBehaviour = new BotBehaviour(this)
+    if(opt.isBot) this.botBehaviour = new BotBehaviour(this)
 }
 
 Player.prototype.start = function () {

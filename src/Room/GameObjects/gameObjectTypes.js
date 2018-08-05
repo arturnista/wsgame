@@ -2,7 +2,8 @@ module.exports = {
     PLAYER: 'gameObject/PLAYER',
     SPELL: 'gameObject/SPELL',
     OBSTACLE: 'gameObject/OBSTACLE',
-    EMPTY: 'gameObject/EMPTY',
+    PLAYER_OBSTACLE: 'gameObject/PLAYER_OBSTACLE',
+    SPELL_OBSTACLE: 'gameObject/SPELL_OBSTACLE',
     isType: function(types, compType) {
         return types.indexOf(compType) !== -1
     },

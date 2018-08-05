@@ -23,7 +23,7 @@ function Player(opt, goController) {
     this.start()
 
     this.botBehaviour = null
-    // if(opt.isBot) this.botBehaviour = new BotBehaviour(this)
+    if(opt.isBot) this.botBehaviour = new BotBehaviour(this)
 }
 
 Player.prototype.start = function () {
@@ -126,6 +126,16 @@ Player.prototype.useSpell = function(spellName, data, { isReplica = false, ignor
         replicatedData.owner = this.voodooDollEntity.id
         this.useSpell(spellName, replicatedData, { isReplica: true, ignoreCooldown: true })
     }
+
+    if(spellData.distance) {
+        if(vector.distance(this.position, data.position) >= spellData.distance) {
+            const dir = vector.direction(this.position, data.position)
+            const angle = Math.atan2(dir.y, dir.x)
+            const xProj = Math.cos(angle) * spellData.distance
+            const yProj = Math.sin(angle) * spellData.distance
+            data.position = vector.add(this.position, { x: xProj, y: yProj })
+        }
+    }
     
     let spellEntity = null
     switch (spellName) {
@@ -168,15 +178,7 @@ Player.prototype.useSpell = function(spellName, data, { isReplica = false, ignor
             this.positionToGo = null
             this.moveVelocity = { x: 0, y: 0 }
             this.knockbackVelocity = vector.multiply(this.knockbackVelocity, .5)
-            if(vector.distance(this.position, data.position) >= spellData.distance) {
-                const dir = vector.direction(this.position, data.position)
-                const angle = Math.atan2(dir.y, dir.x)
-                const xProj = Math.cos(angle) * spellData.distance
-                const yProj = Math.sin(angle) * spellData.distance
-                this.position = vector.add(this.position, { x: xProj, y: yProj })
-            } else {
-                this.position = data.position
-            }
+            this.position = data.position
             break
         case 'repel':
             this.goController.gameObjects.forEach(object => {
@@ -185,7 +187,6 @@ Player.prototype.useSpell = function(spellName, data, { isReplica = false, ignor
                 if(vector.distance(object.position, this.position) > (spellData.radius + object.collider.radius)) return
 
                 const dir = vector.direction(this.position, object.position)
-                console.log(object.type)
                 if(goTypes.isType(object.type, goTypes.PLAYER)) {
                     object.knockback(
                         dir.x === 0 && dir.y === 0 ? { x: 1, y: 1 } : dir,
@@ -198,16 +199,6 @@ Player.prototype.useSpell = function(spellName, data, { isReplica = false, ignor
             })
             break
         case 'explosion':
-            if(vector.distance(this.position, data.position) >= spellData.distance) {
-                const dir = vector.direction(this.position, data.position)
-                const angle = Math.atan2(dir.y, dir.x)
-                const xProj = Math.cos(angle) * spellData.distance
-                const yProj = Math.sin(angle) * spellData.distance
-                data.position = vector.add(this.position, { x: xProj, y: yProj })
-            } else {
-                data.position = data.position
-            }
-
             const afterEffect = () => {
                 this.goController.gameObjects.forEach(object => {
                     if(!goTypes.isType(object.type, goTypes.PLAYER) || object.status !== 'alive' || vector.distance(object.position, data.position) > (spellData.radius + object.collider.radius)) return

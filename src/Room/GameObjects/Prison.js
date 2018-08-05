@@ -7,13 +7,13 @@ const colliders = require('../Physics/colliders')
 
 function Prison(data, goController) {
     this.id = uuid.v4()
-    this.type = goTypes.create(goTypes.OBSTACLE, goTypes.SPELL, goTypes.EMPTY)
+    this.type = goTypes.create(goTypes.PLAYER_OBSTACLE, goTypes.SPELL)
 
     this.direction = data.direction
     this.goController = goController
     this.owner = this.goController.gameObjects.find(x => x.id === data.owner)
 
-    this.collider = colliders.createCircle(data.radius)
+    this.collider = colliders.createCircle(data.radius, 20)
 
     this.velocity = { x: 0, y: 0 }
     this.position = { x: 0, y: 0 }

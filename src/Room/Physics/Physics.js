@@ -17,6 +17,7 @@ Physics.prototype.update = function (deltatime) {
 
         let directionToMove = object.velocity
         if (!directionToMove || vector.length(directionToMove) === 0) continue
+        const directionToMoveLength = vector.length(directionToMove)
 
         let nextPosition = {
             x: object.position.x + directionToMove.x * deltatime,
@@ -25,40 +26,29 @@ Physics.prototype.update = function (deltatime) {
         let nextObj = Object.assign({}, object, { position: nextPosition })
 
         for (var n = 0; n < this.goController.gameObjects.length; n++) {
-            if (!directionToMove || vector.length(directionToMove) === 0) break
+            if (!directionToMove || directionToMoveLength === 0) break
             if (i === n) continue
 
             const objectCmp = this.goController.gameObjects[n]
             if (!objectCmp.collider) continue
 
-            let collided = false
+            const collision = this.circleCollision( nextObj, objectCmp )
 
-            collided = this.circleCollision( nextObj, objectCmp )
-
-            if (collided) {
-                const dirCollision = vector.direction(objectCmp.position, object.position)
-                const dirCollisionInv = vector.direction(object.position, objectCmp.position)
-                if (object.onCollide) onCollideFunctions.push(_ => object.onCollide(objectCmp, dirCollision, dirCollisionInv))
-
-                if (goTypes.isType(objectCmp.type, goTypes.OBSTACLE)) {
-                    if(goTypes.isType(objectCmp.type, goTypes.EMPTY)) {
-                        if(collided === 'inside') continue // directionToMove = vector.multiply(dirCollisionInv, vector.length(directionToMove))
-                        else directionToMove = vector.multiply(dirCollision, vector.length(directionToMove))
-                    } else {
-                        directionToMove = vector.multiply(dirCollision, vector.length(directionToMove))
-                    }
-                } else if (goTypes.isType(object.type, goTypes.OBSTACLE)) {
-                    if(goTypes.isType(object.type, goTypes.EMPTY)) {
-                        if(collided === 'inside') continue // directionToMove = vector.multiply(dirCollisionInv, vector.length(directionToMove))
-                        else directionToMove = vector.multiply(dirCollision, vector.length(directionToMove))
-                    } else {
-                        directionToMove = vector.multiply(dirCollision, vector.length(directionToMove))
-                    }
+            if (collision.status) {
+                const dirCollisionInv = vector.reverse(collision.direction)
+                if (object.onCollide) onCollideFunctions.push(_ => object.onCollide(objectCmp, collision.direction, dirCollisionInv))
+                
+                if (goTypes.isType(objectCmp.type, goTypes.OBSTACLE) || goTypes.isType(object.type, goTypes.OBSTACLE) ||
+                    ( goTypes.isType(objectCmp.type, goTypes.PLAYER_OBSTACLE) && goTypes.isType(object.type, goTypes.PLAYER) ) ||
+                    ( goTypes.isType(objectCmp.type, goTypes.PLAYER) && goTypes.isType(object.type, goTypes.PLAYER_OBSTACLE) ) ||
+                    ( goTypes.isType(objectCmp.type, goTypes.SPELL_OBSTACLE) && goTypes.isType(object.type, goTypes.SPELL) ) ||
+                    ( goTypes.isType(objectCmp.type, goTypes.SPELL) && goTypes.isType(object.type, goTypes.SPELL_OBSTACLE) )) {
+                    directionToMove = vector.multiply(collision.direction, directionToMoveLength)
                 }
             }
         }
 
-        if (directionToMove && vector.length(directionToMove) > 0) {
+        if (directionToMove && directionToMoveLength > 0) {
             movementFunctions.push(_ => {
                 object.position.x += directionToMove.x * deltatime
                 object.position.y += directionToMove.y * deltatime
@@ -73,9 +63,16 @@ Physics.prototype.update = function (deltatime) {
 Physics.prototype.circleCollision = function (obj1, obj2) {
     const objectsDistance = Math.pow((obj1.position.x - obj2.position.x), 2) + Math.pow((obj1.position.y - obj2.position.y), 2)
     const radiusSum = Math.pow((obj1.collider.radius + obj2.collider.radius), 2)
-    if(radiusSum < objectsDistance) return false
+    const fResult = radiusSum > objectsDistance
+    if(!obj2.collider.thickness || !fResult) return { status: fResult, direction: fResult && vector.direction(obj2.position, obj1.position) }
+
     const object2Radius = Math.pow(obj2.collider.radius, 2)
-    return objectsDistance < object2Radius ? 'inside' : 'outside'
+    // If object is outside
+    if(objectsDistance > object2Radius) return { status: true, direction: vector.direction(obj2.position, obj1.position) }
+
+    const object2RadiusInside = Math.pow(obj2.collider.radius - obj2.collider.thickness, 2)
+    if(objectsDistance <= object2RadiusInside) return { status: false }
+    return { status: true, direction: vector.direction(obj1.position, obj2.position) }
 }
 
 Physics.prototype.boxCollision = function (obj1, obj2) {

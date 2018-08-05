@@ -35,6 +35,16 @@ function direction(pos1, pos2) {
     return normalize(dir)
 }
 
+function reverse(pos1) {
+    if(pos1 == null) throw new Error('Position 1 is undefined')
+
+    let dir = {
+        x: -pos1.x,
+        y: -pos1.y
+    }
+    return normalize(dir)
+}
+
 function normalize(vector) {
     if(vector == null) throw new Error('Vector is undefined')
 
@@ -87,6 +97,7 @@ function reduceToZero(vector, value) {
 
 module.exports = {
     direction,
+    reverse,
     normalize,
     distance,
     length,

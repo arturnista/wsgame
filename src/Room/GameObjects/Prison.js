@@ -13,7 +13,13 @@ function Prison(data, goController) {
     this.goController = goController
     this.owner = this.goController.gameObjects.find(x => x.id === data.owner)
 
-    this.collider = colliders.createCircle(data.radius, 20)
+    let radius = data.radius
+    if(!_.isNil(data.size)) {
+        radius = _.clamp(data.size, data.minRadius, data.maxRadius)
+        data.duration = (data.minRadius / radius) * data.baseDuration
+    }
+    
+    this.collider = colliders.createCircle(radius, 15)
 
     this.velocity = { x: 0, y: 0 }
     this.position = { x: 0, y: 0 }

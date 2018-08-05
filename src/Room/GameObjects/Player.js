@@ -23,7 +23,7 @@ function Player(opt, goController) {
     this.start()
 
     this.botBehaviour = null
-    if(opt.isBot) this.botBehaviour = new BotBehaviour(this)
+    // if(opt.isBot) this.botBehaviour = new BotBehaviour(this)
 }
 
 Player.prototype.start = function () {
@@ -150,6 +150,10 @@ Player.prototype.useSpell = function(spellName, data, { isReplica = false, ignor
             break
         case 'prison':
             spellEntity = this.goController.createPrison(Object.assign({ owner: data.id }, data, spellData))
+            break
+        case 'prison_drag':
+            const size = vector.distance(data.position, data.finalPosition)
+            spellEntity = this.goController.createPrison(Object.assign({ owner: data.id, size }, data, spellData))
             break
         case 'voodoo_doll':
             spellEntity = this.goController.createVoodooDoll(Object.assign({ owner: data.id }, data, spellData))

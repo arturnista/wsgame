@@ -3,6 +3,7 @@ const cors = require('cors')
 const server = express()
 const http = require('http').Server(server)
 const WebSocket = require('./src/WebSocket')
+const Articles = require('./src/Articles/iate')
 
 var whitelist = ['http://localhost:3000']
 var corsOptionsDelegate = function (req, callback) {
@@ -34,6 +35,8 @@ server.get('/room', function(req, res, next) {
 server.get('/game', function(req, res, next) {
     return res.redirect(301, '/')
 })
+
+
 server.get('/:filetype/:filesubtype/:filename', function(req, res, next) {
     const filename = `${__dirname}/site/${req.params.filetype}/${req.params.filesubtype}/${req.params.filename}`
     res.sendFile(filename)
@@ -55,6 +58,11 @@ server.get('/rooms', function(req, res, next) {
 server.get('/spells', function(req, res, next) {
     console.log('Http Req :: Get Spells :: ' + req.headers.origin)
     res.status(200).json( WebSocket.getSpells() )
+})
+
+server.get('/articles', function(req, res, next) {
+    console.log('Http Req :: Get Spells :: ' + req.headers.origin)
+    Articles.translator.getAll(req, res, next)
 })
 
 const port = process.env.PORT || 5002

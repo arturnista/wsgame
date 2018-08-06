@@ -6,7 +6,7 @@ const MapController = require('./Map/MapController')
 
 const DELAY_TO_START = 4000
 const DELAY_TO_END = 5000
-const FIXED_SPELLS = [ 'fireball' ]
+const FIXED_SPELLS = []
 
 let COLORS = [
     '#ff0000',

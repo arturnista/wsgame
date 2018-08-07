@@ -4,6 +4,7 @@ const server = express()
 const http = require('http').Server(server)
 const WebSocket = require('./src/WebSocket')
 const Articles = require('./src/Articles/iate')
+const BugReports = require('./src/BugReports/iate')
 
 var whitelist = ['http://localhost:3000']
 var corsOptionsDelegate = function (req, callback) {
@@ -61,8 +62,13 @@ server.get('/spells', function(req, res, next) {
 })
 
 server.get('/articles', function(req, res, next) {
-    console.log('Http Req :: Get Spells :: ' + req.headers.origin)
+    console.log('Http Req :: Get Articles :: ' + req.headers.origin)
     Articles.translator.getAll(req, res, next)
+})
+
+server.post('/bugreports', function(req, res, next) {
+    console.log('Http Req :: Post BugReports :: ' + req.headers.origin)
+    BugReports.translator.post(req, res, next)
 })
 
 const port = process.env.PORT || 5002

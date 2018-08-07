@@ -1,6 +1,6 @@
 {
-  "name": "rtcgameserver",
-  "version": "1.0.0",
+  "name": "NWGame",
+  "version": "0.2.0",
   "description": "",
   "main": "server.js",
   "scripts": {

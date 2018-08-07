@@ -150,6 +150,7 @@ Player.prototype.useSpell = function(spellName, data, { isReplica = false, ignor
             spellEntity = this.goController.createPrison(Object.assign({ caster: data.id }, data, spellData))
             break
         case 'prison_drag':
+            if(!data.finalPosition) data.finalPosition = data.position
             const size = vector.distance(data.position, data.finalPosition)
             spellEntity = this.goController.createPrison(Object.assign({ caster: data.id, size }, data, spellData))
             break

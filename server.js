@@ -2,17 +2,20 @@ const express = require('express')
 const cors = require('cors')
 const server = express()
 const http = require('http').Server(server)
+const bodyParser = require('body-parser')
+
 const WebSocket = require('./src/WebSocket')
 const Articles = require('./src/Articles/iate')
 const BugReports = require('./src/BugReports/iate')
 
 var whitelist = ['http://localhost:3000']
 var corsOptionsDelegate = function (req, callback) {
-    callback(null, {})
-    // const corsOptions = { origin: whitelist.indexOf(req.header('Origin')) !== -1 }
-    // callback(null, corsOptions)
+    // callback(null, {})
+    const corsOptions = { origin: whitelist.indexOf(req.header('Origin')) !== -1 }
+    callback(null, corsOptions)
 }
 server.use(cors(corsOptionsDelegate))
+server.use(bodyParser.json())
 
 server.set('views', __dirname + '')
 server.engine('html', require('ejs').renderFile)

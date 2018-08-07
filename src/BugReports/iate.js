@@ -14,6 +14,7 @@ const translator = {
 
 const interactor = {
     create: function(data) {
+        data.date = (new Date()).toISOString()
         return entity.create(data)
     }
 }
@@ -26,8 +27,8 @@ const entity = {
 
 const adapter = {
     create: function(data) {
-        return admin.firestore().collection('/bug_reports').add(data)
-        .then(res => ({ id: result.id, ...data }))
+        return database.collection('/bug_reports').add(data)
+        .then(res => Object.assign({ id: res.id }, data))
     },
 }
 

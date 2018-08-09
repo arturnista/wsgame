@@ -87,18 +87,18 @@ Room.prototype.userJoin = function(user) {
     user.socket.on('room_kick_user', (message) => {
         if(this.gameIsRunning) return
         if(this.owner.id !== user.id) return
-        if(message.userId !== user.id) return
+        if(message.userId === user.id) return
 
         console.log(`SocketIO :: ${this.name} :: User kicked :: ${JSON.stringify(message)}`)
-        this.userLeftRoom(user)
+        const kUser = this.users.find(x => x.id === message.userId)
+        if(kUser) this.userLeftRoom(kUser)
     })
-    user.socket.on('room_kick_user', (message) => {
+    user.socket.on('room_destroy', (message) => {
         if(this.gameIsRunning) return
         if(this.owner.id !== user.id) return
-        if(message.userId !== user.id) return
 
-        console.log(`SocketIO :: ${this.name} :: User kicked :: ${JSON.stringify(message)}`)
-        this.userLeftRoom(user)
+        console.log(`SocketIO :: ${this.name} :: Room destroyed :: ${JSON.stringify(message)}`)
+
     })
 
     // User events
@@ -201,10 +201,10 @@ Room.prototype.userJoin = function(user) {
 Room.prototype.userLeftRoom = function (user) {
     COLORS.push( user.color )
 
+    this.emit('user_left_room', user.info())
+
     if(user.player) this.gameObjectController.destroyPlayer(user.player.id)
     this.users = this.users.filter(x => x.id !== user.id)
-
-    this.emit('user_left_room', user.info())
 }
 
 Room.prototype.userOwner = function (user) {

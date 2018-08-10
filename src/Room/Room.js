@@ -50,6 +50,10 @@ Room.prototype.delete = function () {
 
     this.gameObjectController.end(this.users)
     this.mapController.end()
+
+    while(this.users.length > 0) {
+        this.userLeftRoom(this.users[0])
+    }
 }
 
 Room.prototype.info = function () {
@@ -92,13 +96,6 @@ Room.prototype.userJoin = function(user) {
         console.log(`SocketIO :: ${this.name} :: User kicked :: ${JSON.stringify(message)}`)
         const kUser = this.users.find(x => x.id === message.userId)
         if(kUser) this.userLeftRoom(kUser)
-    })
-    user.socket.on('room_destroy', (message) => {
-        if(this.gameIsRunning) return
-        if(this.owner.id !== user.id) return
-
-        console.log(`SocketIO :: ${this.name} :: Room destroyed :: ${JSON.stringify(message)}`)
-
     })
 
     // User events

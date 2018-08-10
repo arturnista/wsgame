@@ -268,7 +268,7 @@ Player.prototype.update = function (deltatime) {
     if(this.positionToGo != null) {
 
         const distance = vector.distance(this.position, this.positionToGo)
-        if(distance <= 2) {
+        if(distance <= 5) {
 
             this.moveVelocity = { x: 0, y: 0 }
             this.positionToGo = null

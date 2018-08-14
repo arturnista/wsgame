@@ -9,6 +9,7 @@ const TeleportationOrb = require('./TeleportationOrb')
 const Prison = require('./Prison')
 const PoisonDagger = require('./PoisonDagger')
 const VoodooDoll = require('./VoodooDoll')
+const Bubble = require('./Bubble')
 const Player = require('./Player')
 const Obstacle = require('./Obstacle')
 
@@ -113,6 +114,13 @@ GameObjectController.prototype.createVoodooDoll = function (data) {
     this.create(voodooDoll)
 
     return voodooDoll
+}
+
+GameObjectController.prototype.createBubble = function (data) {
+    const bubble = new Bubble(data, this)
+    this.create(bubble)
+
+    return bubble
 }
 
 GameObjectController.prototype.createTeleportationOrb = function (data) {

@@ -57,6 +57,15 @@ module.exports = {
         knockbackMultiplier: 1,
         knockbackIncrement: 1.2,
     },
+    bubble: {
+        name: 'Bubble',
+        description: 'Lorem ipsum.',
+        type: 'offensive',
+        cooldown: 5000,
+        distance: 400,
+        radius: 50,
+        moveSpeed: 250,
+    },
     prison: {
         name: 'Player prison',
         description: 'Creates a round area that players are forbidden to enter or leave.',

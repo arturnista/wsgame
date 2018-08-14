@@ -29,6 +29,7 @@ function Bubble(data, goController) {
     this.originalPosition = _.clone(this.position)
 
     this.players = []
+    this.playersToIgnore = []
 
     this.velocity = {
         x: this.direction.x * this.moveSpeed,
@@ -53,11 +54,13 @@ Bubble.prototype.update = function (deltatime) {
     if(vector.distance(this.position, this.originalPosition) >= this.distance) {
         this.goController.destroy(this.id)
     }
+
     for (let index = 0; index < this.players.length; index++) {
-        if(vector.distance(this.players[index].position, this.position) < 80) {
-            this.players[index].position.x = this.position.x
-            this.players[index].position.y = this.position.y
-        }
+        if(vector.distance(this.players[index].position, this.position) >= 80) continue
+        if(this.players[index].modifiers.find(x => x.effects.reflectSpells)) continue
+
+        this.players[index].position.x = this.position.x
+        this.players[index].position.y = this.position.y
     }
 }
 
@@ -75,7 +78,16 @@ Bubble.prototype.onCollide = function (object, direction, directionInv) {
     if(goTypes.isType(object.type, goTypes.PLAYER)) {
         if(object.status !== 'alive') return
         if(this.owner && object.id === this.owner.id) return
-        if(this.players.find(x => x.id === object.id)) return
+
+        const shouldReflect = object.modifiers.find(x => x.effects.reflectSpells) != null
+        if(shouldReflect) {
+            this.reflect(object, direction)
+            return
+        }
+
+        if(this.playersToIgnore.indexOf(object.id) !== -1) return
+
+        this.playersToIgnore.push(object.id)
         this.players.push(object)
     } else if(goTypes.isType(object.type, goTypes.OBSTACLE)) {
         this.goController.destroy(this.id)

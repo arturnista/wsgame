@@ -59,7 +59,7 @@ module.exports = {
     },
     bubble: {
         name: 'Bubble',
-        description: 'Lorem ipsum.',
+        description: 'Throws a bubble that travel for 400 units. Enemies are pulled inside and travel with the bubble.',
         type: 'offensive',
         cooldown: 5000,
         distance: 400,

@@ -76,6 +76,11 @@ function sub(pos1, pos2) {
     }
 }
 
+function isZero(vec) {
+    if(vec == null) throw new Error('Position 1 is undefined')
+    return vec.x === 0 && vec.y === 0
+}
+
 function reduceToZero(vector, value) {
     if(value < 0) value *= -1
 
@@ -104,5 +109,6 @@ module.exports = {
     multiply,
     add,
     sub,
+    isZero,
     reduceToZero
 }

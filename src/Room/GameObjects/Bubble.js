@@ -56,16 +56,28 @@ Bubble.prototype.update = function (deltatime) {
     }
 
     for (let index = 0; index < this.players.length; index++) {
-        if(vector.distance(this.players[index].position, this.position) >= 80) continue
-        if(this.players[index].modifiers.find(x => x.effects.reflectSpells)) continue
-
+        if(!this.players[index]) continue
+        if(vector.distance(this.players[index].position, this.position) >= 80) {
+            this.players[index] = null
+            continue
+        }
+        if(this.players[index].modifiers.find(x => x.effects.reflectSpells)) {
+            this.players[index] = null
+            continue
+        }
+        
         this.players[index].position.x = this.position.x
         this.players[index].position.y = this.position.y
     }
 }
 
 Bubble.prototype.reflect = function(object, direction) {
+    if(vector.isZero(direction)) direction = { x: 1, y: 1 }
     this.velocity = vector.multiply(direction, this.moveSpeed)
+
+    this.playersToIgnore.push(object.id)
+    this.players = this.players.filter(x => x && x.id !== object.id)
+
     this.owner = null
 }
 
@@ -89,6 +101,7 @@ Bubble.prototype.onCollide = function (object, direction, directionInv) {
 
         this.playersToIgnore.push(object.id)
         this.players.push(object)
+        
     } else if(goTypes.isType(object.type, goTypes.OBSTACLE)) {
         this.goController.destroy(this.id)
     }

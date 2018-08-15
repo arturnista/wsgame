@@ -80,7 +80,7 @@ module.exports = {
         description: 'Test spell based on prison. Instead of clicking to use the spell, drag the mouse to determine the size of the prison. Duration is based on the size.',
         type: 'support',
         distance: 200,
-        cooldown: 1000,
+        cooldown: 15000,
         minRadius: 30,
         maxRadius: 200,
         baseDuration: 3000,

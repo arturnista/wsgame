@@ -16,7 +16,27 @@ const Obstacle = require('./Obstacle')
 const BOT_COLORS = [
     '#4A148C',
     '#00695C',
-    '#388E3C'
+    '#388E3C',
+    '#880E4F',
+    '#311B92',
+    '#004D40',
+    '#827717',
+    '#FF6F00',
+    '#3E2723'
+]
+
+const BOT_NAMES = [
+    'Bot Ulysses',
+    'Bot Ander',
+    'Bot Bob',
+    'Bot Jairo',
+    'Bot Moharu',
+    'Bot Lorek',
+    'Bot Spk',
+    'Bot Pudim',
+    'Bot Xanz',
+    'Bot Lulu',
+    'Bot Land'
 ]
 
 function GameObjectController(addState) {
@@ -42,8 +62,8 @@ GameObjectController.prototype.start = function (users, { addState, mapControlle
 
     for (let i = 0; i < botCount; i++) {
         let player = this.createPlayer({ isBot: true, addState, mapController })
-        player.color = BOT_COLORS[_.random(0, BOT_COLORS.length - 1)]
-        player.name = 'Bot Ulysses'
+        player.color = _.sample(BOT_COLORS)
+        player.name = _.sample(BOT_NAMES)
         players.push(player)
     }
     
@@ -51,11 +71,11 @@ GameObjectController.prototype.start = function (users, { addState, mapControlle
     return players
 }
 
-GameObjectController.prototype.end = function (users) {
+GameObjectController.prototype.end = function (users, winner = {}) {
 
     this.gameObjects = []
     for (let i = 0; i < users.length; i++) {
-        if(users[i].player.status === 'alive') users[i].winCount += 1
+        if(users[i].player.id === winner.id) users[i].winCount += 1
         users[i].restart()
     }
 

@@ -45,7 +45,8 @@ LightningBolt.prototype.info = function () {
         position: this.position,
         collider: this.collider,
         velocity: this.velocity,
-        owner: this.owner ? this.owner.id : ''
+        owner: this.owner ? this.owner.id : '',
+        caster: this.caster ? this.caster.id : ''
     }
 }
 

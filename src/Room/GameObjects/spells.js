@@ -66,6 +66,21 @@ module.exports = {
         radius: 50,
         moveSpeed: 250,
     },
+    lightning_bolt: {
+        name: 'Lightning Bolt',
+        description: 'Fast eletric projectile. Stun player and electrocute nearby enemies.',
+        type: 'offensive',
+        cooldown: 5000,
+        moveSpeed: 700,
+        radius: 70,
+        duration: 750,
+        knockbackMultiplier: 1,
+        knockbackIncrement: 1.4,
+        hitEffects: {
+            moveVelocity: 0,
+            silenced: true
+        }
+    },
     prison: {
         name: 'Player prison',
         description: 'Creates a round area that players are forbidden to enter or leave.',
@@ -102,7 +117,7 @@ module.exports = {
         moveSpeed: 550,
         knockbackMultiplier: 0,
         knockbackIncrement: 1.1,
-        duration: 1000,
+        duration: 3000,
         hitEffects: {
             moveVelocity: .4,
         }

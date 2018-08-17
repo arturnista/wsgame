@@ -11,6 +11,7 @@ const PoisonDagger = require('./PoisonDagger')
 const VoodooDoll = require('./VoodooDoll')
 const Bubble = require('./Bubble')
 const LightningBolt = require('./LightningBolt')
+const ShotgunProjectile = require('./ShotgunProjectile')
 
 const Player = require('./Player')
 const Obstacle = require('./Obstacle')
@@ -164,6 +165,13 @@ GameObjectController.prototype.createPrison = function (data) {
     this.create(prison)
 
     return prison
+}
+
+GameObjectController.prototype.createShotgunProjectile = function (data) {
+    const shotgun = new ShotgunProjectile(data, this)
+    this.create(shotgun)
+
+    return shotgun
 }
 
 GameObjectController.prototype.createObstacle = function (position) {

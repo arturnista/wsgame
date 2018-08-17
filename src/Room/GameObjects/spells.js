@@ -81,6 +81,16 @@ module.exports = {
             silenced: true
         }
     },
+    shotgun: {
+        name: 'Shotgun',
+        description: 'Fire 3 shots that pushes enemies.',
+        type: 'offensive',
+        cooldown: 3000,
+        moveSpeed: 450,
+        amount: 3,
+        knockbackMultiplier: 1,
+        knockbackIncrement: 1.1,
+    },
     prison: {
         name: 'Player prison',
         description: 'Creates a round area that players are forbidden to enter or leave.',

@@ -23,7 +23,7 @@ function Player(opt, goController) {
     this.start()
 
     this.botBehaviour = null
-    if(opt.isBot) this.botBehaviour = new BotBehaviour(this)
+    // if(opt.isBot) this.botBehaviour = new BotBehaviour(this)
 }
 
 Player.prototype.start = function () {
@@ -151,6 +151,12 @@ Player.prototype.useSpell = function(spellName, data, { isReplica = false, ignor
             break
         case 'bubble':
             spellEntity = this.goController.createBubble(Object.assign({ caster: data.id }, data, spellData))
+            break
+        case 'shotgun':
+            const init = Math.floor(spellData.amount / 2)
+            for (let index = -init; index <= init; index++) {
+                spellEntity = this.goController.createShotgunProjectile(Object.assign({ caster: data.id, index }, data, spellData))
+            }
             break
         case 'lightning_bolt':
             spellEntity = this.goController.createLightningBolt(Object.assign({ caster: data.id }, data, spellData))

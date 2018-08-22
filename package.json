@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon --exec node server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "production": "node server.js"
+    "production": "NODE_ENV=PRODUCTION node server.js"
   },
   "author": "ArturNista",
   "license": "MIT",

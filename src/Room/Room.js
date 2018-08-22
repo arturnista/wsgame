@@ -10,6 +10,9 @@ const DELAY_TO_START = 4000
 const DELAY_TO_END = 5000
 const FIXED_SPELLS = []
 
+const FPS = 60
+const TICK_LENGTH_MS = 1000 / FPS
+
 let COLORS = [
     '#ff0000',
     '#0000ff',
@@ -27,6 +30,10 @@ function Room(socketIo, data) {
     this.name = data.name
 
     this.socketIo = socketIo
+
+    this.previousTick = Date.now()
+    this.gameLoop = this.gameLoop.bind(this)
+    this.gameLogic = this.gameLogic.bind(this)
 
     this.gameObjectController = new GameObjectController(this.addState.bind(this))
     this.mapController = new MapController(this.gameObjectController, this.addState.bind(this))
@@ -254,7 +261,26 @@ Room.prototype.endGame = function (winner) {
     this._gameEnded = false
 }
 
-Room.prototype.gameLoop = function () {
+Room.prototype.gameLoop = function() {
+    if(!this.gameIsRunning) return
+
+    const now = Date.now()
+
+    if (this.previousTick + TICK_LENGTH_MS <= now) {
+        const delta = (now - this.previousTick) / 1000
+        this.previousTick = now
+
+        this.gameLogic(delta)
+    }
+
+    if (Date.now() - this.previousTick < TICK_LENGTH_MS - 16) {
+        setTimeout(this.gameLoop)
+    } else {
+        setImmediate(this.gameLoop)
+    }
+}
+
+Room.prototype.gameLogic = function () {
     const {
         gameObjectController,
         mapController,
@@ -275,8 +301,6 @@ Room.prototype.gameLoop = function () {
     this.nextState = {}
 
     this.lastFrameTime = new Date()
-    this.cycleTime = setTimeout(this.gameLoop.bind(this), 10)
-
     if(this._gameEnded) return
 
     const alivePlayers = infos.players.filter(x => x.status === 'alive')

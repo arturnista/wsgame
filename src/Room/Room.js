@@ -10,7 +10,7 @@ const DELAY_TO_START = 4000
 const DELAY_TO_END = 5000
 const FIXED_SPELLS = []
 
-const FPS = 60
+const FPS = 45
 const TICK_LENGTH_MS = 1000 / FPS
 
 let COLORS = [
@@ -247,7 +247,8 @@ Room.prototype.endGame = function (winner) {
         users: this.users.map(x => ({ id: x.id, name: x.name })),
         players: this.gameObjectController.gameObjects.filter(x => goTypes.isType(x.type, goTypes.PLAYER)).map(p => ({ id: p.id, user: p.user ? p.user.id : 'bot', isBot: p.botBehaviour ? true : false, spells: p.spellsUsed, life: p.life, knockbackValue: p.knockbackValue })),
         map: this.mapController.currentMap.name,
-        duration: new Date() - this.startGameTime
+        duration: new Date() - this.startGameTime,
+        createdAt: (new Date()).toISOString(),
     })
 
     this.gameObjectController.end(this.users, winner)

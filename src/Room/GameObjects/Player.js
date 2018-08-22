@@ -18,12 +18,15 @@ function Player(opt, goController) {
 
     this.maxLife = 100
     this.status = 'alive'
-    this.name = ''
-    this.color = ''
-    this.start()
+    this.user = opt.user
+    this.color = opt.user ? opt.user.color : ''
+    this.name = opt.user ? opt.user.name : ''
+    this.spells = this.user ? this.user.spells : []
 
     this.botBehaviour = null
-    if(opt.isBot) this.botBehaviour = new BotBehaviour(this)
+    // if(opt.isBot) this.botBehaviour = new BotBehaviour(this)
+
+    this.start()
 }
 
 Player.prototype.start = function () {
@@ -39,8 +42,8 @@ Player.prototype.start = function () {
     this.life = this.maxLife
     this.knockbackValue = 300
 
-    this.spells = []
-    this.spellsUsed = {}
+    this.spellsCooldown = {}
+    this.spellsUsed = this.spells.reduce((prev, curr) => Object.assign({}, prev, { [curr]: 0 }), {})
     this.modifiers = []
     
     this.status = 'alive'    
@@ -64,7 +67,7 @@ Player.prototype.info = function () {
         color: this.color,
         userId: this.user ? this.user.id : '',
         modifiers: this.modifiers.map(x => x.name),
-        spells: this.spells.map(x => ({ name: x, cd: this.spellsUsed[x] ? this.spellsUsed[x].toISOString() : '' }))
+        spells: this.spells.map(x => ({ name: x, cd: this.spellsCooldown[x] ? this.spellsCooldown[x].toISOString() : '' }))
     }
 }
 
@@ -111,8 +114,10 @@ Player.prototype.useSpell = function(spellName, data, { isReplica = false, ignor
     const spellData = spells[spellName]
     if(spellName === 'teleportation_orb' && this.teleportationOrb && this.teleportationOrb.exists) spellName = 'teleportation_orb_tel'
 
-    if(!ignoreCooldown && this.spellsUsed[spellName] && (new Date() - this.spellsUsed[spellName]) < spellData.cooldown) return
-    this.spellsUsed[spellName] = new Date()
+    const cooldown = spellData.cooldown + (spellData.incrementalCooldown ? (this.spellsUsed[spellName] - 1) * spellData.incrementalCooldown : 0)
+    if(!ignoreCooldown && this.spellsCooldown[spellName] && (new Date() - this.spellsCooldown[spellName]) < cooldown) return
+    this.spellsCooldown[spellName] = new Date()
+    this.spellsUsed[spellName] += 1
 
     if(spellData.effects || spellData.afterEffects) {
         this.addModifier(spellName, spellData)
@@ -240,7 +245,9 @@ Player.prototype.useSpell = function(spellName, data, { isReplica = false, ignor
                 player: this.info(),
                 entity: spellEntity && spellEntity.info(),
                 castData: data
-            }, spellData)
+            }, spellData, {
+                cooldown: spellData.cooldown + (spellData.incrementalCooldown ? (this.spellsUsed[spellName] - 1) * spellData.incrementalCooldown : 0)
+            })
         )
     }
 }
@@ -257,7 +264,7 @@ Player.prototype.addModifier = function(name, effectData) {
 }
 
 Player.prototype.resetCooldown = function (spellName) {
-    this.spellsUsed[spellName] = null
+    this.spellsCooldown[spellName] = null
 }
 
 Player.prototype.update = function (deltatime) {

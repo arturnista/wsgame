@@ -55,11 +55,7 @@ GameObjectController.prototype.start = function (users, { addState, mapControlle
     for (let i = 0; i < users.length; i++) {
         if(users[i].isObserver) continue
 
-        users[i].player = this.createPlayer({ addState, mapController })
-        users[i].player.color = users[i].color
-        users[i].player.spells = users[i].spells
-        users[i].player.user = users[i]
-        users[i].player.name = users[i].name
+        users[i].player = this.createPlayer({ addState, mapController, user: users[i] })
         players.push(users[i].player)
     }
 

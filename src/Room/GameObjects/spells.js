@@ -43,7 +43,7 @@ module.exports = {
         type: 'offensive',
         cooldown: 5000,
         distance: 350,
-        moveSpeed: 400,
+        moveSpeed: 450,
         knockbackMultiplier: 1,
         knockbackIncrement: 1.4,
     },
@@ -57,13 +57,47 @@ module.exports = {
         knockbackMultiplier: 1,
         knockbackIncrement: 1.2,
     },
+    bubble: {
+        name: 'Bubble',
+        description: 'Throws a bubble that travel for 400 units. Enemies are pulled inside and travel with the bubble.',
+        type: 'offensive',
+        cooldown: 5000,
+        distance: 400,
+        radius: 50,
+        moveSpeed: 250,
+    },
+    lightning_bolt: {
+        name: 'Lightning Bolt',
+        description: 'Fast eletric projectile. Pushes enemies and stun nearby enemies.',
+        type: 'offensive',
+        cooldown: 5000,
+        moveSpeed: 700,
+        radius: 70,
+        duration: 750,
+        knockbackMultiplier: 1,
+        knockbackIncrement: 1.4,
+        hitEffects: {
+            moveVelocity: 0,
+            silenced: true
+        }
+    },
+    shotgun: {
+        name: 'Shotgun',
+        description: 'Fire 3 shots that pushes enemies.',
+        type: 'offensive',
+        cooldown: 3000,
+        moveSpeed: 450,
+        amount: 3,
+        knockbackMultiplier: .6,
+        knockbackIncrement: 1.1,
+    },
     prison: {
         name: 'Player prison',
         description: 'Creates a round area that players are forbidden to enter or leave.',
         type: 'support',
         distance: 130,
         radius: 80,
-        cooldown: 15000,
+        cooldown: 7000,
         duration: 3000,
     },
     prison_drag: {
@@ -71,10 +105,10 @@ module.exports = {
         description: 'Test spell based on prison. Instead of clicking to use the spell, drag the mouse to determine the size of the prison. Duration is based on the size.',
         type: 'support',
         distance: 200,
-        cooldown: 1000,
+        cooldown: 7000,
         minRadius: 30,
         maxRadius: 200,
-        baseDuration: 3000,
+        baseDuration: 5000,
     },
     repel: {
         name: 'Repel',
@@ -93,7 +127,7 @@ module.exports = {
         moveSpeed: 550,
         knockbackMultiplier: 0,
         knockbackIncrement: 1.1,
-        duration: 1000,
+        duration: 3000,
         hitEffects: {
             moveVelocity: .4,
         }
@@ -103,9 +137,6 @@ module.exports = {
         description: 'Transform 10% of the received knockback into life.',
         type: 'support',
         cooldown: 5000,
-        moveSpeed: 550,
-        knockbackMultiplier: 0,
-        knockbackIncrement: 1.1,
         duration: 1000,
         effects: {
             knockbackValue: 0,
@@ -134,9 +165,10 @@ module.exports = {
     },
     blink: {
         name: 'Blink',
-        description: 'Instant teleports the player for 300 units.',
+        description: 'Instant teleports the player for 300 units. Each use increment the cooldown in 3s.',
         type: 'support',
         cooldown: 5000,
+        incrementalCooldown: 3000,
         distance: 300
     },
 }

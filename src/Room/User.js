@@ -18,7 +18,7 @@ function User(socket) {
 
 User.prototype.restart = function() {
     this.player = {}
-    this.spells = this.spells.length === 0 ? [ 'fireball' ] : this.spells
+    this.spells = this.spells.length === 0 ? _.clone(this.fixedSpells) : this.spells
 }
 
 User.prototype.info = function () {
@@ -35,7 +35,8 @@ User.prototype.info = function () {
 }
 
 User.prototype.selectSpell = function (name) {
-    if(!spells[name]) return null
+    if(!spells[name]) return false
+    if(this.spells.indexOf(name) !== -1) return false
 
     const offensiveSpells = this.spells.filter(x => spells[x].type === 'offensive')
     const supportSpells = this.spells.filter(x => spells[x].type === 'support')

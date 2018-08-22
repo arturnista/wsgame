@@ -9,13 +9,37 @@ const TeleportationOrb = require('./TeleportationOrb')
 const Prison = require('./Prison')
 const PoisonDagger = require('./PoisonDagger')
 const VoodooDoll = require('./VoodooDoll')
+const Bubble = require('./Bubble')
+const LightningBolt = require('./LightningBolt')
+const ShotgunProjectile = require('./ShotgunProjectile')
+
 const Player = require('./Player')
 const Obstacle = require('./Obstacle')
 
 const BOT_COLORS = [
     '#4A148C',
     '#00695C',
-    '#388E3C'
+    '#388E3C',
+    '#880E4F',
+    '#311B92',
+    '#004D40',
+    '#827717',
+    '#FF6F00',
+    '#3E2723'
+]
+
+const BOT_NAMES = [
+    'Bot Ulysses',
+    'Bot Ander',
+    'Bot Bob',
+    'Bot Jairo',
+    'Bot Moharu',
+    'Bot Lorek',
+    'Bot Spk',
+    'Bot Pudim',
+    'Bot Xanz',
+    'Bot Lulu',
+    'Bot Land'
 ]
 
 function GameObjectController(addState) {
@@ -31,18 +55,14 @@ GameObjectController.prototype.start = function (users, { addState, mapControlle
     for (let i = 0; i < users.length; i++) {
         if(users[i].isObserver) continue
 
-        users[i].player = this.createPlayer({ addState, mapController })
-        users[i].player.color = users[i].color
-        users[i].player.spells = users[i].spells
-        users[i].player.user = users[i]
-        users[i].player.name = users[i].name
+        users[i].player = this.createPlayer({ addState, mapController, user: users[i] })
         players.push(users[i].player)
     }
 
     for (let i = 0; i < botCount; i++) {
         let player = this.createPlayer({ isBot: true, addState, mapController })
-        player.color = BOT_COLORS[_.random(0, BOT_COLORS.length - 1)]
-        player.name = 'Bot Ulysses'
+        player.color = _.sample(BOT_COLORS)
+        player.name = _.sample(BOT_NAMES)
         players.push(player)
     }
     
@@ -50,11 +70,11 @@ GameObjectController.prototype.start = function (users, { addState, mapControlle
     return players
 }
 
-GameObjectController.prototype.end = function (users) {
+GameObjectController.prototype.end = function (users, winner = {}) {
 
     this.gameObjects = []
     for (let i = 0; i < users.length; i++) {
-        if(users[i].player.status === 'alive') users[i].winCount += 1
+        if(users[i].player.id === winner.id) users[i].winCount += 1
         users[i].restart()
     }
 
@@ -115,6 +135,20 @@ GameObjectController.prototype.createVoodooDoll = function (data) {
     return voodooDoll
 }
 
+GameObjectController.prototype.createBubble = function (data) {
+    const bubble = new Bubble(data, this)
+    this.create(bubble)
+
+    return bubble
+}
+
+GameObjectController.prototype.createLightningBolt = function (data) {
+    const lightningBolt = new LightningBolt(data, this)
+    this.create(lightningBolt)
+
+    return lightningBolt
+}
+
 GameObjectController.prototype.createTeleportationOrb = function (data) {
     const telOrb = new TeleportationOrb(data, this)
     this.create(telOrb)
@@ -127,6 +161,13 @@ GameObjectController.prototype.createPrison = function (data) {
     this.create(prison)
 
     return prison
+}
+
+GameObjectController.prototype.createShotgunProjectile = function (data) {
+    const shotgun = new ShotgunProjectile(data, this)
+    this.create(shotgun)
+
+    return shotgun
 }
 
 GameObjectController.prototype.createObstacle = function (position) {

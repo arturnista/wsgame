@@ -237,8 +237,8 @@ Room.prototype.startGame = function (data) {
     }
 }
 
-Room.prototype.endGame = function () {
-    this.gameObjectController.end(this.users)
+Room.prototype.endGame = function (winner) {
+    this.gameObjectController.end(this.users, winner)
     this.mapController.end()
 
     this.users.forEach(u => u.status = 'waiting')
@@ -295,7 +295,7 @@ Room.prototype.gameLogic = function () {
     if(alivePlayers.length <= 1) {
         this._gameEnded = true
         this.emit('game_will_end', { time: DELAY_TO_END, winner: alivePlayers[0] })
-        setTimeout(this.endGame.bind(this), DELAY_TO_END)
+        setTimeout(() => this.endGame(alivePlayers[0]), DELAY_TO_END)
     }
 }
 

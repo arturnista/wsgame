@@ -1,8 +1,10 @@
 const _ = require('lodash')
 const uuid = require('uuid')
 const GameObjectController = require('./GameObjects/GameObjectController')
+const goTypes = require('./GameObjects/gameObjectTypes')
 const Physics = require('./Physics')
 const MapController = require('./Map/MapController')
+const database = require('../Database').getDatabase()
 
 const DELAY_TO_START = 4000
 const DELAY_TO_END = 5000
@@ -36,6 +38,7 @@ function Room(socketIo, data) {
     this.users = []
     this.chat = []
     this.owner = null
+    this.startGameTime = null
 
     this.nextState = {}
 }
@@ -220,6 +223,7 @@ Room.prototype.startGame = function (data) {
         this.emit('game_will_start', { time: DELAY_TO_START, map: this.mapController.info() })
         setTimeout(() => {
             this.emit('map_create', this.mapController.info())
+            this.startGameTime = new Date()
 
             this.gameIsRunning = true
             this.lastFrameTime = new Date()
@@ -231,6 +235,14 @@ Room.prototype.startGame = function (data) {
 }
 
 Room.prototype.endGame = function (winner) {
+    database.collection('/games').add({
+        winner: winner.id, 
+        users: this.users.map(x => ({ id: x.id, name: x.name })),
+        players: this.gameObjectController.gameObjects.filter(x => goTypes.isType(x.type, goTypes.PLAYER)).map(p => ({ id: p.id, user: p.user ? p.user.id : 'bot', isBot: p.botBehaviour ? true : false, spells: p.spellsUsed, life: p.life, knockbackValue: p.knockbackValue })),
+        map: this.mapController.currentMap.name,
+        duration: new Date() - this.startGameTime
+    })
+
     this.gameObjectController.end(this.users, winner)
     this.mapController.end()
 

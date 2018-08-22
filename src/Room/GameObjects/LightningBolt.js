@@ -66,7 +66,8 @@ LightningBolt.prototype.explode = function(mult, object) {
     const { gameObjects } = this.goController
     gameObjects.forEach(hitObject => {
         if((this.owner && hitObject.id === this.owner.id) || (object && hitObject.id === object.id) || !goTypes.isType(hitObject.type, goTypes.PLAYER) || hitObject.status !== 'alive' || vector.distance(hitObject.position, this.position) > (this.radius + hitObject.collider.radius)) return
-
+        
+        hitObject.addModifier('stun', { effects: this.hitEffects, duration: this.effectDuration } )
         const dir = vector.direction(this.position, hitObject.position)
         hitObject.knockback(
             dir.x === 0 && dir.y === 0 ? { x: 1, y: 1 } : dir,
@@ -90,7 +91,6 @@ LightningBolt.prototype.onCollide = function (object, direction, directionInv) {
         }
         
         object.knockback(directionInv, this.multiplier, this.increment)
-        object.addModifier('stun', { effects: this.hitEffects, duration: this.effectDuration } )
         this.explode(1, object)
         this.goController.destroy(this.id)
     } else if(goTypes.isType(object.type, goTypes.OBSTACLE)) {

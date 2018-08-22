@@ -43,7 +43,7 @@ module.exports = {
         type: 'offensive',
         cooldown: 5000,
         distance: 350,
-        moveSpeed: 400,
+        moveSpeed: 450,
         knockbackMultiplier: 1,
         knockbackIncrement: 1.4,
     },
@@ -68,7 +68,7 @@ module.exports = {
     },
     lightning_bolt: {
         name: 'Lightning Bolt',
-        description: 'Fast eletric projectile. Stun player and electrocute nearby enemies.',
+        description: 'Fast eletric projectile. Pushes enemies and stun nearby enemies.',
         type: 'offensive',
         cooldown: 5000,
         moveSpeed: 700,
@@ -88,7 +88,7 @@ module.exports = {
         cooldown: 3000,
         moveSpeed: 450,
         amount: 3,
-        knockbackMultiplier: 1,
+        knockbackMultiplier: .6,
         knockbackIncrement: 1.1,
     },
     prison: {
@@ -97,7 +97,7 @@ module.exports = {
         type: 'support',
         distance: 130,
         radius: 80,
-        cooldown: 15000,
+        cooldown: 7000,
         duration: 3000,
     },
     prison_drag: {
@@ -105,10 +105,10 @@ module.exports = {
         description: 'Test spell based on prison. Instead of clicking to use the spell, drag the mouse to determine the size of the prison. Duration is based on the size.',
         type: 'support',
         distance: 200,
-        cooldown: 15000,
+        cooldown: 7000,
         minRadius: 30,
         maxRadius: 200,
-        baseDuration: 3000,
+        baseDuration: 5000,
     },
     repel: {
         name: 'Repel',
@@ -165,10 +165,10 @@ module.exports = {
     },
     blink: {
         name: 'Blink',
-        description: 'Instant teleports the player for 300 units.',
+        description: 'Instant teleports the player for 300 units. Each use increment the cooldown in 3s.',
         type: 'support',
         cooldown: 5000,
-        incrementalCooldown: 2000,
+        incrementalCooldown: 3000,
         distance: 300
     },
 }

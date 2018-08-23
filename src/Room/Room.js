@@ -146,20 +146,30 @@ Room.prototype.userJoin = function(user) {
         this.emit('room_update', { room: this.info() })
     })
 
-    user.socket.on('user_select_spell', (message) => {
+    user.socket.on('user_select_spell', (message, responseCallback) => {
         if(this.gameIsRunning) return
 
         console.log(`SocketIO :: ${this.name} :: Player selected spell :: ${JSON.stringify(message)}`)
         const spellData = user.selectSpell(message.spellName)
-        if(spellData) this.emit('user_selected_spell', { user: user.id, spellName: message.spellName, spellData })
+        if(spellData) {
+            this.emit('user_selected_spell', { user: user.id, spellName: message.spellName, spellData })
+            responseCallback({ status: 200 })
+        } else {
+            responseCallback({ status: 400 })
+        }
     })
 
-    user.socket.on('user_deselect_spell', (message) => {
+    user.socket.on('user_deselect_spell', (message, responseCallback) => {
         if(this.gameIsRunning) return
 
         console.log(`SocketIO :: ${this.name} :: Player deselected spell :: ${JSON.stringify(message)}`)
         const result = user.deselectSpell(message.spellName)
-        if(result) this.emit('user_deselected_spell', { user: user.id, spellName: message.spellName })
+        if(result) {
+            this.emit('user_deselected_spell', { user: user.id, spellName: message.spellName })
+            responseCallback({ status: 200 })
+        } else {
+            responseCallback({ status: 400 })
+        }
     })
 
     user.socket.on('user_submit_message', (message) => {

@@ -4,16 +4,21 @@ const spells = require('./GameObjects/spells')
 
 function User(socket) {
     this.id = uuid.v4()
-    this.player = {}
 
     this.socket = socket
+
+    this.reset()
+    this.restart()
+}
+
+User.prototype.reset = function() {
+    this.player = {}
+    
     this.status = 'waiting'
     this.spells = []
     this.fixedSpells = []
     this.winCount = 0
     this.isObserver = false
-
-    this.restart()
 }
 
 User.prototype.restart = function() {

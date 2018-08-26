@@ -221,6 +221,7 @@ Room.prototype.userLeftRoom = function (user) {
     COLORS.push( user.color )
 
     this.emit('user_left_room', user.info())
+    user.reset()
 
     if(user.player) this.gameObjectController.destroyPlayer(user.player.id)
     this.users = this.users.filter(x => x.id !== user.id)

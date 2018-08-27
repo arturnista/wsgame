@@ -12,7 +12,7 @@ const FIXED_SPELLS = []
 
 const isProduction = process.env.NODE_ENV === 'PRODUCTION'
 
-const FPS = 45
+const FPS = 60
 const TICK_LENGTH_MS = 1000 / FPS
 
 let COLORS = [

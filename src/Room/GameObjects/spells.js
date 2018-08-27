@@ -29,7 +29,7 @@ module.exports = {
         cooldown: 3000,
         radius: 50,
         knockbackMultiplier: 1,
-        knockbackIncrement: 1.2,
+        knockbackIncrement: 1.4,
         distance: 600,
         duration: 650,
         effects: {
@@ -55,7 +55,7 @@ module.exports = {
         distance: 450,
         moveSpeed: 350,
         knockbackMultiplier: 1,
-        knockbackIncrement: 1.2,
+        knockbackIncrement: 1.3,
     },
     bubble: {
         name: 'Bubble',
@@ -75,7 +75,7 @@ module.exports = {
         radius: 70,
         duration: 750,
         knockbackMultiplier: 1,
-        knockbackIncrement: 1.4,
+        knockbackIncrement: 1.3,
         hitEffects: {
             moveVelocity: 0,
             silenced: true
@@ -88,7 +88,7 @@ module.exports = {
         cooldown: 3000,
         moveSpeed: 450,
         amount: 3,
-        knockbackMultiplier: .6,
+        knockbackMultiplier: .4,
         knockbackIncrement: 1.1,
     },
     prison: {
@@ -155,8 +155,8 @@ module.exports = {
         name: 'Reflect Shield',
         description: 'Protect the player for knockback and reflect some spells.',
         type: 'support',
-        cooldown: 6000,
-        duration: 1000,
+        cooldown: 5000,
+        duration: 2500,
         effects: {
             knockbackValue: 0,
             knockbackIncrement: 0,

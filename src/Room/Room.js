@@ -260,7 +260,7 @@ Room.prototype.endGame = function (winner) {
     const gameData = {
         room: this.id, 
         version: package.version,
-        winner: winner.id, 
+        winner: winner ? winner.id : 'DRAW', 
         users: this.users.map(x => ({ id: x.id, name: x.name })),
         players: this.gameObjectController.gameObjects.filter(x => goTypes.isType(x.type, goTypes.PLAYER)).map(p => ({ id: p.id, user: p.user ? p.user.id : 'bot', isBot: p.botBehaviour ? true : false, spells: p.spellsUsed, life: p.life, knockbackValue: p.knockbackValue })),
         map: this.mapController.currentMap.name,

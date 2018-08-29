@@ -79,9 +79,9 @@ PoisonDagger.prototype.onCollide = function (object, direction, directionInv) {
         
         object.knockback(directionInv, this.multiplier, this.increment)
         object.addModifier('slow', { effects: this.hitEffects, duration: this.effectDuration } )
-        this.goController.destroy(this.id)
+        this.goController.destroy(this.id, 'hit_player')
     } else if(goTypes.isType(object.type, goTypes.OBSTACLE)) {
-        this.goController.destroy(this.id)
+        this.goController.destroy(this.id, 'hit_obstacle')
     }
     
 }

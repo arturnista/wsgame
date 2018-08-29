@@ -16,6 +16,8 @@ function Player(opt, goController) {
     this.addState = opt.addState
     this.mapController = opt.mapController
 
+    this.freezeTime = 0
+
     this.maxLife = 100
     this.status = 'alive'
     this.user = opt.user
@@ -101,6 +103,8 @@ Player.prototype.knockback = function (direction, multiplier, increment) {
 
     const lifeDrainAmount = this.modifiers.reduce((v, m) => _.isNil(m.effects.lifeDrain) ? v : v + m.effects.lifeDrain, 0)
     if(lifeDrainAmount > 0) this.heal(lifeDrainAmount * knockbackValueOriginal)
+
+    this.freezeTime = 0.06
 }
 
 Player.prototype.useSpell = function(spellName, data, { isReplica = false, ignoreCooldown = false } = {}) {
@@ -269,6 +273,12 @@ Player.prototype.resetCooldown = function (spellName) {
 
 Player.prototype.update = function (deltatime) {
     if(this.status === 'dead') {
+        this.velocity = { x: 0, y: 0 }
+        return
+    }
+
+    if(this.freezeTime > 0) {
+        this.freezeTime -= deltatime
         this.velocity = { x: 0, y: 0 }
         return
     }

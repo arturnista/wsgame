@@ -92,10 +92,10 @@ LightningBolt.prototype.onCollide = function (object, direction, directionInv) {
         
         object.knockback(directionInv, this.multiplier, this.increment)
         this.explode(1, object)
-        this.goController.destroy(this.id)
+        this.goController.destroy(this.id, 'hit_player')
     } else if(goTypes.isType(object.type, goTypes.OBSTACLE)) {
         this.explode(.5)
-        this.goController.destroy(this.id)
+        this.goController.destroy(this.id, 'hit_obstacle')
     }
     
 }

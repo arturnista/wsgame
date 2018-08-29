@@ -73,9 +73,9 @@ TeleportationOrb.prototype.onCollide = function (object, direction, directionInv
             this.reflect(object, direction)
             return
         }
-        this.goController.destroy(this.id)
+        this.goController.destroy(this.id, 'hit_player')
     } else if(goTypes.isType(object.type, goTypes.OBSTACLE)) {
-        this.goController.destroy(this.id)
+        this.goController.destroy(this.id, 'hit_obstacle')
     }
     
 }

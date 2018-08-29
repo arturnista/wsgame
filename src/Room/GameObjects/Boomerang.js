@@ -70,7 +70,7 @@ Boomerang.prototype.onCollide = function (object, direction, directionInv) {
     if(this.owner && object.id === this.owner.id) {
         if(this.isFollowingPlayer) {
             if(this.owner.resetCooldown) this.owner.resetCooldown('boomerang')
-            this.goController.destroy(this.id)
+            this.goController.destroy(this.id, 'player_catch')
         }
         return
     }
@@ -84,9 +84,9 @@ Boomerang.prototype.onCollide = function (object, direction, directionInv) {
             object.knockback(directionInv, this.multiplier, this.increment)
         }
         
-        this.goController.destroy(this.id)
+        this.goController.destroy(this.id, 'hit_player')
     } else if(goTypes.isType(object.type, goTypes.OBSTACLE)) {
-        this.goController.destroy(this.id)
+        this.goController.destroy(this.id, 'hit_obstacle')
     }
     
 }

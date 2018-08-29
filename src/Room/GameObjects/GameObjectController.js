@@ -183,7 +183,7 @@ GameObjectController.prototype.create = function(entity, { supressEmit } = {}) {
     if(!supressEmit) this.addState('entity_created', entity.info())
 }
 
-GameObjectController.prototype.destroy = function (gameObject) {
+GameObjectController.prototype.destroy = function (gameObject, cause = 'normal') {
     if(typeof gameObject === 'string') {
         gameObject = { id: gameObject }
     }
@@ -194,7 +194,7 @@ GameObjectController.prototype.destroy = function (gameObject) {
     })
 
     if(goDeleted) {
-        this.addState('entity_deleted', goDeleted.info())
+        this.addState('entity_deleted', Object.assign({ cause }, goDeleted.info()))
         goDeleted.exists = false
     }
 }

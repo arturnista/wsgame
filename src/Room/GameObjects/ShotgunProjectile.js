@@ -78,9 +78,9 @@ ShotgunProjectile.prototype.onCollide = function (object, direction, directionIn
             return
         }
         object.knockback(directionInv, this.multiplier, this.increment)
-        this.goController.destroy(this.id)
+        this.goController.destroy(this.id, 'hit_player')
     } else if(goTypes.isType(object.type, goTypes.OBSTACLE)) {
-        this.goController.destroy(this.id)
+        this.goController.destroy(this.id, 'hit_obstacle')
     }
     
 }

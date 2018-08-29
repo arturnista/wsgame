@@ -98,13 +98,14 @@ Player.prototype.knockback = function (direction, multiplier, increment) {
     let knockbackIncrement = increment
     knockbackIncrement = this.modifiers.reduce((v, m) => _.isNil(m.effects.knockbackIncrement) ? v : v * m.effects.knockbackIncrement, knockbackIncrement)
 
-    if(knockbackValue) this.knockbackVelocity = vector.add(this.knockbackVelocity, vector.multiply(direction, knockbackValue))
-    if(knockbackIncrement) this.knockbackValue *= knockbackIncrement
+    if(knockbackValue > 0) {
+        this.knockbackVelocity = vector.add(this.knockbackVelocity, vector.multiply(direction, knockbackValue))
+        this.freezeTime = 0.04
+    }
+    if(knockbackIncrement > 0) this.knockbackValue *= knockbackIncrement
 
     const lifeDrainAmount = this.modifiers.reduce((v, m) => _.isNil(m.effects.lifeDrain) ? v : v + m.effects.lifeDrain, 0)
     if(lifeDrainAmount > 0) this.heal(lifeDrainAmount * knockbackValueOriginal)
-
-    this.freezeTime = 0.06
 }
 
 Player.prototype.useSpell = function(spellName, data, { isReplica = false, ignoreCooldown = false } = {}) {

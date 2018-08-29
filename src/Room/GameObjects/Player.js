@@ -277,12 +277,6 @@ Player.prototype.update = function (deltatime) {
         return
     }
 
-    if(this.freezeTime > 0) {
-        this.freezeTime -= deltatime
-        this.velocity = { x: 0, y: 0 }
-        return
-    }
-
     this.modifiers = this.modifiers.filter(m => {
         if((new Date() - m.initial) > m.duration) {
             if(m.afterEffect) m.afterEffect()
@@ -291,6 +285,11 @@ Player.prototype.update = function (deltatime) {
         return true
     })
 
+    if(this.freezeTime > 0) {
+        this.freezeTime -= deltatime
+        this.velocity = { x: 0, y: 0 }
+        return
+    }
 
     if(this.botBehaviour) this.botBehaviour.update(deltatime)
 

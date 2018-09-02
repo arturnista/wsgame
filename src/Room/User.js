@@ -1,11 +1,22 @@
 const _ = require('lodash')
 const uuid = require('uuid')
 const spells = require('./GameObjects/spells')
+const Users = require('../Users/iate')
 
 function User(socket) {
-    this.id = uuid.v4()
-
     this.socket = socket
+    
+    this.socket.on('user_define', (data, callback) => {
+        console.log(`SocketIO :: User defined :: ${data.id}`)
+        this.id = data.id
+        Users.interactor.getOne(this.id)
+        .then(result => {
+            this.id = result.id
+            this.name = result.config.name
+            this.spells = result.config.spells
+            callback(result)
+        })
+    })
 
     this.reset()
     this.restart()
@@ -16,14 +27,12 @@ User.prototype.reset = function() {
     
     this.status = 'waiting'
     this.spells = []
-    this.fixedSpells = []
     this.winCount = 0
     this.isObserver = false
 }
 
 User.prototype.restart = function() {
     this.player = {}
-    this.spells = this.spells.length === 0 ? _.clone(this.fixedSpells) : this.spells
 }
 
 User.prototype.info = function () {
@@ -53,8 +62,6 @@ User.prototype.selectSpell = function (name) {
 }
 
 User.prototype.deselectSpell = function (name) {
-    if(this.fixedSpells.indexOf(name) !== -1) return false
-
     this.spells = this.spells.filter(x => x !== name)
     return true
 }

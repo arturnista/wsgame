@@ -9,7 +9,6 @@ const package = require('../../package.json')
 
 const DELAY_TO_START = 4000
 const DELAY_TO_END = 5000
-const FIXED_SPELLS = []
 
 const isProduction = process.env.NODE_ENV === 'PRODUCTION'
 
@@ -91,8 +90,6 @@ Room.prototype.userJoin = function(user) {
     this.users.push( user )
 
     user.color = _.sample(COLORS)
-    user.spells = [ ...FIXED_SPELLS ]
-    user.fixedSpells = [ ...FIXED_SPELLS ]
     user.gameObjectController = this.gameObjectController
     
     COLORS = COLORS.filter(x => x !== user.color)

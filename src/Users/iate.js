@@ -51,4 +51,5 @@ const adapter = {
 
 module.exports = {
     translator,
+    interactor
 }

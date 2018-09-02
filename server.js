@@ -7,6 +7,7 @@ const bodyParser = require('body-parser')
 const WebSocket = require('./src/WebSocket')
 const Articles = require('./src/Articles/iate')
 const BugReports = require('./src/BugReports/iate')
+const Users = require('./src/Users/iate')
 
 var whitelist = ['http://localhost:3000']
 var corsOptionsDelegate = function (req, callback) {
@@ -44,19 +45,6 @@ server.get('/game', function(req, res, next) {
 })
 
 
-server.get('/:filetype/:filesubtype/:filename', function(req, res, next) {
-    const filename = `${__dirname}/site/${req.params.filetype}/${req.params.filesubtype}/${req.params.filename}`
-    res.sendFile(filename)
-})
-server.get('/:filetype/:filename', function(req, res, next) {
-    const filename = `${__dirname}/site/${req.params.filetype}/${req.params.filename}`
-    res.sendFile(filename)
-})
-server.get('/static/:filetype/:filename', function(req, res, next) {
-    const filename = `${__dirname}/site/static/${req.params.filetype}/${req.params.filename}`
-    res.sendFile(filename)
-})
-
 server.get('/rooms', function(req, res, next) {
     console.log('Http Req :: Get Rooms :: ' + req.headers.origin)
     res.status(200).json( WebSocket.getRooms() )
@@ -72,9 +60,31 @@ server.get('/articles', function(req, res, next) {
     Articles.translator.getAll(req, res, next)
 })
 
+server.get('/users/:id', function(req, res, next) {
+    console.log('Http Req :: Get User :: ' + req.headers.origin)
+    Users.translator.getOne(req, res, next)
+})
+server.put('/users/:id/config', function(req, res, next) {
+    console.log('Http Req :: Put config User :: ' + req.headers.origin)
+    Users.translator.putConfig(req, res, next)
+})
+
 server.post('/bugreports', function(req, res, next) {
     console.log('Http Req :: Post BugReports :: ' + req.headers.origin)
     BugReports.translator.post(req, res, next)
+})
+
+server.get('/:filetype/:filesubtype/:filename', function(req, res, next) {
+    const filename = `${__dirname}/site/${req.params.filetype}/${req.params.filesubtype}/${req.params.filename}`
+    res.sendFile(filename)
+})
+server.get('/:filetype/:filename', function(req, res, next) {
+    const filename = `${__dirname}/site/${req.params.filetype}/${req.params.filename}`
+    res.sendFile(filename)
+})
+server.get('/static/:filetype/:filename', function(req, res, next) {
+    const filename = `${__dirname}/site/static/${req.params.filetype}/${req.params.filename}`
+    res.sendFile(filename)
 })
 
 const port = process.env.PORT || 5002

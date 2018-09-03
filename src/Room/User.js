@@ -6,27 +6,32 @@ const Users = require('../Users/iate')
 function User(socket) {
     this.socket = socket
 
-    this.guest()
     this.reset()
     this.restart()
+    
+    this.socket.on('user_guest', (data, callback) => {
+        console.log(`SocketIO :: User guest defined :: ${data.id}`)
+
+        this.id = uuid.v4()
+        this.name = 'Guest Player'
+        this.spells = []
+
+        callback({ id: this.id, config: { name: this.name, spells: this.spells, hotkeys: ['q', 'w', 'e'] } })
+    })
     
     this.socket.on('user_define', (data, callback) => {
         console.log(`SocketIO :: User defined :: ${data.id}`)
         this.id = data.id
         Users.interactor.getOne(this.id)
         .then(result => {
+
             this.id = result.id
             this.name = result.config.name
             this.spells = result.config.spells
+            
             callback(result)
         })
     })
-}
-
-User.prototype.guest = function() {
-    this.id = uuid.v4()
-    this.name = 'Guest Player'
-    this.spells = []
 }
 
 User.prototype.reset = function() {
@@ -78,8 +83,8 @@ User.prototype.deselectSpell = function (message) {
     return true
 }
 
-User.prototype.save = function() {
-    return Users.interactor.updateConfig(this.id, { name: this.name, spells: this.spells })
+User.prototype.saveSpells = function() {
+    return Users.interactor.updateConfig(this.id, { spells: this.spells })
 }
 
 module.exports = User

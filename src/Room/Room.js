@@ -235,7 +235,7 @@ Room.prototype.startGame = function (data) {
     const usersReady = availableUsers.every(x => x.status === 'ready')
     if(usersReady || (availableUsers.length === 0 && data.botCount > 0)) {
 
-        Promise.all(availableUsers.map(u => u.save()))
+        Promise.all(availableUsers.map(u => u.saveSpells()))
         .then(() => {
             players = this.gameObjectController.start(this.users, { addState: this.addState.bind(this), mapController: this.mapController, botCount: data.botCount || 0 })
             this.mapController.start(data && data.map)

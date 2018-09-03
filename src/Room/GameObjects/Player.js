@@ -23,7 +23,7 @@ function Player(opt, goController) {
     this.user = opt.user
     this.color = opt.user ? opt.user.color : ''
     this.name = opt.user ? opt.user.name : ''
-    this.spells = this.user ? this.user.spells : []
+    this.spells = this.user ? this.user.spells.map(x => x.id) : []
 
     this.botBehaviour = null
     if(opt.isBot) this.botBehaviour = new BotBehaviour(this)

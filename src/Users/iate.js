@@ -26,7 +26,8 @@ const interactor = {
         return entity.getOne(id)
     },
     updateConfig: function(id, config) {
-        return entity.updateConfig(id, config)
+        return entity.getOne(id)
+        .then(userData => entity.updateConfig(id, Object.assign({}, userData.config, config)))
     }
 }
 

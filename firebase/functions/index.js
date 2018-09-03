@@ -4,13 +4,18 @@ const admin = require('firebase-admin')
 admin.initializeApp()
 
 exports.createUser = functions.auth.user().onCreate(event => {
+    console.log(event)
     const data = {
         id: event.uid,
         email: event.email,
         config: {
             name: event.displayName,
-            hotkeys: ['Q', 'W', 'R'],
-            spells: ['fireball', 'explosion', 'blink'],
+            hotkeys: ['q', 'w', 'e'],
+            spells: [
+                { id: 'fireball', position: 0 },
+                { id: 'explosion', position: 1 },
+                { id: 'blink', position: 2 }
+            ],
         },
         badges: []
     }

@@ -5,6 +5,10 @@ const Users = require('../Users/iate')
 
 function User(socket) {
     this.socket = socket
+
+    this.guest()
+    this.reset()
+    this.restart()
     
     this.socket.on('user_define', (data, callback) => {
         console.log(`SocketIO :: User defined :: ${data.id}`)
@@ -17,9 +21,12 @@ function User(socket) {
             callback(result)
         })
     })
+}
 
-    this.reset()
-    this.restart()
+User.prototype.guest = function() {
+    this.id = uuid.v4()
+    this.name = 'Guest Player'
+    this.spells = []
 }
 
 User.prototype.reset = function() {
@@ -48,22 +55,31 @@ User.prototype.info = function () {
     }
 }
 
-User.prototype.selectSpell = function (name) {
+User.prototype.selectSpell = function (message) {
+    const name = message.spellName
+    const position = message.position
+
     if(!spells[name]) return false
-    if(this.spells.indexOf(name) !== -1) return false
+    if(_.findIndex(this.spells, x => x.id === name) !== -1) return false
 
-    const offensiveSpells = this.spells.filter(x => spells[x].type === 'offensive')
-    const supportSpells = this.spells.filter(x => spells[x].type === 'support')
-
+    const offensiveSpells = this.spells.filter(x => spells[x.id].type === 'offensive')
     if(spells[name].type === 'offensive' && offensiveSpells.length >= spells._config.MAX_OFFENSIVE) return false
+
+    const supportSpells = this.spells.filter(x => spells[x.id].type === 'support')
     if(spells[name].type === 'support' && supportSpells.length >= spells._config.MAX_SUPPORT) return false
-    this.spells.push(name)
+
+    this.spells.push({ id: name, position })
     return spells[name]
 }
 
-User.prototype.deselectSpell = function (name) {
-    this.spells = this.spells.filter(x => x !== name)
+User.prototype.deselectSpell = function (message) {
+    const name = message.spellName
+    this.spells = this.spells.filter(x => x.id !== name)
     return true
+}
+
+User.prototype.save = function() {
+    return Users.interactor.updateConfig(this.id, { name: this.name, spells: this.spells })
 }
 
 module.exports = User

@@ -10,8 +10,6 @@ const package = require('../../package.json')
 const DELAY_TO_START = 4000
 const DELAY_TO_END = 5000
 
-const isProduction = process.env.NODE_ENV === 'PRODUCTION'
-
 const FPS = 60
 const TICK_LENGTH_MS = 1000 / FPS
 
@@ -149,9 +147,9 @@ Room.prototype.userJoin = function(user) {
         if(this.gameIsRunning) return
 
         console.log(`SocketIO :: ${this.name} :: Player selected spell :: ${JSON.stringify(message)}`)
-        const spellData = user.selectSpell(message.spellName)
+        const spellData = user.selectSpell(message)
         if(spellData) {
-            this.emit('user_selected_spell', { user: user.id, spellName: message.spellName, spellData })
+            this.emit('user_selected_spell', { user: user.id, spellName: message.spellName, position: message.position, spellData })
             responseCallback({ status: 200 })
         } else {
             responseCallback({ status: 400 })
@@ -162,7 +160,7 @@ Room.prototype.userJoin = function(user) {
         if(this.gameIsRunning) return
 
         console.log(`SocketIO :: ${this.name} :: Player deselected spell :: ${JSON.stringify(message)}`)
-        const result = user.deselectSpell(message.spellName)
+        const result = user.deselectSpell(message)
         if(result) {
             this.emit('user_deselected_spell', { user: user.id, spellName: message.spellName })
             responseCallback({ status: 200 })
@@ -236,20 +234,24 @@ Room.prototype.startGame = function (data) {
     
     const usersReady = availableUsers.every(x => x.status === 'ready')
     if(usersReady || (availableUsers.length === 0 && data.botCount > 0)) {
-        players = this.gameObjectController.start(this.users, { addState: this.addState.bind(this), mapController: this.mapController, botCount: data.botCount || 0 })
-        this.mapController.start(data && data.map)
 
-        this.emit('game_will_start', { time: DELAY_TO_START, map: this.mapController.info() })
-        setTimeout(() => {
-            this.emit('map_create', this.mapController.info())
-            this.startGameTime = new Date()
+        Promise.all(availableUsers.map(u => u.save()))
+        .then(() => {
+            players = this.gameObjectController.start(this.users, { addState: this.addState.bind(this), mapController: this.mapController, botCount: data.botCount || 0 })
+            this.mapController.start(data && data.map)
 
-            this.gameIsRunning = true
-            this.lastFrameTime = new Date()
-            this.gameLoop()
+            this.emit('game_will_start', { time: DELAY_TO_START, map: this.mapController.info() })
+            setTimeout(() => {
+                this.emit('map_create', this.mapController.info())
+                this.startGameTime = new Date()
 
-            this.emit('game_start', { players: players.map(x => x.info()) })
-        }, DELAY_TO_START)
+                this.gameIsRunning = true
+                this.lastFrameTime = new Date()
+                this.gameLoop()
+
+                this.emit('game_start', { players: players.map(x => x.info()) })
+            }, DELAY_TO_START)
+        })
     }
 }
 
@@ -264,11 +266,7 @@ Room.prototype.endGame = function (winner) {
         duration: new Date() - this.startGameTime,
         createdAt: (new Date()).toISOString(),
     }
-    if(isProduction) {
-        database.collection('/games').add(gameData)
-    } else {
-        console.log('Saving :: ', gameData)
-    }
+    database.collection('/games').add(gameData)
 
     this.gameObjectController.end(this.users, winner)
     this.mapController.end()

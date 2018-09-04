@@ -25,11 +25,14 @@ let COLORS = [
     '#aaaaaa',
 ]
 
-function Room(socketIo, data) {
+function Room(data, server, socketIo) {
     this.id = uuid.v4()
-    this.name = data.name
     
+    this.server = server
     this.socketIo = socketIo
+
+    this.name = data.name
+    this.port = this.server.address().port
     
     this.lastFrameTime = new Date()
     this.previousTick = Date.now()
@@ -70,10 +73,15 @@ Room.prototype.delete = function () {
 Room.prototype.info = function () {
     return {
         name: this.name,
+        port: this.port,
         owner: this.owner.info(),
         users: this.users.map(x => x.info()),
         chat: this.chat,
     }
+}
+
+Room.prototype.userOwner = function (user) {
+    this.owner = user
 }
 
 Room.prototype.userJoin = function(user) {
@@ -222,10 +230,6 @@ Room.prototype.userLeftRoom = function (user) {
 
     if(user.player) this.gameObjectController.destroyPlayer(user.player.id)
     this.users = this.users.filter(x => x.id !== user.id)
-}
-
-Room.prototype.userOwner = function (user) {
-    this.owner = user
 }
 
 Room.prototype.startGame = function (data) {

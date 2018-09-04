@@ -1,5 +1,4 @@
 const database = require('../Database').getDatabase()
-const WebSocket = require('../WebSocket')
 
 const translator = {
     getOne: function(req, res, next) {

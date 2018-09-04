@@ -3,38 +3,36 @@ const uuid = require('uuid')
 const spells = require('./GameObjects/spells')
 const Users = require('../Users/iate')
 
-function User(socket) {
+function User(id, socket, readyCallback) {
     this.socket = socket
+    this.id = id
 
     this.reset()
     this.restart()
 
     this.isGuest = false
-    
-    this.socket.on('user_guest', (data, callback) => {
-        console.log(`SocketIO :: User guest defined :: ${data.id}`)
 
-        this.id = uuid.v4()
-        this.name = 'Guest Player'
+    Users.interactor.getOne(this.id)
+    .then(result => {
+
+        this.id = result.id
+        this.name = result.preferences.name
+        this.spells = result.preferences.spells
+        this.isGuest = false
+
+        readyCallback(this.isGuest)
+        
+    })
+    .catch(e => {
+
+        this.id = id
+        this.name = 'Guest player'
         this.spells = []
         this.isGuest = true
+        console.log(this.id)
 
-        callback({ id: this.id, preferences: { name: this.name, spells: this.spells, hotkeys: ['q', 'w', 'e'] } })
-    })
-    
-    this.socket.on('user_define', (data, callback) => {
-        console.log(`SocketIO :: User defined :: ${data.id}`)
-        this.id = data.id
-        Users.interactor.getOne(this.id)
-        .then(result => {
+        readyCallback(this.isGuest)
 
-            this.id = result.id
-            this.name = result.preferences.name
-            this.spells = result.preferences.spells
-            this.isGuest = false
-            
-            callback(result)
-        })
     })
 }
 

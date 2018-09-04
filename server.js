@@ -4,7 +4,7 @@ const server = express()
 const http = require('http').Server(server)
 const bodyParser = require('body-parser')
 
-const WebSocket = require('./src/WebSocket')
+const RoomController = require('./src/Room/RoomController')
 const Articles = require('./src/Articles/iate')
 const BugReports = require('./src/BugReports/iate')
 const Users = require('./src/Users/iate')
@@ -47,12 +47,17 @@ server.get('/game', function(req, res, next) {
 
 server.get('/rooms', function(req, res, next) {
     console.log('Http Req :: Get Rooms :: ' + req.headers.origin)
-    res.status(200).json( WebSocket.getRooms() )
+    res.status(200).json( RoomController.getRooms() )
+})
+server.post('/rooms', function(req, res, next) {
+    console.log('Http Req :: Post Rooms :: ' + req.headers.origin)
+    const data = RoomController.createRoom(req.body)
+    res.status(200).json(data)
 })
 
 server.get('/spells', function(req, res, next) {
     console.log('Http Req :: Get Spells :: ' + req.headers.origin)
-    res.status(200).json( WebSocket.getSpells() )
+    res.status(200).json( RoomController.getSpells() )
 })
 
 server.get('/articles', function(req, res, next) {
@@ -87,8 +92,7 @@ server.get('/static/:filetype/:filename', function(req, res, next) {
     res.sendFile(filename)
 })
 
-const port = process.env.PORT || 5002
+const port = process.env.PORT || 5000
 http.listen(port, function() {
     console.log('Gameserver API running! Port: ' + port)
 })
-WebSocket.connect(http)

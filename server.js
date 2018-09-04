@@ -64,9 +64,9 @@ server.get('/users/:id', function(req, res, next) {
     console.log('Http Req :: Get User :: ' + req.headers.origin)
     Users.translator.getOne(req, res, next)
 })
-server.put('/users/:id/config', function(req, res, next) {
-    console.log('Http Req :: Put config User :: ' + req.headers.origin)
-    Users.translator.putConfig(req, res, next)
+server.put('/users/:id/preferences', function(req, res, next) {
+    console.log('Http Req :: Put preferences User :: ' + req.headers.origin)
+    Users.translator.putPreferences(req, res, next)
 })
 
 server.post('/bugreports', function(req, res, next) {

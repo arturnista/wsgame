@@ -1,4 +1,5 @@
 const database = require('../Database').getDatabase()
+const WebSocket = require('../WebSocket')
 
 const translator = {
     getOne: function(req, res, next) {
@@ -10,8 +11,8 @@ const translator = {
             res.status(500).json(err)
         })
     }, 
-    putConfig: function(req, res, next) {
-        interactor.updateConfig(req.params.id, req.body)
+    putPreferences: function(req, res, next) {
+        interactor.updatePreferences(req.params.id, req.body)
         .then(result => {
             res.status(200).json(result)
         })
@@ -25,9 +26,9 @@ const interactor = {
     getOne: function(id) {
         return entity.getOne(id)
     },
-    updateConfig: function(id, config) {
+    updatePreferences: function(id, preferences) {
         return entity.getOne(id)
-        .then(userData => entity.updateConfig(id, Object.assign({}, userData.config, config)))
+        .then(userData => entity.updatePreferences(id, Object.assign({}, userData.preferences, preferences)))
     }
 }
 
@@ -35,8 +36,8 @@ const entity = {
     getOne: function(id) {
         return adapter.getOne(id)
     },
-    updateConfig: function(id, config) {
-        return adapter.updateConfig(id, config)
+    updatePreferences: function(id, preferences) {
+        return adapter.updatePreferences(id, preferences)
     }
 }
 
@@ -45,8 +46,8 @@ const adapter = {
         return database.collection('/users').doc(id).get()
         .then(fsUser => fsUser.exists ? Object.assign({ id: fsUser.id }, fsUser.data()) : { error: 'NOT_FOUND' })
     },
-    updateConfig: function(id, config) {
-        return database.collection('/users').doc(id).update({ id, config })
+    updatePreferences: function(id, preferences) {
+        return database.collection('/users').doc(id).update({ id, preferences })
     },
 }
 

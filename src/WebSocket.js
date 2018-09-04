@@ -98,5 +98,6 @@ function getSpells() {
 module.exports = {
     connect,
     getRooms,
-    getSpells
+    getSpells,
+    users
 }

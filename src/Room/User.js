@@ -8,6 +8,8 @@ function User(socket) {
 
     this.reset()
     this.restart()
+
+    this.isGuest = false
     
     this.socket.on('user_guest', (data, callback) => {
         console.log(`SocketIO :: User guest defined :: ${data.id}`)
@@ -15,8 +17,9 @@ function User(socket) {
         this.id = uuid.v4()
         this.name = 'Guest Player'
         this.spells = []
+        this.isGuest = true
 
-        callback({ id: this.id, config: { name: this.name, spells: this.spells, hotkeys: ['q', 'w', 'e'] } })
+        callback({ id: this.id, preferences: { name: this.name, spells: this.spells, hotkeys: ['q', 'w', 'e'] } })
     })
     
     this.socket.on('user_define', (data, callback) => {
@@ -26,8 +29,9 @@ function User(socket) {
         .then(result => {
 
             this.id = result.id
-            this.name = result.config.name
-            this.spells = result.config.spells
+            this.name = result.preferences.name
+            this.spells = result.preferences.spells
+            this.isGuest = false
             
             callback(result)
         })
@@ -84,7 +88,8 @@ User.prototype.deselectSpell = function (message) {
 }
 
 User.prototype.saveSpells = function() {
-    return Users.interactor.updateConfig(this.id, { spells: this.spells })
+    if(this.isGuest) return Promise.resolve()
+    return Users.interactor.updatePreferences(this.id, { spells: this.spells })
 }
 
 module.exports = User

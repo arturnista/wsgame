@@ -4,22 +4,26 @@ const admin = require('firebase-admin')
 admin.initializeApp()
 
 exports.createUser = functions.auth.user().onCreate(event => {
-    console.log(event)
-    const data = {
-        id: event.uid,
-        email: event.email,
-        config: {
-            name: event.displayName,
-            hotkeys: ['q', 'w', 'e'],
-            spells: [
-                { id: 'fireball', position: 0 },
-                { id: 'explosion', position: 1 },
-                { id: 'blink', position: 2 }
-            ],
-        },
-        badges: []
-    }
-    return admin.firestore().collection('/users').doc(data.id).set(data)
+    return admin.auth().getUser(event.uid)
+    .then(userRecord => {
+        const userData = userRecord.toJSON()
+        console.log(userData)
+        const data = {
+            id: userData.uid,
+            email: userData.email,
+            preferences: {
+                name: userData.displayName || '',
+                hotkeys: ['q', 'w', 'e'],
+                spells: [
+                    { id: 'fireball', position: 0 },
+                    { id: 'explosion', position: 1 },
+                    { id: 'blink', position: 2 }
+                ],
+            },
+            badges: []
+        }
+        return admin.firestore().collection('/users').doc(data.id).set(data)
+    })
 })
 
 exports.deleteUser = functions.auth.user().onDelete(event => {

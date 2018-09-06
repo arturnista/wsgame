@@ -272,11 +272,15 @@ Room.prototype.endGame = function (winner) {
         createdAt: (new Date()).toISOString(),
     }
     database.collection('/games').add(gameData)
+    const userWinner = this.users.find(x => !x.player ? false : x.player.id === gameData.winner)
 
     this.gameObjectController.end(this.users, winner)
     this.mapController.end()
 
-    this.users.forEach(u => u.status = 'waiting')
+    this.users.forEach(u => {
+        u.saveGame(!userWinner ? false : u.id === userWinner.id)
+        u.status = 'waiting'
+    })
 
     this.emit('game_end', { users: this.users.map(x => x.info()) })
 

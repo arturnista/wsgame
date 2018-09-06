@@ -11,6 +11,10 @@ exports.createUser = functions.auth.user().onCreate(event => {
         const data = {
             id: userData.uid,
             email: userData.email,
+            status: {
+                games: 0,
+                wins: 0
+            },
             preferences: {
                 name: userData.displayName || '',
                 hotkeys: ['q', 'w', 'e'],

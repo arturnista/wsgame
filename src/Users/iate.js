@@ -28,6 +28,13 @@ const interactor = {
     updatePreferences: function(id, preferences) {
         return entity.getOne(id)
         .then(userData => entity.updatePreferences(id, Object.assign({}, userData.preferences, preferences)))
+    },
+    updateGames: function(id, status) {
+        return entity.getOne(id)
+        .then(userData => {
+            const newStatus = Object.assign({}, userData.status, { games: userData.status.games + status.games, wins: userData.status.wins + (status.isWinner ? 1 : 0) })
+            return entity.updateStatus(id, newStatus)
+        })
     }
 }
 
@@ -36,7 +43,10 @@ const entity = {
         return adapter.getOne(id)
     },
     updatePreferences: function(id, preferences) {
-        return adapter.updatePreferences(id, preferences)
+        return adapter.update(id, { preferences })
+    },
+    updateStatus: function(id, status) {
+        return adapter.update(id, { status })
     }
 }
 
@@ -45,8 +55,8 @@ const adapter = {
         return database.collection('/users').doc(id).get()
         .then(fsUser => fsUser.exists ? Object.assign({ id: fsUser.id }, fsUser.data()) : { error: 'NOT_FOUND' })
     },
-    updatePreferences: function(id, preferences) {
-        return database.collection('/users').doc(id).update({ id, preferences })
+    update: function(id, data) {
+        return database.collection('/users').doc(id).update(data)
     },
 }
 

@@ -3,7 +3,7 @@ const uuid = require('uuid')
 const spells = require('./GameObjects/spells')
 const Users = require('../Users/iate')
 
-function User(id, socket, readyCallback) {
+function User({ id, name }, socket, readyCallback) {
     this.socket = socket
     this.id = id
 
@@ -26,10 +26,9 @@ function User(id, socket, readyCallback) {
     .catch(e => {
 
         this.id = id
-        this.name = 'Guest player'
+        this.name = name
         this.spells = []
         this.isGuest = true
-        console.log(this.id)
 
         readyCallback(this.isGuest)
 

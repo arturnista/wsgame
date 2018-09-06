@@ -4,7 +4,7 @@ const server = express()
 const http = require('http').Server(server)
 const bodyParser = require('body-parser')
 
-const RoomController = require('./src/Room/RoomController')
+const GameController = require('./src/Game/GameController')
 const Articles = require('./src/Articles/iate')
 const BugReports = require('./src/BugReports/iate')
 const Users = require('./src/Users/iate')
@@ -47,17 +47,17 @@ server.get('/game', function(req, res, next) {
 
 server.get('/rooms', function(req, res, next) {
     console.log('Http Req :: Get Rooms :: ' + req.headers.origin)
-    res.status(200).json( RoomController.getRooms() )
+    res.status(200).json( GameController.getRooms() )
 })
 server.post('/rooms', function(req, res, next) {
     console.log('Http Req :: Post Rooms :: ' + req.headers.origin)
-    const data = RoomController.createRoom(req.body)
+    const data = GameController.createRoom(req.body)
     res.status(200).json(data)
 })
 
 server.get('/spells', function(req, res, next) {
     console.log('Http Req :: Get Spells :: ' + req.headers.origin)
-    res.status(200).json( RoomController.getSpells() )
+    res.status(200).json( GameController.getSpells() )
 })
 
 server.get('/articles', function(req, res, next) {

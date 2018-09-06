@@ -44,12 +44,13 @@ const socketConnect = function(server, data) {
 
     socketIo.on('connection', function(socket) {
         const userId = socket.request._query.user_id
+        const name = socket.request._query.name
         if(users.find(x => x.id === userId) != null) {
             socket.disconnect()
             return
         }
         
-        let user = new User(userId, socket, isGuest => {
+        let user = new User({ id: userId, name }, socket, isGuest => {
             console.log(`SocketIO :: User connected :: ${user.id}`)
             
             if(_.isNil(room.owner)) room.userOwner(user)

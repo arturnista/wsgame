@@ -43,8 +43,9 @@ function Room(data, server, socketIo) {
     this.mapController = new MapController(this.gameObjectController, this.addState.bind(this))
     this.physics = new Physics(this.gameObjectController)
 
+    this.gameIsStarting = false
     this.gameIsRunning = false
-    this._gameEnded = false
+    this.gameEnded = false
     this.cycleTime = null
     this.users = []
     this.chat = []
@@ -57,8 +58,9 @@ function Room(data, server, socketIo) {
 Room.prototype.delete = function () {
     console.log(`SocketIO :: ${this.name} :: Deleted`)
 
+    this.gameIsStarting = false
     this.gameIsRunning = false
-    this._gameEnded = false
+    this.gameEnded = false
 
     clearTimeout(this.cycleTime)
 
@@ -206,12 +208,12 @@ Room.prototype.userJoin = function(user) {
     })
 
     // Game events
-    user.socket.on('game_start', (message) => {
-        if(this.gameIsRunning) return
+    user.socket.on('game_start', (message, responseCallback) => {
+        if(this.gameIsRunning || this.gameIsStarting) return
         console.log(`SocketIO :: ${this.name} :: Game start :: ${JSON.stringify(message)}`)
         if(this.owner.id !== user.id) return
 
-        this.startGame(message)
+        this.startGame(message, responseCallback)
     })
 
     user.socket.on('game_restart', (message) => {
@@ -233,9 +235,14 @@ Room.prototype.userLeftRoom = function (user) {
     this.users = this.users.filter(x => x.id !== user.id)
 }
 
-Room.prototype.startGame = function (data) {
+Room.prototype.startGame = function (data, responseCallback) {
     const availableUsers = this.users.filter(x => !x.isObserver)
-    if(data.botCount === 0 && availableUsers.length === 0) return
+    if(data.botCount === 0 && availableUsers.length === 0) {
+        responseCallback({ error: 'NO_USERS' })
+        return
+    }
+    
+    this.gameIsStarting = true
     
     const usersReady = availableUsers.every(x => x.status === 'ready')
     if(usersReady || (availableUsers.length === 0 && data.botCount > 0)) {
@@ -250,6 +257,7 @@ Room.prototype.startGame = function (data) {
                 this.emit('map_create', this.mapController.info())
                 this.startGameTime = new Date()
 
+                this.gameIsStarting = false
                 this.gameIsRunning = true
                 this.lastFrameTime = new Date()
                 this.gameLoop()
@@ -257,6 +265,8 @@ Room.prototype.startGame = function (data) {
                 this.emit('game_start', { players: players.map(x => x.info()) })
             }, DELAY_TO_START)
         })
+    } else {
+        responseCallback({ error: 'NOT_READY' })        
     }
 }
 
@@ -285,7 +295,7 @@ Room.prototype.endGame = function (winner) {
     this.emit('game_end', { users: this.users.map(x => x.info()) })
 
     this.gameIsRunning = false
-    this._gameEnded = false
+    this.gameEnded = false
 }
 
 Room.prototype.gameLoop = function() {
@@ -328,11 +338,11 @@ Room.prototype.gameLogic = function () {
     this.nextState = {}
 
     this.lastFrameTime = new Date()
-    if(this._gameEnded) return
+    if(this.gameEnded) return
 
     const alivePlayers = infos.players.filter(x => x.status === 'alive')
     if(alivePlayers.length <= 1) {
-        this._gameEnded = true
+        this.gameEnded = true
         this.emit('game_will_end', { time: DELAY_TO_END, winner: alivePlayers[0] })
         setTimeout(() => this.endGame(alivePlayers[0]), DELAY_TO_END)
     }

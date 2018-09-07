@@ -76,7 +76,7 @@ Room.prototype.info = function () {
     return {
         name: this.name,
         port: this.port,
-        owner: this.owner.info(),
+        owner: this.owner ? this.owner.info() : '',
         users: this.users.map(x => x.info()),
         chat: this.chat,
     }
@@ -185,6 +185,7 @@ Room.prototype.userJoin = function(user) {
         this.chat.push({
             id: user.id,
             message: message.message,
+            color: user.color,
             name: user.name,
             createdAt: (new Date()).toISOString(),
         })
@@ -266,6 +267,7 @@ Room.prototype.startGame = function (data, responseCallback) {
             }, DELAY_TO_START)
         })
     } else {
+        this.gameIsStarting = false
         responseCallback({ error: 'NOT_READY' })        
     }
 }

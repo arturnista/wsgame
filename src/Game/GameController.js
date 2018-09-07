@@ -61,7 +61,6 @@ const socketConnect = function(server, data) {
 
         socket.on('room_destroy', function (data) {
             console.log(`SocketIO :: User deleted room :: ${user.id}`)
-            if(!room) return 
             if(room.owner.id !== user.id) return
 
             rooms = rooms.filter(r => {
@@ -75,7 +74,8 @@ const socketConnect = function(server, data) {
 
         socket.on('disconnect', function () {
             console.log(`SocketIO :: User disconnect :: ${user.id}`)
-            if(room) room.userLeftRoom(user)
+            room.userLeftRoom(user)
+            if(user.id === room.owner.id) deleteRoom(room)
 
             users = users.filter(x => x.id !== user.id)
             rooms = rooms.filter(r => {

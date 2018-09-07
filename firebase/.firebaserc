@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "dev-nwgame"
+    "default": "dev-nwgame",
+    "production": "nwgame-d8f9d",
+    "development": "dev-nwgame"
   }
 }

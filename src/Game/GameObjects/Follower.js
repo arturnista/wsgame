@@ -40,8 +40,9 @@ function Follower(data, goController) {
     this.lifeTime = this.duration
     this._timePassed = 0
 
-    if(this.target == null) return
-    this.direction = vector.direction(this.position, this.target.position)
+    this.direction = { x: 0, y: 0 }
+    if(this.target != null) this.direction = vector.direction(this.position, this.target.position)
+    
     this.acceleration = 30
     this.desiredVelocity = {
         x: this.direction.x * this.moveSpeed,

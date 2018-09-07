@@ -288,7 +288,7 @@ Room.prototype.endGame = function (winner) {
     this.mapController.end()
 
     this.users.forEach(u => {
-        u.saveGame(!userWinner ? false : u.id === userWinner.id)
+        u.saveGame(!userWinner ? false : u.id === userWinner.id, this.users)
         u.status = 'waiting'
     })
 

@@ -89,9 +89,9 @@ User.prototype.saveSpells = function() {
     return Users.interactor.updatePreferences(this.id, { spells: this.spells })
 }
 
-User.prototype.saveGame = function(isWinner) {
+User.prototype.saveGame = function(isWinner, users) {
     if(this.isGuest) return Promise.resolve()
-    return Users.interactor.updateGames(this.id, { games: 1, isWinner })
+    return Promise.resolve()
 }
 
 module.exports = User

@@ -7,6 +7,7 @@ const translator = {
             res.status(200).json(result)
         })
         .catch(err => {
+            console.log(err)
             res.status(500).json(err)
         })
     }, 
@@ -24,6 +25,13 @@ const translator = {
 const interactor = {
     getOne: function(id) {
         return entity.getOne(id)
+        .then(user => {
+            return entity.getGames(id)
+            .then(games => {
+                user.games = games
+                return user
+            })
+        })
     },
     updatePreferences: function(id, preferences) {
         return entity.getOne(id)
@@ -42,6 +50,9 @@ const entity = {
     getOne: function(id) {
         return adapter.getOne(id)
     },
+    getGames: function(id) {
+        return adapter.getGames(id)
+    },
     updatePreferences: function(id, preferences) {
         return adapter.update(id, { preferences })
     },
@@ -54,6 +65,16 @@ const adapter = {
     getOne: function(id) {
         return database.collection('/users').doc(id).get()
         .then(fsUser => fsUser.exists ? Object.assign({ id: fsUser.id }, fsUser.data()) : { error: 'NOT_FOUND' })
+    },
+    getGames: function(id) {
+        return database.collection('/games').where(`users.ids.${id}`, '==', true).get()
+        .then(fsGames => {
+            if(!fsGames) return []
+            
+            let games = []
+            fsGames.forEach(doc => games.push(Object.assign({ id: doc.id }, doc.data())))
+            return games
+        })
     },
     update: function(id, data) {
         return database.collection('/users').doc(id).update(data)

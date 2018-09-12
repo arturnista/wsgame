@@ -15,7 +15,11 @@ RUN npm install --production
 LABEL description="nwgame-api image" \
       release=$NWGAME_API_RELEASE
 
-COPY ./ ./
+COPY ./src ./src
+
+COPY ./site ./site
+
+COPY ./server.js ./server.js
 
 EXPOSE 5000
 

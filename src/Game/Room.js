@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const uuid = require('uuid')
+const RoomTutorialBehaviour = require('./RoomTutorialBehaviour')
 const GameObjectController = require('./GameObjects/GameObjectController')
 const goTypes = require('./GameObjects/gameObjectTypes')
 const Physics = require('./Physics')
@@ -51,6 +52,14 @@ function Room(data, server, socketIo) {
     this.chat = []
     this.owner = null
     this.startGameTime = null
+
+    this.isTutorialRoom = data.isTutorial
+
+    if(this.isTutorialRoom) {
+        this.roomBehaviour = new RoomTutorialBehaviour(this)
+    } else {
+        this.roomBehaviour = null
+    }
 
     this.nextState = {}
 }
@@ -223,6 +232,17 @@ Room.prototype.userJoin = function(user) {
 
     })
 
+    if(user.id === this.owner.id && this.isTutorialRoom) {
+        user.status = 'ready'
+        user.spells = []
+        this.startGame({
+            botCount: 0,
+            map: 'TutorialArena',
+        }, () => {
+            console.log('lets go')
+        })
+    }
+
 }
 
 Room.prototype.userLeftRoom = function (user) {
@@ -252,6 +272,7 @@ Room.prototype.startGame = function (data, responseCallback) {
         .then(() => {
             players = this.gameObjectController.start(this.users, { addState: this.addState.bind(this), mapController: this.mapController, botCount: data.botCount || 0 })
             this.mapController.start(data && data.map)
+            if(this.roomBehaviour) this.roomBehaviour.start()
 
             this.emit('game_will_start', { time: DELAY_TO_START, map: this.mapController.info() })
             setTimeout(() => {
@@ -355,6 +376,11 @@ Room.prototype.gameLogic = function () {
 
     this.lastFrameTime = new Date()
     if(this.gameEnded) return
+
+    if(this.roomBehaviour) {
+        const result = this.roomBehaviour.update(deltatime)
+        if(result.ignoreEndGame) return
+    }
 
     const alivePlayers = infos.players.filter(x => x.status === 'alive')
     if(alivePlayers.length <= 1) {

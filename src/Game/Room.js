@@ -33,6 +33,7 @@ function Room(data, server, socketIo) {
     this.socketIo = socketIo
 
     this.name = data.name
+    this.isPrivate = !!data.isPrivate || !!data.isTutorial
     this.port = this.server.address().port
     
     this.lastFrameTime = new Date()
@@ -75,6 +76,7 @@ Room.prototype.delete = function () {
 
     this.gameObjectController.end(this.users)
     this.mapController.end()
+    if(this.roomBehaviour) this.roomBehaviour.delete()
 
     while(this.users.length > 0) {
         this.userLeftRoom(this.users[0])
@@ -85,6 +87,7 @@ Room.prototype.info = function () {
     return {
         name: this.name,
         port: this.port,
+        private: this.isPrivate,
         owner: this.owner ? this.owner.info() : '',
         users: this.users.map(x => x.info()),
         chat: this.chat,
@@ -238,9 +241,7 @@ Room.prototype.userJoin = function(user) {
         this.startGame({
             botCount: 0,
             map: 'TutorialArena',
-        }, () => {
-            console.log('lets go')
-        })
+        }, () => {})
     }
 
 }
@@ -333,6 +334,8 @@ Room.prototype.endGame = function (winner) {
 
     this.gameIsRunning = false
     this.gameEnded = false
+
+    if(this.isTutorialRoom) this.userLeftRoom(this.users[0])
 }
 
 Room.prototype.gameLoop = function() {

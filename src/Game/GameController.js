@@ -117,7 +117,7 @@ const socketConnect = function(server, data) {
 }
 
 function getRooms() {
-    return rooms.map(x => x.info())
+    return rooms.map(x => x.info()).filter(x => !x.private)
 }
 
 function getSpells() {

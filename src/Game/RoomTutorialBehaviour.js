@@ -25,7 +25,7 @@ RoomTutorialBehaviour.prototype.start = function() {
     const randomPositionoOutside = { x: Math.cos(outAngle) * outDistance + mapInfo.position.x, y: Math.sin(outAngle) * outDistance + mapInfo.position.y }
     
     this.movePositions = [
-        { x: 250, y: 250 },
+        { x: 250, y: 150 },
         randomPositionInside,
         randomPositionoOutside,
         { x: 250, y: 250 },
@@ -79,7 +79,7 @@ RoomTutorialBehaviour.prototype.update = function(deltatime) {
                     this.botPlayer.spells = []
                     this.botPlayer.botBehaviour = null
                     this.botPlayer.position.x = 250
-                    this.botPlayer.position.y = 250
+                    this.botPlayer.position.y = 350
                     this.botPlayer.color = '#FF6F00'
                     this.botPlayer.name = 'Tutorial Bot'
                     

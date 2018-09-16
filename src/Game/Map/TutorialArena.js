@@ -20,10 +20,7 @@ TutorialArena.prototype.prepare = function() {
     }
 
     this.obstacles = []
-    this.obstacles.push( this.goController.createObstacle({ position: { x: 150, y: 150 }, size: 30 }) )
-    this.obstacles.push( this.goController.createObstacle({ position: { x: 350, y: 150 }, size: 10 }) )
-    this.obstacles.push( this.goController.createObstacle({ position: { x: 150, y: 350 }, size: 10 }) )
-    this.obstacles.push( this.goController.createObstacle({ position: { x: 350, y: 350 }, size: 30 }) )
+    this.obstacles.push( this.goController.createObstacle({ position: { x: 250, y: 250 }, size: 30 }) )
 
     this.spawnPoints = []
     this.spawnPoints.push( { x: 100, y: 100 } )

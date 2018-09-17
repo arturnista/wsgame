@@ -269,7 +269,7 @@ Room.prototype.startGame = function (data, responseCallback) {
     const usersReady = availableUsers.every(x => x.status === 'ready')
     if(usersReady || (availableUsers.length === 0 && data.botCount > 0)) {
 
-        Promise.all(availableUsers.map(u => u.saveSpells()))
+        this.saveUsers(availableUsers)
         .then(() => {
             players = this.gameObjectController.start(this.users, { addState: this.addState.bind(this), mapController: this.mapController, botCount: data.botCount || 0 })
             this.mapController.start(data && data.map)
@@ -294,41 +294,43 @@ Room.prototype.startGame = function (data, responseCallback) {
     }
 }
 
+Room.prototype.saveUsers = function(availableUsers) {
+    if(this.isTutorialRoom) return Promise.resolve()
+    return Promise.all(availableUsers.map(u => u.saveSpells()))
+}
+
 Room.prototype.endGame = function (winner) {
     const userWinner = this.users.find(x => !x.player || !winner ? false : x.player.id === winner.id)
     const usersIds = {}
     this.users.forEach(x => {usersIds[x.id] = true})
 
-    const gameData = {
-        version: package.version,
-        room: {
-            id: this.id,
-            name: this.name
-        }, 
-        winner: {
-            isDraw: !winner,
-            player: winner ? winner.id : '',
-            user: userWinner ? userWinner.id: '',
-        }, 
-        users: {
-            data: this.users.map(x => ({ id: x.id, name: x.name })),
-            ids: usersIds,
-        },
-        players: this.gameObjectController.gameObjects.filter(x => goTypes.isType(x.type, goTypes.PLAYER))
-            .map(p => ({ id: p.id, user: p.user ? p.user.id : 'bot', isBot: !!p.botBehaviour, spells: p.spellsUsed, life: p.life, knockbackValue: p.knockbackValue })),
-        map: this.mapController.currentMap.name,
-        duration: new Date() - this.startGameTime,
-        createdAt: (new Date()).toISOString(),
+    if(!this.isTutorialRoom) {
+        const gameData = {
+            version: package.version,
+            room: {
+                id: this.id,
+                name: this.name
+            }, 
+            winner: {
+                isDraw: !winner,
+                player: winner ? winner.id : '',
+                user: userWinner ? userWinner.id: '',
+            }, 
+            users: {
+                data: this.users.map(x => ({ id: x.id, name: x.name })),
+                ids: usersIds,
+            },
+            players: this.gameObjectController.gameObjects.filter(x => goTypes.isType(x.type, goTypes.PLAYER))
+                .map(p => ({ id: p.id, user: p.user ? p.user.id : 'bot', isBot: !!p.botBehaviour, spells: p.spellsUsed, life: p.life, knockbackValue: p.knockbackValue })),
+            map: this.mapController.currentMap.name,
+            duration: new Date() - this.startGameTime,
+            createdAt: (new Date()).toISOString(),
+        }
+        database.collection('/games').add(gameData)
     }
-    database.collection('/games').add(gameData)
 
     this.gameObjectController.end(this.users, winner)
     this.mapController.end()
-
-    this.users.forEach(u => {
-        u.saveGame(!userWinner ? false : u.id === userWinner.id, this.users)
-        u.status = 'waiting'
-    })
 
     this.emit('game_end', { users: this.users.map(x => x.info()) })
 
@@ -336,6 +338,12 @@ Room.prototype.endGame = function (winner) {
     this.gameEnded = false
 
     if(this.isTutorialRoom) this.userLeftRoom(this.users[0])
+    else {
+        this.users.forEach(u => {
+            u.saveGame(!userWinner ? false : u.id === userWinner.id, this.users)
+            u.status = 'waiting'
+        })
+    }
 }
 
 Room.prototype.gameLoop = function() {

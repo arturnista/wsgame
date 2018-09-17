@@ -87,6 +87,7 @@ RoomTutorialBehaviour.prototype.update = function(deltatime) {
                     this.tutorialPhase = 7
                     const spellId = setTimeout(() => {
                         this.room.addState('show_message', { messageCode: 'TUTORIAL_SPELL' })
+                        this.room.addState('show_spell_position', { position: this.botPlayer.position })
 
                         this.player.spells = ['fireball']
                         this.room.addState('player_add_spell', { spellName: 'fireball' })
@@ -104,6 +105,7 @@ RoomTutorialBehaviour.prototype.update = function(deltatime) {
         if(this.botPlayer.knockbackValue > this.botKnockbackBase) {
 
             this.room.addState('show_message', { messageCode: 'TUTORIAL_SPELL_HIT' })
+            this.room.addState('show_spell_position', { destroy: true })
 
             this.tutorialPhase = 9
         }

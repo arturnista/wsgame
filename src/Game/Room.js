@@ -271,7 +271,7 @@ Room.prototype.startGame = function (data, responseCallback) {
 
         this.saveUsers(availableUsers)
         .then(() => {
-            players = this.gameObjectController.start(this.users, { addState: this.addState.bind(this), mapController: this.mapController, botCount: data.botCount || 0 })
+            const players = this.gameObjectController.start(this.users, { addState: this.addState.bind(this), mapController: this.mapController, botCount: data.botCount || 0 })
             this.mapController.start(data && data.map)
             if(this.roomBehaviour) this.roomBehaviour.start()
 

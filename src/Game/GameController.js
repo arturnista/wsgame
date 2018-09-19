@@ -1,9 +1,10 @@
 const express = require('express')
 const server = express()
-const http = require('http')
+const https = require('https')
 const io = require('socket.io')
 const _ = require('lodash')
 const uuid = require('uuid')
+const fs = require('fs')
 const Room = require('./Room')
 const User = require('./User')
 const spells = require('./GameObjects/spells')
@@ -28,7 +29,13 @@ let rooms = []
 
 const createRoom = (roomData) => {
     const server = express()
-    const roomHttp = http.Server(server)
+    const sslOptions = {
+        key: fs.readFileSync('../../ssl/server.key'),
+        cert: fs.readFileSync('../../ssl/cert.crt'),
+        ca: [fs.readFileSync('../../ssl/gd1.cert', 'utf8'),
+            fs.readFileSync('../../ssl/gd2.cert', 'utf8')]
+    }
+    const roomHttp = https.Server(sslOptions, server)
     let room = null
 
     server.get('/', function(req, res, next) {

@@ -1,8 +1,9 @@
 const express = require('express')
 const cors = require('cors')
 const server = express()
-const http = require('http').Server(server)
+const http = require('http')
 const bodyParser = require('body-parser')
+const fs = require('fs')
 
 const GameController = require('./src/Game/GameController')
 const Articles = require('./src/Articles/iate')
@@ -93,6 +94,13 @@ server.get('/static/:filetype/:filename', function(req, res, next) {
 })
 
 const port = process.env.PORT || 5000
-http.listen(port, function() {
+const sslOptions = {
+    key: fs.readFileSync('./ssl/server.key'),
+    cert: fs.readFileSync('./ssl/cert.crt'),
+    ca: [fs.readFileSync('./ssl/gd1.crt', 'utf8'),
+         fs.readFileSync('./ssl/gd2.crt', 'utf8')]
+}
+const httpServer = http.createServer(sslOptions, server)
+httpServer.listen(port, function() {
     console.log('Gameserver API running! Port: ' + port)
 })

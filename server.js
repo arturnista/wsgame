@@ -97,8 +97,8 @@ const port = process.env.PORT || 5000
 const sslOptions = {
     key: fs.readFileSync('./ssl/server.key'),
     cert: fs.readFileSync('./ssl/cert.crt'),
-    ca: [fs.readFileSync('./ssl/gd1.crt', 'utf8'),
-         fs.readFileSync('./ssl/gd2.crt', 'utf8')]
+    ca: [fs.readFileSync('./ssl/gd1.cert', 'utf8'),
+         fs.readFileSync('./ssl/gd2.cert', 'utf8')]
 }
 const httpServer = http.createServer(sslOptions, server)
 httpServer.listen(port, function() {

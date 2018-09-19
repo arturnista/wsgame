@@ -30,10 +30,10 @@ let rooms = []
 const createRoom = (roomData) => {
     const server = express()
     const sslOptions = {
-        key: fs.readFileSync('../../ssl/server.key'),
-        cert: fs.readFileSync('../../ssl/cert.crt'),
-        ca: [fs.readFileSync('../../ssl/gd1.cert', 'utf8'),
-            fs.readFileSync('../../ssl/gd2.cert', 'utf8')]
+        key: fs.readFileSync('./ssl/server.key'),
+        cert: fs.readFileSync('./ssl/cert.crt'),
+        ca: [fs.readFileSync('./ssl/gd1.cert', 'utf8'),
+            fs.readFileSync('./ssl/gd2.cert', 'utf8')]
     }
     const roomHttp = https.Server(sslOptions, server)
     let room = null

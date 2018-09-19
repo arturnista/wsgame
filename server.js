@@ -1,7 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const server = express()
-const http = require('http')
+const https = require('https')
 const bodyParser = require('body-parser')
 const fs = require('fs')
 
@@ -100,7 +100,7 @@ const sslOptions = {
     ca: [fs.readFileSync('./ssl/gd1.cert', 'utf8'),
          fs.readFileSync('./ssl/gd2.cert', 'utf8')]
 }
-const httpServer = http.createServer(sslOptions, server)
-httpServer.listen(port, function() {
+const httpsServer = https.Server(sslOptions, server)
+httpsServer.listen(port, function() {
     console.log('Gameserver API running! Port: ' + port)
 })

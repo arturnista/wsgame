@@ -27,23 +27,31 @@ const nextPort = (function() {
 let socketIo = null
 let rooms = []
 
-const createRoom = (roomData) => {
-    const server = express()
-    const sslOptions = {
-        key: fs.readFileSync('./ssl/server.key'),
-        cert: fs.readFileSync('./ssl/cert.crt'),
-        ca: [fs.readFileSync('./ssl/gd1.cert', 'utf8'),
-            fs.readFileSync('./ssl/gd2.cert', 'utf8')]
+const createRoom = (roomData, roomHttp) => {
+    let roomPort
+    if(!roomHttp) {
+
+        const server = express()
+        const sslOptions = {
+            key: fs.readFileSync('./ssl/server.key'),
+            cert: fs.readFileSync('./ssl/cert.crt'),
+            ca: [fs.readFileSync('./ssl/gd1.cert', 'utf8'),
+                fs.readFileSync('./ssl/gd2.cert', 'utf8')]
+        }
+        roomHttp = https.Server(sslOptions, server)
+        let room = null
+    
+        server.get('/', function(req, res, next) {
+            res.status(200).json(room.info())
+        })
+    
+        roomPort = nextPort()
+        roomHttp.listen(roomPort)
+
+    } else {
+        roomPort = roomHttp.address().port
     }
-    const roomHttp = https.Server(sslOptions, server)
-    let room = null
 
-    server.get('/', function(req, res, next) {
-        res.status(200).json(room.info())
-    })
-
-    const roomPort = nextPort()
-    roomHttp.listen(roomPort)
     room = socketConnect(roomHttp, roomData)
 
     // Keep track of the open sockets

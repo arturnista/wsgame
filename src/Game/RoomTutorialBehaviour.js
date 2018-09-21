@@ -14,6 +14,7 @@ function RoomTutorialBehaviour(room) {
 
 RoomTutorialBehaviour.prototype.start = function() {
     this.tutorialPhase = 0
+    this.room.users[0].spells = []
 
     const angle = Math.random() * 360
     const mapInfo = this.room.mapController.info()

@@ -6,7 +6,7 @@ const DECREASE_INCREMENT = 5
 
 function TutorialArena(goController) {
     this.goController = goController
-    this.name = 'Basic Arena'
+    this.name = 'Tutorial Arena'
 }
 
 TutorialArena.prototype.prepare = function() {

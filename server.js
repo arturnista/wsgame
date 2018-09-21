@@ -5,6 +5,8 @@ const https = require('https')
 const bodyParser = require('body-parser')
 const fs = require('fs')
 
+require('./redirect')
+
 const GameController = require('./src/Game/GameController')
 const Articles = require('./src/Articles/iate')
 const BugReports = require('./src/BugReports/iate')

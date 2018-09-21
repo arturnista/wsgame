@@ -46,6 +46,9 @@ server.get('/room', function(req, res, next) {
 server.get('/game', function(req, res, next) {
     return res.redirect(301, '/')
 })
+server.get('/profile', function(req, res, next) {
+    return res.redirect(301, '/')
+})
 
 
 server.get('/rooms', function(req, res, next) {

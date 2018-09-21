@@ -50,6 +50,7 @@ const createRoom = (roomData, roomHttp) => {
 
     } else {
         roomPort = roomHttp.address().port
+        roomHttp.isLocal = true
     }
 
     room = socketConnect(roomHttp, roomData)
@@ -76,9 +77,11 @@ const createRoom = (roomData, roomHttp) => {
 }
 
 const deleteRoom = (room) => {
-    room.server.close()
-    // Close all the open sockets. If a socket is left open, the server is not closed
-    for(const k in room.server.sockets) room.server.sockets[k].destroy()
+    if(!room.server.isLocal) {
+        room.server.close()
+        // Close all the open sockets. If a socket is left open, the server is not closed
+        for(const k in room.server.sockets) room.server.sockets[k].destroy()
+    }
     
     room.delete()
 
@@ -120,7 +123,7 @@ const socketConnect = function(server, data) {
         socket.on('disconnect', function () {
             console.log(`SocketIO :: User disconnect :: ${user.id}`)
             room.userLeftRoom(user)
-            if(user.id === room.owner.id) deleteRoom(room)
+            if(room && user.id === room.owner.id) deleteRoom(room)
             else if(room.users.length === 0) deleteRoom(room)
 
             users = users.filter(x => x.id !== user.id)

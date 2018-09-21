@@ -273,7 +273,7 @@ Room.prototype.startGame = function (data, responseCallback) {
         .then(() => {
             const players = this.gameObjectController.start(this.users, { addState: this.addState.bind(this), mapController: this.mapController, botCount: data.botCount || 0 })
             this.mapController.start(data && data.map)
-            if(this.roomBehaviour) this.roomBehaviour.start()
+            if(this.roomBehaviour) this.roomBehaviour.start(players)
 
             this.emit('game_will_start', { time: DELAY_TO_START, map: this.mapController.info() })
             setTimeout(() => {

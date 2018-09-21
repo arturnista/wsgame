@@ -12,9 +12,9 @@ function RoomTutorialBehaviour(room) {
     this.letGameEnd = false
 }
 
-RoomTutorialBehaviour.prototype.start = function() {
+RoomTutorialBehaviour.prototype.start = function(players) {
     this.tutorialPhase = 0
-    this.room.users[0].spells = []
+    players[0].spells = []
 
     const angle = Math.random() * 360
     const mapInfo = this.room.mapController.info()

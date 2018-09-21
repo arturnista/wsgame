@@ -28,7 +28,9 @@ let socketIo = null
 let rooms = []
 
 const createRoom = (roomData, roomHttp) => {
-    let roomPort
+    let roomPort = null
+    let room = null
+
     if(!roomHttp) {
 
         const server = express()
@@ -39,7 +41,6 @@ const createRoom = (roomData, roomHttp) => {
                 fs.readFileSync('./ssl/gd2.cert', 'utf8')]
         }
         roomHttp = https.Server(sslOptions, server)
-        let room = null
     
         server.get('/', function(req, res, next) {
             res.status(200).json(room.info())
@@ -49,8 +50,10 @@ const createRoom = (roomData, roomHttp) => {
         roomHttp.listen(roomPort)
 
     } else {
+        
         roomPort = roomHttp.address().port
         roomHttp.isLocal = true
+        
     }
 
     room = socketConnect(roomHttp, roomData)
@@ -60,7 +63,7 @@ const createRoom = (roomData, roomHttp) => {
         if(!roomHttp.sockets) roomHttp.sockets = {}
         socket.id = generateId()
         roomHttp.sockets[socket.id] = socket
-        socket.on('close', function (socket) {
+        socket.on('close', function (closeSocket) {
             delete roomHttp.sockets[socket.id]
         })
     })    
@@ -80,7 +83,7 @@ const deleteRoom = (room) => {
     if(!room.server.isLocal) {
         room.server.close()
         // Close all the open sockets. If a socket is left open, the server is not closed
-        for(const k in room.server.sockets) room.server.sockets[k].destroy()
+        // for(const k in room.server.sockets) room.server.sockets[k].destroy()
     }
     
     room.delete()

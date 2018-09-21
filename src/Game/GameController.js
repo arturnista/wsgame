@@ -1,9 +1,10 @@
 const express = require('express')
 const server = express()
-const http = require('http')
+const https = require('https')
 const io = require('socket.io')
 const _ = require('lodash')
 const uuid = require('uuid')
+const fs = require('fs')
 const Room = require('./Room')
 const User = require('./User')
 const spells = require('./GameObjects/spells')
@@ -26,17 +27,31 @@ const nextPort = (function() {
 let socketIo = null
 let rooms = []
 
-const createRoom = (roomData) => {
-    const server = express()
-    const roomHttp = http.Server(server)
-    let room = null
+const createRoom = (roomData, roomHttp) => {
+    let roomPort
+    if(!roomHttp) {
 
-    server.get('/', function(req, res, next) {
-        res.status(200).json(room.info())
-    })
+        const server = express()
+        const sslOptions = {
+            key: fs.readFileSync('./ssl/server.key'),
+            cert: fs.readFileSync('./ssl/cert.crt'),
+            ca: [fs.readFileSync('./ssl/gd1.cert', 'utf8'),
+                fs.readFileSync('./ssl/gd2.cert', 'utf8')]
+        }
+        roomHttp = https.Server(sslOptions, server)
+        let room = null
+    
+        server.get('/', function(req, res, next) {
+            res.status(200).json(room.info())
+        })
+    
+        roomPort = nextPort()
+        roomHttp.listen(roomPort)
 
-    const roomPort = nextPort()
-    roomHttp.listen(roomPort)
+    } else {
+        roomPort = roomHttp.address().port
+    }
+
     room = socketConnect(roomHttp, roomData)
 
     // Keep track of the open sockets

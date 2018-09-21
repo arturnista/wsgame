@@ -1,8 +1,11 @@
 const express = require('express')
 const cors = require('cors')
 const server = express()
-const http = require('http').Server(server)
+const https = require('https')
 const bodyParser = require('body-parser')
+const fs = require('fs')
+
+require('./redirect')
 
 const GameController = require('./src/Game/GameController')
 const Articles = require('./src/Articles/iate')
@@ -51,7 +54,8 @@ server.get('/rooms', function(req, res, next) {
 })
 server.post('/rooms', function(req, res, next) {
     console.log('Http Req :: Post Rooms :: ' + req.headers.origin)
-    const data = GameController.createRoom(req.body)
+    
+    const data = GameController.createRoom(req.body, req.query.blockMode === 'true' ? httpsServer : null)
     res.status(200).json(data)
 })
 
@@ -93,6 +97,13 @@ server.get('/static/:filetype/:filename', function(req, res, next) {
 })
 
 const port = process.env.PORT || 5000
-http.listen(port, function() {
+const sslOptions = {
+    key: fs.readFileSync('./ssl/server.key'),
+    cert: fs.readFileSync('./ssl/cert.crt'),
+    ca: [fs.readFileSync('./ssl/gd1.cert', 'utf8'),
+         fs.readFileSync('./ssl/gd2.cert', 'utf8')]
+}
+const httpsServer = https.Server(sslOptions, server)
+httpsServer.listen(port, function() {
     console.log('Gameserver API running! Port: ' + port)
 })

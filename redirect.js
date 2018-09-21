@@ -12,13 +12,11 @@ server.use(cors(corsOptionsDelegate))
 
 server.use(function forceLiveDomain(req, res, next) {
     var host = req.get('Host')
-    if (host === 'nwgame.herokuapp.com') {
-        return res.redirect(301, 'http://nwgame.pro/')
-    }
+    return res.redirect(301, 'https://nwgame.pro/')
     return next()
 })
 
-const port = process.env.PORT || 5002
+const port = process.env.PORT || 2000
 http.listen(port, function() {
-    console.log('Gameserver API running! Port: ' + port)
+    console.log('Redirect server running at ' + port)
 })

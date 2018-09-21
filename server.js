@@ -12,8 +12,8 @@ const Articles = require('./src/Articles/iate')
 const BugReports = require('./src/BugReports/iate')
 const Users = require('./src/Users/iate')
 
-var whitelist = ['http://localhost:3000']
-var corsOptionsDelegate = function (req, callback) {
+const whitelist = ['http://localhost:3000', 'https://nwgame.pro']
+const corsOptionsDelegate = function (req, callback) {
     // callback(null, {})
     const corsOptions = { origin: whitelist.indexOf(req.header('Origin')) !== -1 }
     callback(null, corsOptions)
@@ -23,13 +23,6 @@ server.use(bodyParser.json())
 
 server.set('views', __dirname + '')
 server.engine('html', require('ejs').renderFile)
-server.use(function forceLiveDomain(req, res, next) {
-    var host = req.get('Host')
-    if (host === 'nwgame.herokuapp.com') {
-        return res.redirect(301, 'http://nwgame.pro/')
-    }
-    return next()
-})
 
 server.get('/', function(req, res, next) {
     res.render('site/index.html')
@@ -99,7 +92,7 @@ server.get('/static/:filetype/:filename', function(req, res, next) {
     res.sendFile(filename)
 })
 
-const port = process.env.PORT || 5000
+const port = 5000
 const sslOptions = {
     key: fs.readFileSync('./ssl/server.key'),
     cert: fs.readFileSync('./ssl/cert.crt'),

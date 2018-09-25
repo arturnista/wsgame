@@ -14,7 +14,7 @@ function Follower(data, goController) {
     this.caster = this.goController.gameObjects.find(x => x.id === data.caster)
 
     this.position = { x: 0, y: 0 }
-    if(this.owner) {
+    if(this.owner && this.caster) {
         this.position = vector.add( this.caster.position, vector.multiply(data.direction, this.owner.collider.size) )
     }
 
@@ -66,7 +66,7 @@ Follower.prototype.info = function () {
 }
 
 Follower.prototype.update = function (deltatime) {
-    if(!this.target || !this.target.exists) {
+    if(!this.target || !this.target.exists || !this.caster) {
         this.goController.destroy(this)
         return
     }

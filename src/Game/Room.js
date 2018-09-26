@@ -410,8 +410,8 @@ Room.prototype.emit = function(name, data) {
     const emitData = data || {}
     emitData.sendTime = (new Date()).toISOString()
 
-    // this.socketIo.emit(name, emitData)
-    this.users.forEach(u => u.socket.emit(name, emitData))
+    this.socketIo.emit(name, emitData)
+    // this.users.forEach(u => u.socket.emit(name, emitData))
 }
 
 module.exports = Room

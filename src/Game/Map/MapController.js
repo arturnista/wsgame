@@ -10,6 +10,10 @@ const MAPS = {
     FireArena,
     Grid,
 }
+const AVAILABLE_FOR_RANDOM = [
+    'BasicArena',
+    'FireArena',
+]
 
 
 function MapController(goController, addState) {
@@ -24,8 +28,7 @@ MapController.prototype.selectCurrentMap = function(map) {
     if(!_.isNil(MAPS[map])) {
         MapToCreate = MAPS[map]
     } else {
-        const keys = Object.keys(MAPS)
-        const randomKey = keys[ _.random(0, keys.length - 1) ]
+        const randomKey = _.sample(AVAILABLE_FOR_RANDOM)
         MapToCreate = MAPS[randomKey]
     }
 

@@ -27,9 +27,11 @@ const nextPort = (function() {
 let socketIo = null
 let rooms = []
 
-const createRoom = (roomData, roomHttp) => {
+const createRoom = (roomData, opt) => {
     let roomPort = null
     let room = null
+    let roomHttp = opt.server
+    const isBlockMode = opt.isBlockMode
 
     if(!roomHttp) {
 
@@ -71,7 +73,9 @@ const createRoom = (roomData, roomHttp) => {
     // If the room do not have any user in 3s
     setTimeout(() => {
         if(room.users.length === 0) deleteRoom(room)
-    }, 3000)
+    }, 15000)
+
+    room.isBlockMode = isBlockMode
 
     return {
         id: room.id,

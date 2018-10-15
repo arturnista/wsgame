@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon --exec node server.js",
+    "start": "NODE_ENV=DEV nodemon --exec node server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "production": "NODE_ENV=PRODUCTION node server.js"
   },

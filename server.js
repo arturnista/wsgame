@@ -1,8 +1,10 @@
 const express = require('express')
 const cors = require('cors')
 const server = express()
-const https = require('https')
 const bodyParser = require('body-parser')
+
+const http = require('http')
+const https = require('https')
 const fs = require('fs')
 
 require('./redirect')
@@ -12,7 +14,7 @@ const Articles = require('./src/Articles/iate')
 const BugReports = require('./src/BugReports/iate')
 const Users = require('./src/Users/iate')
 
-const whitelist = ['http://localhost:3000', 'https://nwgame.pro']
+const whitelist = ['http://localhost:3000', 'http://localhost:3001', 'https://nwgame.pro']
 const corsOptionsDelegate = function (req, callback) {
     // callback(null, {})
     const corsOptions = { origin: whitelist.indexOf(req.header('Origin')) !== -1 }
@@ -97,13 +99,25 @@ server.get('/static/:filetype/:filename', function(req, res, next) {
 })
 
 const port = 5000
-const sslOptions = {
-    key: fs.readFileSync('./ssl/server.key'),
-    cert: fs.readFileSync('./ssl/cert.crt'),
-    ca: [fs.readFileSync('./ssl/gd1.cert', 'utf8'),
-         fs.readFileSync('./ssl/gd2.cert', 'utf8')]
+
+if(process.env.NODE_ENV === 'DEV') {
+
+    const httpServer = http.Server(server)
+    httpServer.listen(port, function() {
+        console.log('Gameserver API running! Port: ' + port)
+    })
+
+} else {
+
+    const sslOptions = {
+        key: fs.readFileSync('./ssl/server.key'),
+        cert: fs.readFileSync('./ssl/cert.crt'),
+        ca: [fs.readFileSync('./ssl/gd1.cert', 'utf8'),
+            fs.readFileSync('./ssl/gd2.cert', 'utf8')]
+    }
+    const httpsServer = https.Server(sslOptions, server)
+    httpsServer.listen(port, function() {
+        console.log('Gameserver API running! Port: ' + port)
+    })
+
 }
-const httpsServer = https.Server(sslOptions, server)
-httpsServer.listen(port, function() {
-    console.log('Gameserver API running! Port: ' + port)
-})

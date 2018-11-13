@@ -56,22 +56,4 @@ Prison.prototype.update = function (deltatime) {
     }
 }
 
-Prison.prototype.reflect = function(object, direction) {
-
-}
-
-Prison.prototype.onCollide = function (object, direction, directionInv) {
-    const { gameObjects } = this.goController
-
-    if(object.id === this.id) return
-    if(this.owner && object.id === this.owner.id) return
-
-    if(goTypes.isType(object.type, goTypes.PLAYER)) {
-
-    } else {
-        if(object.reflect) object.reflect(object, direction)
-    }
-    
-}
-
 module.exports = Prison

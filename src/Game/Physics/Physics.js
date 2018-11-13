@@ -16,19 +16,27 @@ Physics.prototype.update = function (deltatime) {
         const object = this.goController.gameObjects[i]
         if (!object.collider) continue
 
+        // Get object velocity
         let directionToMove = object.velocity
         if(!directionToMove) directionToMove = { x: 0, y: 0 }
         const directionToMoveLength = vector.length(directionToMove)
 
-        let objectWithPredictedPosition = Object.assign({ position: {
-            x: object.position.x + directionToMove.x * deltatime,
-            y: object.position.y + directionToMove.y * deltatime,
-        }}, object)
+        // Predict the object position
+        let objectWithPredictedPosition = { 
+            ...object, 
+            position: {
+                x: object.position.x + directionToMove.x * deltatime,
+                y: object.position.y + directionToMove.y * deltatime,
+            }
+        }
 
+        // Iterate every object
         for (let n = i + 1; n < this.goController.gameObjects.length; n++) {
             const compareObject = this.goController.gameObjects[n]
+            // Objects without colliders should be ignore
             if (!compareObject.collider) continue
 
+            // Test the collision
             const collision = this.circleCollision( objectWithPredictedPosition, compareObject )
 
             if (collision.status) {
@@ -49,6 +57,7 @@ Physics.prototype.update = function (deltatime) {
             }
         }
 
+        // Move object if
         if (directionToMoveLength > 0) {
             movementFunctions.push(_ => {
                 object.position.x += directionToMove.x * deltatime

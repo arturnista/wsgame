@@ -56,7 +56,7 @@ server.post('/rooms', function(req, res, next) {
     const isBlockMode = req.query.blockMode === 'true'
     const data = GameController.createRoom(req.body, {
         isBlockMode,
-        server: isBlockMode ? httpsServer : null
+        server: isBlockMode ? httpServer : null
     })
     res.status(200).json(data)
 })
@@ -99,10 +99,11 @@ server.get('/static/:filetype/:filename', function(req, res, next) {
 })
 
 const port = 5000
+let httpServer = null
 
 if(process.env.NODE_ENV === 'DEV') {
 
-    const httpServer = http.Server(server)
+    httpServer = http.Server(server)
     httpServer.listen(port, function() {
         console.log('Gameserver API running! Port: ' + port)
     })
@@ -115,8 +116,8 @@ if(process.env.NODE_ENV === 'DEV') {
         ca: [fs.readFileSync('./ssl/gd1.cert', 'utf8'),
             fs.readFileSync('./ssl/gd2.cert', 'utf8')]
     }
-    const httpsServer = https.Server(sslOptions, server)
-    httpsServer.listen(port, function() {
+    httpServer = https.Server(sslOptions, server)
+    httpServer.listen(port, function() {
         console.log('Gameserver API running! Port: ' + port)
     })
 

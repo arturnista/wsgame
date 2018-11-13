@@ -36,7 +36,6 @@ function Room(data, server, socketIo) {
     this.isPrivate = !!data.isPrivate || !!data.isTutorial
     this.port = this.server.address().port
     
-    this.lastFrameTime = new Date()
     this.previousTick = Date.now()
     this.gameLoop = this.gameLoop.bind(this)
     this.gameLogic = this.gameLogic.bind(this)
@@ -263,6 +262,9 @@ Room.prototype.startGame = function (data, responseCallback) {
         responseCallback({ error: 'NO_USERS' })
         return
     }
+
+    this.FPS = data.fps || 60
+    this.TICK_LENGTH_MS = 1000 / this.FPS
     
     this.gameIsStarting = true
     
@@ -282,7 +284,7 @@ Room.prototype.startGame = function (data, responseCallback) {
 
                 this.gameIsStarting = false
                 this.gameIsRunning = true
-                this.lastFrameTime = new Date()
+                this.previousTick = Date.now()
                 this.gameLoop()
 
                 this.emit('game_start', { players: players.map(x => x.info()) })
@@ -351,21 +353,21 @@ Room.prototype.gameLoop = function() {
 
     const now = Date.now()
 
-    if (this.previousTick + TICK_LENGTH_MS <= now) {
+    if (this.previousTick + this.TICK_LENGTH_MS <= now) {
         const delta = (now - this.previousTick) / 1000
         this.previousTick = now
 
         this.gameLogic(delta)
     }
 
-    if (Date.now() - this.previousTick < TICK_LENGTH_MS - 16) {
+    if (Date.now() - this.previousTick < this.TICK_LENGTH_MS - 16) {
         setTimeout(this.gameLoop)
     } else {
         setImmediate(this.gameLoop)
     }
 }
 
-Room.prototype.gameLogic = function () {
+Room.prototype.gameLogic = function (deltatime) {
     const {
         gameObjectController,
         mapController,
@@ -374,18 +376,14 @@ Room.prototype.gameLogic = function () {
 
     if(!this.gameIsRunning) return
 
-    let deltatime = (new Date() - this.lastFrameTime) / 1000
-    if(deltatime === 0) deltatime = .0001
-
     physics.update(deltatime)
     gameObjectController.update(deltatime)
     mapController.update(deltatime)
 
     const infos = gameObjectController.allInfos()
-    this.emit('game_state', Object.assign({ entities: infos }, this.nextState))
+    this.emit('game_state', { ...this.nextState, entities: infos })
     this.nextState = {}
 
-    this.lastFrameTime = new Date()
     if(this.gameEnded) return
 
     if(this.roomBehaviour) {

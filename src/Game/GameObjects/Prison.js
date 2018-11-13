@@ -56,4 +56,8 @@ Prison.prototype.update = function (deltatime) {
     }
 }
 
+Prison.prototype.reflect = function () {
+
+}
+
 module.exports = Prison

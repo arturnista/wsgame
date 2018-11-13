@@ -8,47 +8,48 @@ function Physics(goController) {
 }
 
 Physics.prototype.update = function (deltatime) {
+    
     const movementFunctions = []
     const onCollideFunctions = []
 
-    for (var i = 0; i < this.goController.gameObjects.length; i++) {
+    for (let i = 0; i < this.goController.gameObjects.length; i++) {
         const object = this.goController.gameObjects[i]
         if (!object.collider) continue
 
         let directionToMove = object.velocity
-        if (!directionToMove || vector.length(directionToMove) === 0) continue
+        if(!directionToMove) directionToMove = { x: 0, y: 0 }
         const directionToMoveLength = vector.length(directionToMove)
 
-        let nextPosition = {
+        let objectWithPredictedPosition = Object.assign({ position: {
             x: object.position.x + directionToMove.x * deltatime,
             y: object.position.y + directionToMove.y * deltatime,
-        }
-        let nextObj = Object.assign({}, object, { position: nextPosition })
+        }}, object)
 
-        for (var n = 0; n < this.goController.gameObjects.length; n++) {
-            if (!directionToMove || directionToMoveLength === 0) break
-            if (i === n) continue
+        for (let n = i + 1; n < this.goController.gameObjects.length; n++) {
+            const compareObject = this.goController.gameObjects[n]
+            if (!compareObject.collider) continue
 
-            const objectCmp = this.goController.gameObjects[n]
-            if (!objectCmp.collider) continue
-
-            const collision = this.circleCollision( nextObj, objectCmp )
+            const collision = this.circleCollision( objectWithPredictedPosition, compareObject )
 
             if (collision.status) {
                 const dirCollisionInv = vector.reverse(collision.direction)
-                if (object.onCollide) onCollideFunctions.push(_ => object.onCollide(objectCmp, collision.direction, dirCollisionInv))
+                // Collide object
+                if (object.onCollide) onCollideFunctions.push(_ => object.onCollide(compareObject, collision.direction, dirCollisionInv))
+                // Collide Compare Object with inverted direction
+                if (compareObject.onCollide) onCollideFunctions.push(_ => compareObject.onCollide(object, dirCollisionInv, collision.direction))
                 
-                if (goTypes.isType(objectCmp.type, goTypes.OBSTACLE) || goTypes.isType(object.type, goTypes.OBSTACLE) ||
-                    ( goTypes.isType(objectCmp.type, goTypes.PLAYER_OBSTACLE) && goTypes.isType(object.type, goTypes.PLAYER) ) ||
-                    ( goTypes.isType(objectCmp.type, goTypes.PLAYER) && goTypes.isType(object.type, goTypes.PLAYER_OBSTACLE) ) ||
-                    ( goTypes.isType(objectCmp.type, goTypes.SPELL_OBSTACLE) && goTypes.isType(object.type, goTypes.SPELL) ) ||
-                    ( goTypes.isType(objectCmp.type, goTypes.SPELL) && goTypes.isType(object.type, goTypes.SPELL_OBSTACLE) )) {
+                // If objects should collide with physics
+                if (goTypes.isType(compareObject.type, goTypes.OBSTACLE) || goTypes.isType(object.type, goTypes.OBSTACLE) ||
+                    ( goTypes.isType(compareObject.type, goTypes.PLAYER_OBSTACLE) && goTypes.isType(object.type, goTypes.PLAYER) ) ||
+                    ( goTypes.isType(compareObject.type, goTypes.PLAYER) && goTypes.isType(object.type, goTypes.PLAYER_OBSTACLE) ) ||
+                    ( goTypes.isType(compareObject.type, goTypes.SPELL_OBSTACLE) && goTypes.isType(object.type, goTypes.SPELL) ) ||
+                    ( goTypes.isType(compareObject.type, goTypes.SPELL) && goTypes.isType(object.type, goTypes.SPELL_OBSTACLE) )) {
                     directionToMove = vector.multiply(collision.direction, directionToMoveLength)
                 }
             }
         }
 
-        if (directionToMove && directionToMoveLength > 0) {
+        if (directionToMoveLength > 0) {
             movementFunctions.push(_ => {
                 object.position.x += directionToMove.x * deltatime
                 object.position.y += directionToMove.y * deltatime
@@ -58,6 +59,7 @@ Physics.prototype.update = function (deltatime) {
 
     for (let i = 0; i < movementFunctions.length; i++) movementFunctions[i]()
     for (let i = 0; i < onCollideFunctions.length; i++) onCollideFunctions[i]()
+
 }
 
 Physics.prototype.circleCollision = function (obj1, obj2) {

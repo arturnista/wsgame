@@ -39,7 +39,8 @@ const BOT_NAMES = [
     'Bot Pudim',
     'Bot Xanz',
     'Bot Lulu',
-    'Bot Land'
+    'Bot Land',
+    'Bot Uza'
 ]
 
 function GameObjectController(addState) {

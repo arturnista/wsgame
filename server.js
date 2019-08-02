@@ -3,6 +3,8 @@ const cors = require('cors')
 const server = express()
 const bodyParser = require('body-parser')
 
+const figlet = require('figlet')
+
 const http = require('http')
 const https = require('https')
 const fs = require('fs')
@@ -101,12 +103,15 @@ server.get('/static/:filetype/:filename', function(req, res, next) {
 const port = 5000
 let httpServer = null
 
+const startCallback = function() {
+    console.log(figlet.textSync('NW Game', 'Delta Corps Priest 1'));
+    console.log(`Server running on port ${port}`);
+}
+
 if(process.env.NODE_ENV === 'DEV' || process.env.PROTOCOL === 'HTTP') {
 
     httpServer = http.Server(server)
-    httpServer.listen(port, function() {
-        console.log('Gameserver API running! Port: ' + port)
-    })
+    httpServer.listen(port, startCallback)
 
 } else {
 
@@ -117,8 +122,6 @@ if(process.env.NODE_ENV === 'DEV' || process.env.PROTOCOL === 'HTTP') {
             fs.readFileSync('./ssl/gd2.cert', 'utf8')]
     }
     httpServer = https.Server(sslOptions, server)
-    httpServer.listen(port, function() {
-        console.log('Gameserver API running! Port: ' + port)
-    })
+    httpServer.listen(port, startCallback)
 
 }

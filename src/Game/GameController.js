@@ -9,6 +9,7 @@ const fs = require('fs')
 const Room = require('./Room')
 const User = require('./User')
 const spells = require('./GameObjects/spells')
+const figlet = require('figlet')
 
 const INITIAL_PORT = 5001
 const MAX_ROOMS = process.env.MAX_ROOMS ? parseInt(process.env.MAX_ROOMS) : 1000
@@ -29,7 +30,7 @@ const nextPort = (function() {
 let socketIo = null
 let rooms = []
 
-const createRoom = (roomData, opt) => {
+const createRoom = (roomData, opt = {}) => {
     let roomPort = null
     let room = null
     let roomHttp = opt.server
@@ -38,7 +39,7 @@ const createRoom = (roomData, opt) => {
     if(!roomHttp) {
 
         const server = express()
-        if(process.env.PROTOCOL === 'HTTP') {
+        if(process.env.NODE_ENV === 'DEV' || process.env.PROTOCOL === 'HTTP') {
 
             roomHttp = http.Server(server)
 
@@ -58,7 +59,7 @@ const createRoom = (roomData, opt) => {
             res.status(200).json(room.info())
         })
     
-        roomPort = nextPort()
+        roomPort = opt.port ? opt.port : nextPort()
         roomHttp.listen(roomPort)
 
     } else {
@@ -106,6 +107,8 @@ const deleteRoom = (room) => {
 }
 
 const socketConnect = function(server, data) {    
+
+    console.log(figlet.textSync(`NW Game\nServer`, 'Delta Corps Priest 1'));
     console.log(`SocketIO :: Room created ${data.name} :: ${server.address().port}`)
     socketIo = io.listen(server)
 

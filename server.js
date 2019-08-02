@@ -104,8 +104,8 @@ const port = 5000
 let httpServer = null
 
 const startCallback = function() {
-    console.log(figlet.textSync('NW Game', 'Delta Corps Priest 1'));
-    console.log(`Server running on port ${port}`);
+    console.log(figlet.textSync('\nNW Game', 'Delta Corps Priest 1'));
+    console.log(`Server running on port ${port}\n\n`);
 }
 
 if(process.env.NODE_ENV === 'DEV' || process.env.PROTOCOL === 'HTTP') {

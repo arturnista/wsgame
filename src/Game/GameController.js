@@ -11,6 +11,7 @@ const User = require('./User')
 const spells = require('./GameObjects/spells')
 
 const INITIAL_PORT = 5001
+const MAX_ROOMS = process.env.MAX_ROOMS ? parseInt(process.env.MAX_ROOMS) : 1000
 
 const generateId = (function() {
     let socketId = 0
@@ -20,7 +21,7 @@ const generateId = (function() {
 const nextPort = (function() {
     let port = 0
     return function() { 
-        port = (port + 1) % 1000
+        port = (port + 1) % MAX_ROOMS
         return INITIAL_PORT + port
     }
 })()
@@ -37,7 +38,7 @@ const createRoom = (roomData, opt) => {
     if(!roomHttp) {
 
         const server = express()
-        if(process.env.NODE_ENV === 'DEV') {
+        if(process.env.PROTOCOL === 'HTTP') {
 
             roomHttp = http.Server(server)
 

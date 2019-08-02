@@ -1,4 +1,4 @@
-FROM node:8.12.0
+FROM node:10.16.1
 
 ARG NWGAME_API_RELEASE
 
@@ -21,7 +21,9 @@ COPY ./site ./site
 
 COPY ./server.js ./server.js
 
-EXPOSE 5000
+COPY ./nwgame-firebase.json ./src/Database/nwgame-firebase.json
+
+EXPOSE 5000-6000
 
 RUN chown -R nwgame:nwgame .
 

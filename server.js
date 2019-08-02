@@ -7,7 +7,7 @@ const http = require('http')
 const https = require('https')
 const fs = require('fs')
 
-require('./redirect')
+// require('./redirect')
 
 const GameController = require('./src/Game/GameController')
 const Articles = require('./src/Articles/iate')
@@ -101,7 +101,7 @@ server.get('/static/:filetype/:filename', function(req, res, next) {
 const port = 5000
 let httpServer = null
 
-if(process.env.NODE_ENV === 'DEV') {
+if(process.env.NODE_ENV === 'DEV' || process.env.PROTOCOL === 'HTTP') {
 
     httpServer = http.Server(server)
     httpServer.listen(port, function() {

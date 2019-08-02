@@ -14,7 +14,7 @@ const Articles = require('./src/Articles/iate')
 const BugReports = require('./src/BugReports/iate')
 const Users = require('./src/Users/iate')
 
-const whitelist = ['http://localhost:3000', 'http://localhost:3001', 'https://nwgame.pro']
+const whitelist = ['http://localhost:3000', 'http://localhost:3001', 'https://nwgame.pro', 'http://nwgame.pro', 'http://191.235.86.235']
 const corsOptionsDelegate = function (req, callback) {
     // callback(null, {})
     const corsOptions = { origin: whitelist.indexOf(req.header('Origin')) !== -1 }

@@ -1,6 +1,6 @@
 var admin = require("firebase-admin")
 
-var serviceAccount = require("./nwgame-firebase.json")
+var serviceAccount = require("./magearena-firebase.json")
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://nwgame-d8f9d.firebaseio.com"

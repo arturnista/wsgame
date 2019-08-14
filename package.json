@@ -1,5 +1,5 @@
 {
-  "name": "Mage Arena",
+  "name": "mage_arena",
   "version": "0.6.7",
   "description": "",
   "main": "server.js",

@@ -1,36 +1,36 @@
 # Initial configs
 FROM node:10.16.1
 
-ARG NWGAME_API_RELEASE
+ARG MAGEARENA_API_RELEASE
 
 RUN ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
 
-RUN groupadd -r nwgame && useradd -r -g nwgame nwgame
+RUN groupadd -r magearena && useradd -r -g magearena magearena
 
-WORKDIR /service/nwgame/
+WORKDIR /service/magearena/
 
 # Install packages
 COPY package.json .
 
 RUN npm install --production
 
-LABEL description="nwgame-api image" \
-      release=$NWGAME_API_RELEASE
+LABEL description="magearena-api image" \
+      release=$MAGEARENA_API_RELEASE
 
 # Copy files
 COPY ./src ./src
 
 COPY ./site ./site
 
-COPY ./nwgame-firebase.json ./src/Database/nwgame-firebase.json
+COPY ./magearena-firebase.json ./src/Database/magearena-firebase.json
 
 COPY ./server.js ./server.js
 
 EXPOSE 5000-6000
 
 # Permissions
-RUN chown -R nwgame:nwgame .
+RUN chown -R magearena:magearena .
 
-USER nwgame
+USER magearena
 
 ENTRYPOINT ["node", "server"]

@@ -16,7 +16,7 @@ const Articles = require('./src/Articles/iate')
 const BugReports = require('./src/BugReports/iate')
 const Users = require('./src/Users/iate')
 
-const whitelist = ['http://localhost:3000', 'http://localhost:3001', 'https://nwgame.pro', 'http://nwgame.pro', 'http://191.235.86.235']
+const whitelist = ['http://localhost:3000', 'http://localhost:3001', 'https://nwgame.pro', 'http://nwgame.pro', 'http://191.235.86.235', 'http://magearena.com', 'https://magearena.com']
 const corsOptionsDelegate = function (req, callback) {
     // callback(null, {})
     const corsOptions = { origin: whitelist.indexOf(req.header('Origin')) !== -1 }
@@ -104,7 +104,7 @@ const port = 5000
 let httpServer = null
 
 const startCallback = function() {
-    console.log(figlet.textSync('\nNW Game', 'Delta Corps Priest 1'));
+    console.log(figlet.textSync('\nMage Arena', 'Delta Corps Priest 1'));
     console.log(`Server running on port ${port}\n\n`);
 }
 

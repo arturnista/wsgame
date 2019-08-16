@@ -1,6 +1,6 @@
 {
-  "name": "mage_arena",
-  "version": "0.6.7",
+  "name": "magearena-server",
+  "version": "0.7.0",
   "description": "",
   "main": "server.js",
   "scripts": {
@@ -17,7 +17,7 @@
     "express": "^4.16.2",
     "figlet": "^1.2.3",
     "firebase-admin": "^5.13.1",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.15",
     "moment": "^2.19.3",
     "socket.io": "^2.0.4",
     "uuid": "^3.1.0"

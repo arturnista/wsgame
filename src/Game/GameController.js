@@ -108,7 +108,7 @@ const deleteRoom = (room) => {
 
 const socketConnect = function(server, data) {    
 
-    console.log(figlet.textSync(`Mage Arena\nServer`, 'Delta Corps Priest 1'));
+    console.log('\n\n' + figlet.textSync('Mage\nArena', 'Delta Corps Priest 1'));
     console.log(`SocketIO :: Room created ${data.name} :: ${server.address().port}`)
     socketIo = io.listen(server)
 

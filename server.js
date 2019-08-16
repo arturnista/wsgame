@@ -104,7 +104,7 @@ const port = 5000
 let httpServer = null
 
 const startCallback = function() {
-    console.log(figlet.textSync('\nMage Arena', 'Delta Corps Priest 1'));
+    console.log('\n\n' + figlet.textSync('Mage\nArena', 'Delta Corps Priest 1'));
     console.log(`Server running on port ${port}\n\n`);
 }
 

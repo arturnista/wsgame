@@ -25,7 +25,6 @@ const nextPort = (function() {
     }
 })()
 
-let socketIo = null
 let rooms = []
 
 const startCallback = function(port) {
@@ -97,60 +96,16 @@ const createRoom = (roomData, opt = {}) => {
 }
 
 const deleteRoom = (room) => {
-    if(!room.server.isLocal) {
-        room.server.close()
-        // Close all the open sockets. If a socket is left open, the server is not closed
-        // for(const k in room.server.sockets) room.server.sockets[k].destroy()
-    }
-    
-    room.delete()
-
     rooms = rooms.filter(r => r.id !== room.id)
 }
 
 const socketConnect = function(server, data) {    
 
     console.log(`SocketIO :: Room created ${data.name} :: ${server.address().port}`)
-    socketIo = io.listen(server)
+    const socketIo = io.listen(server)
 
-    const room = new Room(data, server, socketIo)
+    const room = new Room(data, server, socketIo, deleteRoom)
     rooms.push(room)
-    let users = []    
-
-    socketIo.on('connection', function(socket) {
-        const userId = socket.request._query.user_id
-        const name = socket.request._query.name
-        if(users.find(x => x.id === userId) != null) {
-            socket.disconnect()
-            return
-        }
-        
-        let user = new User({ id: userId, name }, socket, isGuest => {
-            console.log(`SocketIO :: User connected :: ${user.id}`)
-            
-            if(_.isNil(room.owner)) room.userOwner(user)
-            room.userJoin(user)
-        })
-
-        users.push( user )
-
-        socket.on('room_destroy', function (data) {
-            console.log(`SocketIO :: User destroyed room :: ${user.id}`)
-            if(room.owner.id !== user.id) return
-
-            deleteRoom(room)
-        })
-
-        socket.on('disconnect', function () {
-            console.log(`SocketIO :: User disconnect :: ${user.id}`)
-            room.userLeftRoom(user)
-            if(user.id === _.get(room, 'owner.id')) deleteRoom(room)
-            else if(room.users.length === 0) deleteRoom(room)
-
-            users = users.filter(x => x.id !== user.id)
-        })
-
-    })
 
     return room
 }

@@ -7,6 +7,7 @@ const Physics = require('./Physics')
 const MapController = require('./Map/MapController')
 const database = require('../Database').getDatabase()
 const package = require('../../package.json')
+const User = require('./User')
 
 const DELAY_TO_START = 4000
 const DELAY_TO_END = 5000
@@ -15,56 +16,97 @@ const FPS = 60
 const TICK_LENGTH_MS = 1000 / FPS
 
 let COLORS = [
-    '#ff0000',
-    '#0000ff',
-    '#00ffff',
-    '#ff00ff',
-    '#ffff00',
-    '#ff8000',
-    '#00ff00',
+    '#ff2222',
+    '#2222ff',
+    '#22ffff',
+    '#ff22ff',
+    '#ffff22',
+    '#ff8022',
+    '#22ff22',
     '#ffaaaa',
     '#aaaaaa',
 ]
 
-function Room(data, server, socketIo) {
+function Room(data, server, socketIo, deleteRoomCallback) {
     this.id = uuid.v4()
     
     this.server = server
     this.socketIo = socketIo
 
     this.name = data.name
-    this.isPrivate = !!data.isPrivate || !!data.isTutorial
     this.port = this.server.address().port
+
+    this.isPrivate = !!data.isPrivate || !!data.isTutorial
+
+    this.gameIsStarting = false
+    this.gameIsRunning = false
+    this.gameEnded = false
+    this.startGameTime = null
+
+    this.chat = []
+    this.users = []
+    this.owner = null
     
     this.previousTick = Date.now()
     this.gameLoop = this.gameLoop.bind(this)
     this.gameLogic = this.gameLogic.bind(this)
+    this.userJoin = this.userJoin.bind(this)
+    this.deleteRoomCallback = deleteRoomCallback
 
     this.gameObjectController = new GameObjectController(this.addState.bind(this))
     this.mapController = new MapController(this.gameObjectController, this.addState.bind(this))
     this.physics = new Physics(this.gameObjectController)
 
-    this.gameIsStarting = false
-    this.gameIsRunning = false
-    this.gameEnded = false
-    this.users = []
-    this.chat = []
-    this.owner = null
-    this.startGameTime = null
+    this.socketIo.on('connection', (socket) => {
+
+        const userId = socket.request._query.user_id
+        const name = socket.request._query.name
+
+        if(this.users.find(x => x.id === userId) != null) {
+            socket.disconnect()
+            return
+        }
+        
+        let user = new User({ id: userId, name }, socket, this.userJoin)
+
+        socket.on('room_destroy', (data) => {
+            console.log(`SocketIO :: User destroyed room :: ${user.id}`)
+            if(this.owner.id !== user.id) return
+
+            this.delete()
+        })
+
+        socket.on('disconnect', () => {
+            console.log(`SocketIO :: User disconnect :: ${user.id}`)
+            this.userLeftRoom(user)
+
+            const ownerId = _.get(this, 'owner.id')
+            if(user.id === ownerId) this.delete()
+            else if(this.users.length === 0) this.delete()
+
+            this.users = this.users.filter(x => x.id !== user.id)
+        })
+
+    })
 
     this.isTutorialRoom = data.isTutorial
-
     if(this.isTutorialRoom) {
         this.roomBehaviour = new RoomTutorialBehaviour(this)
     } else {
         this.roomBehaviour = null
     }
 
-    this.nextState = {}
+    this.nextState = {} 
 }
 
 Room.prototype.delete = function () {
     console.log(`SocketIO :: ${this.name} :: Deleted`)
+
+    if(!this.server.isLocal) {
+        this.server.close()
+        // Close all the open sockets. If a socket is left open, the server is not closed
+        // for(const k in this.server.sockets) this.server.sockets[k].destroy()
+    }
 
     this.gameIsStarting = false
     this.gameIsRunning = false
@@ -77,6 +119,8 @@ Room.prototype.delete = function () {
     while(this.users.length > 0) {
         this.userLeftRoom(this.users[0])
     }
+
+    this.deleteRoomCallback(this)
 }
 
 Room.prototype.info = function () {
@@ -102,6 +146,10 @@ Room.prototype.userJoin = function(user) {
     } = this
 
     if(this.users.find(x => x.id === user.id) != null) return
+
+    console.log(`SocketIO :: User connected :: ${user.id}`)
+    
+    if(_.isNil(this.owner)) this.userOwner(user)
 
     this.users.push( user )
 

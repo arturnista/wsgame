@@ -7,13 +7,13 @@ const gameObject = {
     isType: function(types, compType) {
         return (types & compType) > 0
     },
-    create: function() {
-        let data = 0
-        for (let index = 0; index < arguments.length; index++) {
-            const element = arguments[index]
-            data = data | element
+    create: function(...types) {
+        let colliderType = 0
+        for (let index = 0; index < types.length; index++) {
+            const element = types[index]
+            colliderType = colliderType | element
         }
-        return data
+        return colliderType
     }
 }
 

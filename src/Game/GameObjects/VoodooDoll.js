@@ -4,6 +4,7 @@ const goTypes = require('./gameObjectTypes')
 const gameObjectController = require('./GameObjectController')
 const vector = require('../../utils/vector')
 const colliders = require('../Physics/colliders')
+const AutoDestroyBehaviour = require('./Behaviours/AutoDestroyBehaviour')
 
 function VoodooDoll(data, goController) {
     this.id = uuid.v4()
@@ -21,8 +22,9 @@ function VoodooDoll(data, goController) {
         this.position = _.clone(this.caster.position)
     }
 
-    this.lifeTime = data.duration / 1000
-    this._timePassed = 0
+    this.behaviours = [
+        new AutoDestroyBehaviour(this, this.goController, data.duration / 1000)
+    ]
 
     this.velocity = { x: 0, y: 0 }
 }
@@ -39,10 +41,7 @@ VoodooDoll.prototype.info = function () {
 }
 
 VoodooDoll.prototype.update = function (deltatime) {
-    this._timePassed += deltatime
-    if(this._timePassed >= this.lifeTime) {
-        this.goController.destroy(this.id)
-    }
+    if(this.behaviours.length > 0) this.behaviours.forEach(behaviour => behaviour.update(deltatime))
 }
 
 VoodooDoll.prototype.reflect = function(object, direction) {

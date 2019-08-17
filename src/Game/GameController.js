@@ -1,10 +1,8 @@
 const express = require('express')
-const server = express()
 const http = require('http')
 const https = require('https')
 const io = require('socket.io')
 const _ = require('lodash')
-const uuid = require('uuid')
 const fs = require('fs')
 const Room = require('./Room')
 const User = require('./User')
@@ -29,6 +27,10 @@ const nextPort = (function() {
 
 let socketIo = null
 let rooms = []
+
+const startCallback = function(port) {
+    console.log('\n\n' + figlet.textSync('Game\nServer', 'Delta Corps Priest 1'));
+}
 
 const createRoom = (roomData, opt = {}) => {
     let roomPort = null
@@ -60,7 +62,7 @@ const createRoom = (roomData, opt = {}) => {
         })
     
         roomPort = opt.port ? opt.port : nextPort()
-        roomHttp.listen(roomPort)
+        roomHttp.listen(roomPort, () => startCallback(roomPort))
 
     } else {
         
@@ -108,7 +110,6 @@ const deleteRoom = (room) => {
 
 const socketConnect = function(server, data) {    
 
-    console.log('\n\n' + figlet.textSync('Mage\nArena', 'Delta Corps Priest 1'));
     console.log(`SocketIO :: Room created ${data.name} :: ${server.address().port}`)
     socketIo = io.listen(server)
 
@@ -143,7 +144,7 @@ const socketConnect = function(server, data) {
         socket.on('disconnect', function () {
             console.log(`SocketIO :: User disconnect :: ${user.id}`)
             room.userLeftRoom(user)
-            if(room && user.id === room.owner.id) deleteRoom(room)
+            if(user.id === _.get(room, 'owner.id')) deleteRoom(room)
             else if(room.users.length === 0) deleteRoom(room)
 
             users = users.filter(x => x.id !== user.id)

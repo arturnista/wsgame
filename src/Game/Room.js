@@ -47,7 +47,6 @@ function Room(data, server, socketIo) {
     this.gameIsStarting = false
     this.gameIsRunning = false
     this.gameEnded = false
-    this.cycleTime = null
     this.users = []
     this.chat = []
     this.owner = null
@@ -70,8 +69,6 @@ Room.prototype.delete = function () {
     this.gameIsStarting = false
     this.gameIsRunning = false
     this.gameEnded = false
-
-    clearTimeout(this.cycleTime)
 
     this.gameObjectController.end(this.users)
     this.mapController.end()
@@ -323,7 +320,7 @@ Room.prototype.endGame = function (winner) {
                 ids: usersIds,
             },
             players: this.gameObjectController.gameObjects.filter(x => goTypes.isType(x.type, goTypes.PLAYER))
-                .map(p => ({ id: p.id, user: p.user ? p.user.id : 'bot', isBot: !!p.botBehaviour, spells: p.spellsUsed, life: p.life, knockbackValue: p.knockbackValue })),
+                .map(p => ({ id: p.id, user: p.user ? p.user.id : 'bot', isBot: p.isBot, spells: p.spellsUsed, life: p.life, knockbackValue: p.knockbackValue })),
             map: this.mapController.currentMap.name,
             duration: new Date() - this.startGameTime,
             createdAt: (new Date()).toISOString(),

@@ -1,6 +1,6 @@
 const vector = require('../utils/vector')
 const goTypes = require('./GameObjects/gameObjectTypes')
-const BotBehaviour = require('./GameObjects/BotBehaviour')
+const BotBehaviour = require('./GameObjects/Behaviours/BotBehaviour')
 
 function RoomTutorialBehaviour(room) {
     this.room = room
@@ -74,11 +74,10 @@ RoomTutorialBehaviour.prototype.update = function(deltatime) {
 
                 const playerId = setTimeout(() => {
                     this.room.addState('show_message', { messageCode: 'TUTORIAL_PLAYER', time: 8000 })
-                    this.botPlayer = this.room.gameObjectController.createPlayer({ isBot: true, addState: this.room.addState.bind(this.room), mapController: this.room.mapController })
+                    this.botPlayer = this.room.gameObjectController.createPlayer({ isBot: false, addState: this.room.addState.bind(this.room), mapController: this.room.mapController })
                     this.botKnockbackBase = this.botPlayer.knockbackValue
                     this.botLifeBase = this.botPlayer.life
                     this.botPlayer.spells = []
-                    this.botPlayer.botBehaviour = null
                     this.botPlayer.position.x = 250
                     this.botPlayer.position.y = 350
                     this.botPlayer.color = '#FF6F00'
@@ -115,7 +114,7 @@ RoomTutorialBehaviour.prototype.update = function(deltatime) {
         if(this.botPlayer.life < this.botLifeBase) {
 
             this.room.addState('show_message', { messageCode: 'TUTORIAL_KILL' })
-            this.botPlayer.botBehaviour = new BotBehaviour(this.botPlayer)
+            this.botPlayer.behaviours.push( new BotBehaviour(this.botPlayer) )
             this.botPlayer.spells = []
             this.botPlayer.life = 30
 

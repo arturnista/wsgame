@@ -4,6 +4,7 @@ const goTypes = require('./gameObjectTypes')
 const gameObjectController = require('./GameObjectController')
 const vector = require('../../utils/vector')
 const colliders = require('../Physics/colliders')
+const AutoDestroyBehaviour = require('./Behaviours/AutoDestroyBehaviour')
 
 function Prison(data, goController) {
     this.id = uuid.v4()
@@ -30,9 +31,10 @@ function Prison(data, goController) {
 
     this.multiplier = data.knockbackMultiplier
     this.increment = data.knockbackIncrement
-
-    this.lifeTime = data.duration / 1000
-    this._timePassed = 0
+    
+    this.behaviours = [
+        new AutoDestroyBehaviour(this, this.goController, data.duration / 1000)
+    ]
 
 }
 
@@ -48,12 +50,7 @@ Prison.prototype.info = function () {
 }
 
 Prison.prototype.update = function (deltatime) {
-    const { gameObjects } = this.goController
-
-    this._timePassed += deltatime
-    if(this._timePassed >= this.lifeTime) {
-        this.goController.destroy(this.id)
-    }
+    if(this.behaviours.length > 0) this.behaviours.forEach(behaviour => behaviour.update(deltatime))
 }
 
 Prison.prototype.reflect = function () {

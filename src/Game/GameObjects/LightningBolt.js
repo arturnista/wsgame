@@ -4,6 +4,7 @@ const goTypes = require('./gameObjectTypes')
 const gameObjectController = require('./GameObjectController')
 const vector = require('../../utils/vector')
 const colliders = require('../Physics/colliders')
+const AutoDestroyBehaviour = require('./Behaviours/AutoDestroyBehaviour')
 
 function LightningBolt(data, goController) {
     this.id = uuid.v4()
@@ -29,8 +30,9 @@ function LightningBolt(data, goController) {
     this.radius = data.radius
     this.hitEffects = data.hitEffects
 
-    this.lifeTime = 5
-    this._timePassed = 0
+    this.behaviours = [
+        new AutoDestroyBehaviour(this, this.goController, 5)
+    ]
 
     this.velocity = {
         x: this.direction.x * this.moveSpeed,
@@ -51,10 +53,7 @@ LightningBolt.prototype.info = function () {
 }
 
 LightningBolt.prototype.update = function (deltatime) {
-    this._timePassed += deltatime
-    if(this._timePassed >= this.lifeTime) {
-        this.goController.destroy(this.id)
-    }
+    if(this.behaviours.length > 0) this.behaviours.forEach(behaviour => behaviour.update(deltatime))
 }
 
 LightningBolt.prototype.reflect = function(object, direction) {

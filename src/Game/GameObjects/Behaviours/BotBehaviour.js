@@ -1,8 +1,8 @@
 const _ = require('lodash')
-const goTypes = require('./gameObjectTypes')
-const vector = require('../../utils/vector')
-const colliders = require('../Physics/colliders')
-const spells = require('./spells')
+const goTypes = require('../gameObjectTypes')
+const vector = require('../../../utils/vector')
+const colliders = require('../../Physics/colliders')
+const spells = require('../spells')
 
 function BotBehaviour(player) {
     let offensiveSpells = Object.keys(spells).filter(k => spells[k].type == 'offensive')
@@ -17,21 +17,22 @@ function BotBehaviour(player) {
     this.supportSpells = [ tSpell ]
     
     this.lastSpell = 0
-    this.spellOffset = _.random(1, 3, true)
+    this.castSpellDelay = _.random(1, 3, true)
     this.lastCheck = 0
-    this.checkForProjectile = 1
+    this.checkForProjectileDelay = 1
 }
 
 
 BotBehaviour.prototype.update = function (deltatime) {
+    return
     if(this.player.positionToGo == null) {
         this.setPosition()
     }
 
     this.lastSpell += deltatime
-    if(this.lastSpell > this.spellOffset) {
+    if(this.lastSpell > this.castSpellDelay) {
         this.lastSpell = 0
-        this.spellOffset = _.random(1, 3, true)
+        this.castSpellDelay = _.random(1, 3, true)
 
         const spellName = _.sample(this.offensiveSpells)
         const playersToCast = this.player.goController.gameObjects.filter(x =>
@@ -46,7 +47,7 @@ BotBehaviour.prototype.update = function (deltatime) {
     }
 
     this.lastCheck += deltatime   
-    if(this.lastCheck > this.checkForProjectile) {
+    if(this.lastCheck > this.checkForProjectileDelay) {
         this.lastCheck = 0
         const spells = this.player.goController.gameObjects.filter(x => goTypes.isType(x.type, goTypes.SPELL))
 
@@ -54,8 +55,8 @@ BotBehaviour.prototype.update = function (deltatime) {
             const spellDirection = vector.direction(sp.position, this.player.position)
             const spellVelocity = vector.normalize(sp.velocity)
 
-            const isGoing = vector.length( vector.sub( spellVelocity, spellDirection ) )
-            if(isGoing < 0.5) {
+            const spellIsGoingToHit = vector.length( vector.sub( spellVelocity, spellDirection ) )
+            if(spellIsGoingToHit < 0.5) {
                 const spellName = _.sample(this.supportSpells)
                 this.setPosition()
                 if(this.canCastSpell(spellName)) {

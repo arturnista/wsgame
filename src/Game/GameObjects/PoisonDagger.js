@@ -4,6 +4,7 @@ const goTypes = require('./gameObjectTypes')
 const gameObjectController = require('./GameObjectController')
 const vector = require('../../utils/vector')
 const colliders = require('../Physics/colliders')
+const AutoDestroyBehaviour = require('./Behaviours/AutoDestroyBehaviour')
 
 function PoisonDagger(data, goController) {
     this.id = uuid.v4()
@@ -28,8 +29,9 @@ function PoisonDagger(data, goController) {
     this.effectDuration = data.duration
     this.hitEffects = data.hitEffects
 
-    this.lifeTime = 5
-    this._timePassed = 0
+    this.behaviours = [
+        new AutoDestroyBehaviour(this, this.goController, 5)
+    ]
 
     this.velocity = {
         x: this.direction.x * this.moveSpeed,
@@ -49,12 +51,7 @@ PoisonDagger.prototype.info = function () {
 }
 
 PoisonDagger.prototype.update = function (deltatime) {
-    const { gameObjects } = this.goController
-
-    this._timePassed += deltatime
-    if(this._timePassed >= this.lifeTime) {
-        this.goController.destroy(this.id)
-    }
+    if(this.behaviours.length > 0) this.behaviours.forEach(behaviour => behaviour.update(deltatime))
 }
 
 PoisonDagger.prototype.reflect = function(object, direction) {

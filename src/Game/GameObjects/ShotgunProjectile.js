@@ -4,6 +4,7 @@ const goTypes = require('./gameObjectTypes')
 const gameObjectController = require('./GameObjectController')
 const vector = require('../../utils/vector')
 const colliders = require('../Physics/colliders')
+const AutoDestroyBehaviour = require('./Behaviours/AutoDestroyBehaviour')
 
 function ShotgunProjectile(data, goController) {
     this.id = uuid.v4()
@@ -25,8 +26,9 @@ function ShotgunProjectile(data, goController) {
     this.increment = data.knockbackIncrement
     this.moveSpeed = data.moveSpeed
 
-    this.lifeTime = 5
-    this._timePassed = 0
+    this.behaviours = [
+        new AutoDestroyBehaviour(this, this.goController, 5)
+    ]
 
     const angle = Math.atan2(this.direction.y, this.direction.x)
     const xProj = Math.cos(angle + (data.index * 20 * 0.017453286))
@@ -50,12 +52,7 @@ ShotgunProjectile.prototype.info = function () {
 }
 
 ShotgunProjectile.prototype.update = function (deltatime) {
-    const { gameObjects } = this.goController
-
-    this._timePassed += deltatime
-    if(this._timePassed >= this.lifeTime) {
-        this.goController.destroy(this.id)
-    }
+    if(this.behaviours.length > 0) this.behaviours.forEach(behaviour => behaviour.update(deltatime))
 }
 
 ShotgunProjectile.prototype.reflect = function(object, direction) {

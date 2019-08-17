@@ -3,7 +3,7 @@ const uuid = require('uuid')
 const goTypes = require('./gameObjectTypes')
 const vector = require('../../utils/vector')
 const colliders = require('../Physics/colliders')
-const BotBehaviour = require('./BotBehaviour')
+const BotBehaviour = require('./Behaviours/BotBehaviour')
 const spells = require('./spells')
 
 function Player(opt, goController) {
@@ -25,8 +25,10 @@ function Player(opt, goController) {
     this.name = opt.user ? opt.user.name : ''
     this.spells = this.user ? this.user.spells.map(x => x.id) : []
 
-    this.botBehaviour = null
-    if(opt.isBot) this.botBehaviour = new BotBehaviour(this)
+    this.isBot = opt.isBot ? true : false
+
+    this.behaviours = []
+    if(this.isBot) this.behaviours.push( new BotBehaviour(this) )
 
     this.start()
 }
@@ -292,7 +294,7 @@ Player.prototype.update = function (deltatime) {
         return
     }
 
-    if(this.botBehaviour) this.botBehaviour.update(deltatime)
+    if(this.behaviours.length > 0) this.behaviours.forEach(behaviour => behaviour.update(deltatime))
 
     if(this.positionToGo != null) {
 

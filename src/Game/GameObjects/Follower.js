@@ -4,6 +4,7 @@ const goTypes = require('./gameObjectTypes')
 const gameObjectController = require('./GameObjectController')
 const vector = require('../../utils/vector')
 const colliders = require('../Physics/colliders')
+const AutoDestroyBehaviour = require('./Behaviours/AutoDestroyBehaviour')
 
 function Follower(data, goController) {
     this.id = uuid.v4()
@@ -37,8 +38,9 @@ function Follower(data, goController) {
     this.moveSpeed = data.moveSpeed
 
     this.duration = data.duration / 1000
-    this.lifeTime = this.duration
-    this._timePassed = 0
+    this.behaviours = [
+        new AutoDestroyBehaviour(this, this.goController, this.duration)
+    ]
 
     this.direction = { x: 0, y: 0 }
     if(this.target != null) this.direction = vector.direction(this.position, this.target.position)
@@ -70,6 +72,9 @@ Follower.prototype.update = function (deltatime) {
         this.goController.destroy(this)
         return
     }
+
+    if(this.behaviours.length > 0) this.behaviours.forEach(behaviour => behaviour.update(deltatime))
+
     const { gameObjects } = this.goController
 
     this.direction = vector.direction(this.position, this.target.position)
@@ -83,11 +88,6 @@ Follower.prototype.update = function (deltatime) {
     else if(this.velocity.x > this.desiredVelocity.x) this.velocity.x -= this.acceleration * deltatime
     if(this.velocity.y < this.desiredVelocity.y) this.velocity.y += this.acceleration * deltatime
     else if(this.velocity.y > this.desiredVelocity.y) this.velocity.y -= this.acceleration * deltatime
-
-    this._timePassed += deltatime
-    if(this._timePassed >= this.lifeTime) {
-        this.goController.destroy(this.id)
-    }
 }
 
 Follower.prototype.reflect = function(object, direction) {

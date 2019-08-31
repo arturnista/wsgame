@@ -7,6 +7,9 @@ function User({ id, name }, socket, connectionReadyCallback) {
     this.socket = socket
     this.id = id
 
+    spells.get()
+    .then(result => this.SPELL_DATA = result)
+
     this.reset()
     this.restart()
 
@@ -62,6 +65,8 @@ User.prototype.info = function () {
 }
 
 User.prototype.selectSpell = function (message) {
+    const spells = this.SPELL_DATA
+    
     const name = message.spellName
     const position = message.position
 

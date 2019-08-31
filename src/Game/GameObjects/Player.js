@@ -10,6 +10,9 @@ function Player(opt, goController) {
     this.id = uuid.v4()
     this.type = goTypes.create(goTypes.PLAYER)
 
+    spells.get()
+    .then(result => this.SPELL_DATA = result)
+
     this.collider = colliders.createCircle(25)
     this.goController = goController
 
@@ -111,6 +114,8 @@ Player.prototype.knockback = function (direction, multiplier, increment) {
 }
 
 Player.prototype.useSpell = function(spellName, data, { isReplica = false, ignoreCooldown = false } = {}) {
+    const spells = this.SPELL_DATA
+    
     if(this.status !== 'alive') return
     if(this.spells.indexOf(spellName) === -1) return
     if(!spells[spellName]) return

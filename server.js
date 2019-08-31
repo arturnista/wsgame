@@ -67,7 +67,8 @@ server.post('/rooms', function(req, res, next) {
 
 server.get('/spells', function(req, res, next) {
     console.log('Http Req :: Get Spells :: ' + req.headers.origin)
-    res.status(200).json( GameController.getSpells() )
+    GameController.getSpells()
+    .then(spells => res.status(200).json( spells ))
 })
 
 server.get('/articles', function(req, res, next) {

@@ -17,7 +17,7 @@ const staticSpells = {
     },
     follower: {
         name: 'Follower',
-        description: 'Summons 3 followers, each one follows the closest player for 6 seconds.',
+        description: 'Summons 3 followers, each one follows the closest player for 8 seconds.',
         type: 'offensive',
         cooldown: 12000,
         duration: 8000,

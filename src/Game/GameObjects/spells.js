@@ -97,7 +97,7 @@ module.exports = {
         type: 'support',
         cooldown: 7000,
         distance: 130,
-        radius: 80,
+        radius: 45,
         duration: 3000,
     },
     repel: {

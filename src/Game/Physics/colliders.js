@@ -23,8 +23,8 @@ function createBox(size, thickness = 0) {
 function createCircle(size, thickness = 0) {
     return {
         type: 'circle',
-        size: size,
-        thickness: thickness,
+        size,
+        thickness,
         radius: size / 2
     }
 }

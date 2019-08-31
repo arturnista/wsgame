@@ -253,7 +253,7 @@ Room.prototype.userJoin = function(user) {
         if(!this.gameIsRunning) return
         if(user.isObserver) return
         console.log(`SocketIO :: ${this.name} :: Player move :: ${JSON.stringify(message)}`)
-        if(user.player && user.player.status === 'alive') user.player.setPositionToGo(message.position)
+        if(user.player && user.player.status === 'alive') user.player.settargetPosition(message.position)
     })
 
     user.socket.on('player_spell', (message) => {

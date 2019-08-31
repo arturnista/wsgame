@@ -35,7 +35,7 @@ function Player(opt, goController) {
 
 Player.prototype.start = function () {
     this.moveSpeed = 200
-    this.positionToGo = null
+    this.targetPosition = null
 
     this.position = { x: 0, y: 0 }
 
@@ -75,8 +75,8 @@ Player.prototype.info = function () {
     }
 }
 
-Player.prototype.setPositionToGo = function (position) {
-    this.positionToGo = position
+Player.prototype.settargetPosition = function (position) {
+    this.targetPosition = position
 }
 
 Player.prototype.dealDamage = function (damage) {
@@ -119,7 +119,7 @@ Player.prototype.useSpell = function(spellName, data, { isReplica = false, ignor
     if(isSilenced) return
 
     const spellData = spells[spellName]
-    if(spellName === 'teleportation_orb' && this.teleportationOrb && this.teleportationOrb.exists) spellName = 'teleportation_orb_tel'
+    if(spellName === 'teleportation_orb' && this.teleportationOrb && this.teleportationOrb.exists) spellName = 'teleportation_orb_teleport'
 
     const cooldown = spellData.cooldown + (spellData.incrementalCooldown ? (this.spellsUsed[spellName] - 1) * spellData.incrementalCooldown : 0)
     if(!ignoreCooldown && this.spellsCooldown[spellName] && (new Date() - this.spellsCooldown[spellName]) < cooldown) return
@@ -182,13 +182,13 @@ Player.prototype.useSpell = function(spellName, data, { isReplica = false, ignor
             spellEntity = this.goController.createVoodooDoll(Object.assign({ caster: data.id }, data, spellData))
             this.voodooDollEntity = spellEntity
             break
-        case 'teleportation_orb_tel':
+        case 'teleportation_orb_teleport':
             if(isReplica || !this.teleportationOrb || !this.teleportationOrb.exists) break
 
             this.position = this.teleportationOrb.position
             this.goController.destroy(this.teleportationOrb.id)
 
-            this.positionToGo = null
+            this.targetPosition = null
             this.moveVelocity = { x: 0, y: 0 }
             this.teleportationOrb = null
             break
@@ -202,7 +202,7 @@ Player.prototype.useSpell = function(spellName, data, { isReplica = false, ignor
             setTimeout(_ => this.goController.createFollower(Object.assign({ caster: data.id }, data, spellData)), 1000)
             break
         case 'blink':
-            this.positionToGo = null
+            this.targetPosition = null
             this.moveVelocity = { x: 0, y: 0 }
             this.knockbackVelocity = vector.multiply(this.knockbackVelocity, .5)
             this.position = data.position
@@ -296,25 +296,25 @@ Player.prototype.update = function (deltatime) {
 
     if(this.behaviours.length > 0) this.behaviours.forEach(behaviour => behaviour.update(deltatime))
 
-    if(this.positionToGo != null) {
+    if(this.targetPosition != null) {
 
-        const distance = vector.distance(this.position, this.positionToGo)
+        const distance = vector.distance(this.position, this.targetPosition)
         if(distance <= 5) {
 
             this.moveVelocity = { x: 0, y: 0 }
-            this.positionToGo = null
+            this.targetPosition = null
 
         } else {
 
-            let deltaX = Math.abs(this.positionToGo.x - this.position.x) / Math.abs(this.positionToGo.y - this.position.y)
+            let deltaX = Math.abs(this.targetPosition.x - this.position.x) / Math.abs(this.targetPosition.y - this.position.y)
             let deltaY = 1
             let deltaSum = deltaX + deltaY
 
             deltaX = deltaX / deltaSum
             deltaY = deltaY / deltaSum
 
-            if(this.positionToGo.x < this.position.x) deltaX *= -1
-            if(this.positionToGo.y < this.position.y) deltaY *= -1
+            if(this.targetPosition.x < this.position.x) deltaX *= -1
+            if(this.targetPosition.y < this.position.y) deltaY *= -1
 
             this.moveVelocity = {
                 x: this.moveSpeed * deltaX,

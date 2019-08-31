@@ -21,7 +21,7 @@ function Prison(data, goController) {
         data.duration = (data.minRadius / radius) * data.baseDuration
     }
     
-    this.collider = colliders.createCircle(radius, 15)
+    this.collider = colliders.createCircle(radius * 2, 15)
 
     this.velocity = { x: 0, y: 0 }
     this.position = { x: 0, y: 0 }

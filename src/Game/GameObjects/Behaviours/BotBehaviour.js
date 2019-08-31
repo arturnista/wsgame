@@ -25,7 +25,7 @@ function BotBehaviour(player) {
 
 BotBehaviour.prototype.update = function (deltatime) {
     return
-    if(this.player.positionToGo == null) {
+    if(this.player.targetPosition == null) {
         this.setPosition()
     }
 
@@ -60,7 +60,7 @@ BotBehaviour.prototype.update = function (deltatime) {
                 const spellName = _.sample(this.supportSpells)
                 this.setPosition()
                 if(this.canCastSpell(spellName)) {
-                    this.castSpell(spellName, this.player.positionToGo)
+                    this.castSpell(spellName, this.player.targetPosition)
                 }
             }
         })
@@ -71,7 +71,7 @@ BotBehaviour.prototype.setPosition = function() {
 
     const mapPos = this.player.mapController.currentMap.position
     const mapSize = this.player.mapController.currentMap.size / 2
-    this.player.positionToGo = {
+    this.player.targetPosition = {
         x: _.random(mapPos.x - mapSize, mapPos.x + mapSize),
         y: _.random(mapPos.y - mapSize, mapPos.y + mapSize),
     }

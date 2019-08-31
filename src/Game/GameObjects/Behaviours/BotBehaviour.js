@@ -24,7 +24,6 @@ function BotBehaviour(player) {
 
 
 BotBehaviour.prototype.update = function (deltatime) {
-    return
     if(this.player.targetPosition == null) {
         this.setPosition()
     }

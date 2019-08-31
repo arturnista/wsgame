@@ -4,6 +4,7 @@ const vector = require('../../utils/vector')
 const colliders = require('../Physics/colliders')
 
 const DECREASE_INCREMENT = 3
+const DAMAGE_INCREASE = 2
 
 function Grid(goController) {
     this.goController = goController
@@ -13,8 +14,12 @@ function Grid(goController) {
 Grid.prototype.prepare = function() {
     this.damagePerSecond = 5
 
+    this.obstacles = []
+    let obstacleMaxCount = 3
+    let obstacleCount = 0
+
     this.blocks = []
-    let blockSize = 200
+    let blockSize = 125
     let gridSize = 4
     for (let x = 0; x < gridSize; x++) {
         for (let y = 0; y < gridSize; y++) {
@@ -22,6 +27,11 @@ Grid.prototype.prepare = function() {
             const yF = (blockSize / 2) + (blockSize * y)
             const edges = colliders.createBox(blockSize).edges({ x: xF, y: yF })
             this.blocks.push({ status: 'normal', size: blockSize, position: { x: xF, y: yF }, edges })
+            
+            if(Math.random() < 0.3 && obstacleCount < obstacleMaxCount) {
+                this.obstacles.push( this.goController.createObstacle({ position: { x: xF, y: yF }, size: (Math.random() * 10) + 10 }) )
+                obstacleCount++
+            }
         }
     }
 
@@ -72,7 +82,8 @@ Grid.prototype.info = function() {
         size: this.size,
         blocks: this.blocks,
         position: this.position,
-        timeToUpdate: this.timeToUpdate
+        obstacles: this.obstacles.map(x => x.info()),
+        timeToUpdate: this.timeToUpdate,
     }
 }
 
@@ -97,6 +108,8 @@ Grid.prototype.nextStep = function() {
         }
         return Object.assign({}, block, {status})
     })
+
+    this.damagePerSecond += DAMAGE_INCREASE
 }
 
 Grid.prototype.update = function(deltatime) {

@@ -3,6 +3,7 @@ const goTypes = require('../GameObjects/gameObjectTypes')
 const vector = require('../../utils/vector')
 
 const DECREASE_INCREMENT = 5
+const DAMAGE_MULTIPLIER = 1.5
 
 function BasicArena(goController) {
     this.goController = goController
@@ -91,7 +92,7 @@ BasicArena.prototype.update = function(deltatime) {
     if(this._timePassed > this.timeToUpdate) {
         this._timePassed = 0
 
-        this.damagePerSecond *= 2
+        this.damagePerSecond *= DAMAGE_MULTIPLIER
         this.decreasePerSecond += DECREASE_INCREMENT
         shouldUpdate = true
     }

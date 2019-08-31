@@ -40,7 +40,7 @@ const createRoom = (roomData, opt = {}) => {
     if(!roomHttp) {
 
         const server = express()
-        if(process.env.NODE_ENV === 'DEV' || process.env.PROTOCOL === 'HTTP') {
+        if(process.env.PROTOCOL === 'HTTP') {
 
             roomHttp = http.Server(server)
 

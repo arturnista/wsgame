@@ -24,6 +24,8 @@ COPY ./site ./site
 
 COPY ./magearena-firebase.json ./src/Database/magearena-firebase.json
 
+COPY ./.env ./.env
+
 COPY ./server.js ./server.js
 
 EXPOSE 5000-6000

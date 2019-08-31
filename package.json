@@ -4,15 +4,16 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "NODE_ENV=DEV nodemon --exec node server.js",
+    "start": "nodemon --exec node server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "production": "NODE_ENV=PRODUCTION node server.js"
+    "production": "NODE_ENV=PRODUCTION PROTOCOL=HTTP node server.js"
   },
   "author": "ArturNista",
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
+    "dotenv": "^8.1.0",
     "ejs": "^2.5.7",
     "express": "^4.16.2",
     "figlet": "^1.2.3",

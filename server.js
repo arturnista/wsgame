@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const express = require('express')
 const cors = require('cors')
 const server = express()
@@ -108,7 +110,7 @@ const startCallback = function() {
     console.log(`Server running on port ${port}\n\n`);
 }
 
-if(process.env.NODE_ENV === 'DEV' || process.env.PROTOCOL === 'HTTP') {
+if(process.env.PROTOCOL === 'HTTP') {
 
     httpServer = http.Server(server)
     httpServer.listen(port, startCallback)

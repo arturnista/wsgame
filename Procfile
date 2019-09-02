@@ -1,1 +1,1 @@
-web: node redirect.js
+web: node server.js

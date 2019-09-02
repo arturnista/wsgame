@@ -103,7 +103,7 @@ server.get('/static/:filetype/:filename', function(req, res, next) {
     res.sendFile(filename)
 })
 
-const port = 5000
+const port = process.env.PORT || 5000
 let httpServer = null
 
 const startCallback = function() {

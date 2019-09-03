@@ -62,11 +62,13 @@ const staticSpells = {
     },
     bubble: {
         name: 'Bubble',
-        description: 'Throws a bubble that travel for 500 units. Enemies are pulled inside and travel with the bubble.',
+        description: 'Create a small bubble, that increase in size and travel for 500 units. Enemies are pulled inside and travel with the bubble.',
         type: 'offensive',
         cooldown: 3000,
         distance: 500,
-        radius: 50,
+        startRadius: 20,
+        increaseRadius: 50,
+        radius: 80,
         moveSpeed: 250,
     },
     lightning_bolt: {

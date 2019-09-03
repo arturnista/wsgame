@@ -14,7 +14,10 @@ function Bubble(data, goController) {
     this.owner = this.goController.gameObjects.find(x => x.id === data.id)
     this.caster = this.goController.gameObjects.find(x => x.id === data.caster)
 
-    this.collider = colliders.createCircle(80)
+    this.currentRadius = data.startRadius
+    this.radiusIncrement = data.increaseRadius
+    this.maxRadius = data.radius
+    this.collider = colliders.createCircle(this.currentRadius)
 
     this.position = { x: 0, y: 0 }
     if(this.owner) {
@@ -53,6 +56,11 @@ Bubble.prototype.update = function (deltatime) {
 
     if(vector.distance(this.position, this.originalPosition) >= this.distance) {
         this.goController.destroy(this.id)
+    }
+
+    if(this.currentRadius <= this.maxRadius) {
+        this.currentRadius += this.radiusIncrement * deltatime
+        this.collider = colliders.createCircle(this.currentRadius)
     }
 
     for (let index = 0; index < this.players.length; index++) {

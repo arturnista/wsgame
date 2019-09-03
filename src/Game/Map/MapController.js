@@ -13,6 +13,7 @@ const MAPS = {
 const AVAILABLE_FOR_RANDOM = [
     'BasicArena',
     'FireArena',
+    'Grid',
 ]
 
 

@@ -57,7 +57,7 @@ server.get('/rooms', function(req, res, next) {
 server.post('/rooms', function(req, res, next) {
     console.log('Http Req :: Post Rooms :: ' + req.headers.origin)
     
-    const isBlockMode = req.query.blockMode === 'true'
+    const isBlockMode = process.env.BLOCK_MODE === 'true' || req.query.blockMode === 'true'
     const data = GameController.createRoom(req.body, {
         isBlockMode,
         server: isBlockMode ? httpServer : null

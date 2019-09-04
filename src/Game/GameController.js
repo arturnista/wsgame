@@ -27,8 +27,11 @@ const nextPort = (function() {
 
 let rooms = []
 
-const startCallback = function(port) {
+const startCallback = function(port, local) {
     console.log('\n\n' + figlet.textSync('Game\nServer', 'Delta Corps Priest 1'));
+    if(local) {
+        console.log('\n\n' + figlet.textSync('Local', 'Delta Corps Priest 1'))
+    }
 }
 
 const createRoom = (roomData, opt = {}) => {
@@ -67,6 +70,8 @@ const createRoom = (roomData, opt = {}) => {
         
         roomPort = roomHttp.address().port
         roomHttp.isLocal = true
+        
+        startCallback(roomPort, true)
         
     }
 

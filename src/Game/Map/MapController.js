@@ -10,12 +10,12 @@ const MAPS = {
     FireArena,
     Grid,
 }
+
 const AVAILABLE_FOR_RANDOM = [
     'BasicArena',
     'FireArena',
     'Grid',
 ]
-
 
 function MapController(goController, addState) {
     this.addState = addState

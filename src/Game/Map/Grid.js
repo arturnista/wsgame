@@ -21,16 +21,22 @@ Grid.prototype.prepare = function() {
     this.blocks = []
     let blockSize = 125
     let gridSize = 4
+    let lastCreatedY
     for (let x = 0; x < gridSize; x++) {
+        let createdInRow = false
+
         for (let y = 0; y < gridSize; y++) {
             const xF = (blockSize / 2) + (blockSize * x)
             const yF = (blockSize / 2) + (blockSize * y)
             const edges = colliders.createBox(blockSize).edges({ x: xF, y: yF })
             this.blocks.push({ status: 'normal', size: blockSize, position: { x: xF, y: yF }, edges })
             
-            if(Math.random() < 0.3 && obstacleCount < obstacleMaxCount) {
+            if(!createdInRow && lastCreatedY !== y && Math.random() < 0.3 && obstacleCount < obstacleMaxCount) {
                 this.obstacles.push( this.goController.createObstacle({ position: { x: xF, y: yF }, size: (Math.random() * 10) + 10 }) )
                 obstacleCount++
+
+                createdInRow = true
+                lastCreatedY = y
             }
         }
     }

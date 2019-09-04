@@ -96,7 +96,8 @@ const createRoom = (roomData, opt = {}) => {
 
     return {
         id: room.id,
-        port: roomPort
+        port: roomPort,
+        isBlockMode
     }
 }
 

@@ -13,6 +13,8 @@ const fs = require('fs')
 
 // require('./redirect')
 
+console.log(process.env.FIREBASE_PRIVATE_KEY);
+
 const GameController = require('./src/Game/GameController')
 const Articles = require('./src/Articles/iate')
 const BugReports = require('./src/BugReports/iate')

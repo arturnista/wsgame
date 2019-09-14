@@ -6,7 +6,7 @@ const http = require('http').Server(server)
 server.use(cors())
 
 server.use(function forceLiveDomain(req, res, next) {
-    return res.redirect(301, 'https://magearena.pro/')
+    return res.redirect(301, 'https://magearena.com/')
     return next()
 })
 

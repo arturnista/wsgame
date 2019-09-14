@@ -28,11 +28,9 @@ COPY ./.env ./.env
 
 COPY ./server.js ./server.js
 
-COPY /etc/letsencrypt/live/magearena.com/privkey.pem ./ssl/privkey.pem
-
-COPY /etc/letsencrypt/live/magearena.com/cert.pem ./ssl/cert.pem
-
-COPY /etc/letsencrypt/live/magearena.com/chain.pem ./ssl/chain.pem
+COPY ./ssl/privkey.pem ./ssl/privkey.pem
+COPY ./ssl/cert.pem ./ssl/cert.pem
+COPY ./ssl/chain.pem ./ssl/chain.pem
 
 EXPOSE 5000-6000
 

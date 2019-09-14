@@ -57,7 +57,7 @@ server.get('/rooms', function(req, res, next) {
 server.post('/rooms', function(req, res, next) {
     console.log('Http Req :: Post Rooms :: ' + req.headers.origin)
     
-    const isBlockMode = process.env.BLOCK_MODE === 'true' || req.query.blockMode === 'true'
+    const isBlockMode = req.query.blockMode === 'true'
     const data = GameController.createRoom(req.body, {
         isBlockMode,
         server: isBlockMode ? httpServer : null
@@ -117,15 +117,11 @@ if(process.env.PROTOCOL === 'HTTP') {
     httpServer.listen(port, startCallback)
 
 } else {
-    
-    const privateKey = fs.readFileSync(process.env.SSL_PRIVATE_KEY, 'utf8');
-    const certificate = fs.readFileSync(process.env.SSL_CERTIFICATE, 'utf8');
-    const ca = fs.readFileSync(process.env.SSL_CA, 'utf8');
 
     const sslOptions = {
-        key: privateKey,
-        cert: certificate,
-        ca: ca
+        key: fs.readFileSync('./ssl/privkey.pem'),
+        cert: fs.readFileSync('./ssl/cert.pem'),
+        ca: fs.readFileSync('./ssl/chain.pem', 'utf8')
     }
     httpServer = https.Server(sslOptions, server)
     httpServer.listen(port, startCallback)

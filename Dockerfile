@@ -27,6 +27,7 @@ COPY ./magearena-firebase.json ./src/Database/magearena-firebase.json
 COPY ./.env ./.env
 
 COPY ./server.js ./server.js
+COPY ./redirect.js ./redirect.js
 
 COPY ./ssl/privkey.pem ./ssl/privkey.pem
 COPY ./ssl/cert.pem ./ssl/cert.pem

@@ -49,11 +49,14 @@ const createRoom = (roomData, opt = {}) => {
 
         } else {
 
+            const privateKey = fs.readFileSync(process.env.SSL_PRIVATE_KEY, 'utf8');
+            const certificate = fs.readFileSync(process.env.SSL_CERTIFICATE, 'utf8');
+            const ca = fs.readFileSync(process.env.SSL_CA, 'utf8');
+
             const sslOptions = {
-                key: fs.readFileSync('./ssl/server.key'),
-                cert: fs.readFileSync('./ssl/cert.crt'),
-                ca: [fs.readFileSync('./ssl/gd1.cert', 'utf8'),
-                    fs.readFileSync('./ssl/gd2.cert', 'utf8')]
+                key: privateKey,
+                cert: certificate,
+                ca: ca
             }
             roomHttp = https.Server(sslOptions, server)
 

@@ -24,7 +24,7 @@ function Player(opt, goController) {
     this.maxLife = 100
     this.status = 'alive'
     this.user = opt.user
-    this.color = opt.user ? opt.user.color : ''
+    this.team = opt.user ? opt.user.team : null
     this.name = opt.user ? opt.user.name : ''
     this.spells = this.user ? this.user.spells.map(x => x.id) : []
 
@@ -70,8 +70,8 @@ Player.prototype.info = function () {
         collider: this.collider,
         velocity: this.velocity,
         status: this.status,
+        team: this.team,
         knockbackValue: this.knockbackValue,
-        color: this.color,
         userId: this.user ? this.user.id : '',
         modifiers: this.modifiers.map(x => x.name),
         spells: this.spells.map(x => ({ name: x, cd: this.spellsCooldown[x] ? this.spellsCooldown[x].toISOString() : '' }))

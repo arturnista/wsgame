@@ -15,18 +15,6 @@ const DELAY_TO_END = 5000
 const FPS = 60
 const TICK_LENGTH_MS = 1000 / FPS
 
-let COLORS = [
-    '#ff2222',
-    '#2222ff',
-    '#22ffff',
-    '#ff22ff',
-    '#ffff22',
-    '#ff8022',
-    '#22ff22',
-    '#ffaaaa',
-    '#aaaaaa',
-]
-
 function Room(data, server, socketIo, deleteRoomCallback) {
     this.id = uuid.v4()
     
@@ -35,6 +23,17 @@ function Room(data, server, socketIo, deleteRoomCallback) {
 
     this.name = data.name
     this.port = this.server.address().port
+    this.teams = [
+        { id: 0, color: '#ff2222' },
+        { id: 1, color: '#2222ff' },
+        { id: 2, color: '#22ffff' },
+        { id: 3, color: '#ff22ff' },
+        { id: 4, color: '#ffff22' },
+        { id: 5, color: '#ff8022' },
+        { id: 6, color: '#22ff22' },
+        { id: 7, color: '#ffaaaa' },
+        { id: 8, color: '#aaaaaa' },
+    ]
 
     this.isPrivate = !!data.isPrivate || !!data.isTutorial
 
@@ -131,6 +130,7 @@ Room.prototype.info = function () {
         owner: this.owner ? this.owner.info() : '',
         users: this.users.map(x => x.info()),
         chat: this.chat,
+        teams: this.teams
     }
 }
 
@@ -151,13 +151,16 @@ Room.prototype.userJoin = function(user) {
     
     if(_.isNil(this.owner)) this.userOwner(user)
 
-    this.users.push( user )
+    const availableTeamId = this.users.reduce((prev, current) => {
+        if(current.team.id === prev) return prev + 1
+        else return prev
+    }, this.teams[0].id)
 
-    user.color = _.sample(COLORS)
+    user.team = this.teams.find(x => x.id === availableTeamId)
     user.gameObjectController = this.gameObjectController
-    
-    COLORS = COLORS.filter(x => x !== user.color)
 
+    this.users.push( user )
+    
     console.log(`SocketIO :: ${this.name} :: User joined :: ${user.id}`)
     user.socket.emit('myuser_joined_room', { room: this.info(), user: user.info() })
     this.emit('user_joined_room', { room: this.info(), user: user.info() })
@@ -209,6 +212,15 @@ Room.prototype.userJoin = function(user) {
         this.emit('room_update', { room: this.info() })
     })
 
+    user.socket.on('user_select_team', (message) => {
+        if(this.gameIsRunning) return
+
+        console.log(`SocketIO :: ${this.name} :: Player selected team :: ${JSON.stringify(message)}`)
+        const team = this.teams.find(x => x.id === message.teamId)
+        user.selectTeam({ team })
+        this.emit('user_selected_team', { user: user.id, team })
+    })
+
     user.socket.on('user_select_spell', (message, responseCallback) => {
         if(this.gameIsRunning) return
 
@@ -241,7 +253,7 @@ Room.prototype.userJoin = function(user) {
         this.chat.push({
             id: user.id,
             message: message.message,
-            color: user.color,
+            team: user.team,
             name: user.name,
             createdAt: (new Date()).toISOString(),
         })
@@ -291,8 +303,6 @@ Room.prototype.userJoin = function(user) {
 }
 
 Room.prototype.userLeftRoom = function (user) {
-    COLORS.push( user.color )
-
     this.emit('user_left_room', user.info())
     user.reset()
     user.socket.disconnect()
@@ -440,6 +450,10 @@ Room.prototype.gameLogic = function (deltatime) {
     if(alivePlayers.length <= 1) {
         this.gameEnded = true
         this.emit('game_will_end', { time: DELAY_TO_END, winner: alivePlayers[0] })
+        setTimeout(() => this.endGame(alivePlayers[0]), DELAY_TO_END)
+    } else if(alivePlayers.every((pl => pl.team.id === alivePlayers[0].team.id))) {
+        this.gameEnded = true
+        this.emit('game_will_end', { time: DELAY_TO_END, winner: alivePlayers[0], winnerTeam: alivePlayers[0].team })
         setTimeout(() => this.endGame(alivePlayers[0]), DELAY_TO_END)
     }
 }

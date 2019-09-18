@@ -56,12 +56,17 @@ User.prototype.info = function () {
         id: this.id,
         name: this.name,
         player: _.isNil(this.player) || _.isEmpty(this.player) || _.isNil(this.player.info) ? this.player : this.player.info(),
-        color: this.color,
         status: this.status,
+        team: this.team,
         winCount: this.winCount,
         spells: this.spells,
         isObserver: this.isObserver,
     }
+}
+
+User.prototype.selectTeam = function (message) {
+    this.team = message.team
+    return this.team
 }
 
 User.prototype.selectSpell = function (message) {

@@ -16,16 +16,16 @@ const ShotgunProjectile = require('./ShotgunProjectile')
 const Player = require('./Player')
 const Obstacle = require('./Obstacle')
 
-const BOT_COLORS = [
-    '#4A148C',
-    '#00695C',
-    '#388E3C',
-    '#880E4F',
-    '#311B92',
-    '#004D40',
-    '#827717',
-    '#FF6F00',
-    '#3E2723'
+const BOT_TEAMS = [
+    { id: 2251, color: '#4A148C' },
+    { id: 2252, color: '#00695C' },
+    { id: 2253, color: '#388E3C' },
+    { id: 2254, color: '#880E4F' },
+    { id: 2255, color: '#311B92' },
+    { id: 2256, color: '#004D40' },
+    { id: 2257, color: '#827717' },
+    { id: 2258, color: '#FF6F00' },
+    { id: 2259, color: '#3E2723' }
 ]
 
 const BOT_NAMES = [
@@ -62,7 +62,7 @@ GameObjectController.prototype.start = function (users, { addState, mapControlle
 
     for (let i = 0; i < botCount; i++) {
         let player = this.createPlayer({ isBot: true, addState, mapController })
-        player.color = _.sample(BOT_COLORS)
+        player.team = _.sample(BOT_TEAMS)
         player.name = _.sample(BOT_NAMES)
         players.push(player)
     }

@@ -41,6 +41,7 @@ function Room(data, server, socketIo, deleteRoomCallback) {
     this.gameIsRunning = false
     this.gameEnded = false
     this.startGameTime = null
+    this.friendlyFire = false
 
     this.chat = []
     this.users = []
@@ -129,6 +130,7 @@ Room.prototype.info = function () {
         private: this.isPrivate,
         owner: this.owner ? this.owner.info() : '',
         users: this.users.map(x => x.info()),
+        friendlyFire: this.friendlyFire,
         chat: this.chat,
         teams: this.teams
     }
@@ -174,6 +176,14 @@ Room.prototype.userJoin = function(user) {
         console.log(`SocketIO :: ${this.name} :: User kicked :: ${JSON.stringify(message)}`)
         const kUser = this.users.find(x => x.id === message.userId)
         if(kUser) this.userLeftRoom(kUser)
+    })
+    user.socket.on('room_toggle_friendly_fire', (message) => {
+        if(this.gameIsRunning) return
+        if(this.owner.id !== user.id) return
+        
+        console.log(`SocketIO :: ${this.name} :: Friendly fire is ${this.friendlyFire ? 'ON' : 'OFF'} :: ${JSON.stringify(message)}`)
+        this.friendlyFire = !this.friendlyFire
+        this.emit('room_update', { room: this.info() })
     })
 
     // User events

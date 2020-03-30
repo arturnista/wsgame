@@ -10,7 +10,7 @@ server.use(function forceLiveDomain(req, res, next) {
     return next()
 })
 
-const port = process.env.PORT || 2000
+const port = 2000
 http.listen(port, function() {
     console.log('Redirect server running at ' + port)
 })

@@ -109,6 +109,12 @@ let httpServer = null
 const startCallback = function() {
     console.log('\n\n' + figlet.textSync('Mage\nArena', 'Delta Corps Priest 1'));
     console.log(`Server running on port ${port}\n\n`);
+    if (process.env.NODE_ENV == 'DEV') {
+        console.log(`NODE_ENV is DEV!\n\n`);
+    }
+    if (process.env.BLOCK_MODE) {
+        console.log(`BLOCK_MODE is ON!\n\n`);
+    }
 }
 
 if(process.env.PROTOCOL === 'HTTP') {

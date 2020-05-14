@@ -38,7 +38,7 @@ const createRoom = (roomData, opt = {}) => {
     let roomPort = null
     let room = null
     let roomHttp = opt.server
-    const isBlockMode = opt.isBlockMode
+    const isBlockMode = opt.isBlockMode || process.env.BLOCK_MODE
 
     if(!roomHttp) {
 

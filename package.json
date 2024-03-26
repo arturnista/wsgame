@@ -15,7 +15,7 @@
     "cors": "^2.8.4",
     "dotenv": "^8.1.0",
     "ejs": "^2.5.7",
-    "express": "^4.16.2",
+    "express": "^4.19.2",
     "figlet": "^1.2.3",
     "firebase-admin": "^5.13.1",
     "lodash": "^4.17.15",
